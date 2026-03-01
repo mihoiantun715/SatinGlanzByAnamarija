@@ -3,7 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
-import { Flower2, Instagram, Mail } from 'lucide-react';
+import Image from 'next/image';
+import { Instagram, Mail } from 'lucide-react';
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -15,7 +16,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <Flower2 className="w-7 h-7 text-rose-400" />
+              <Image src="/logo.png" alt="SatinGlanz" width={32} height={32} className="rounded-full" />
               <div>
                 <span className="text-lg font-bold text-white">SatinGlanz</span>
                 <span className="block text-xs text-rose-400 font-medium tracking-wider -mt-0.5">by Anamarija</span>

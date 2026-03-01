@@ -7,7 +7,8 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import LanguageSwitcher from './LanguageSwitcher';
-import { ShoppingBag, Menu, X, Flower2, User, LogOut, ShieldCheck } from 'lucide-react';
+import Image from 'next/image';
+import { ShoppingBag, Menu, X, User, LogOut, ShieldCheck } from 'lucide-react';
 
 export default function Navbar() {
   const { t } = useLanguage();
@@ -51,7 +52,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <Flower2 className="w-8 h-8 text-rose-500 group-hover:text-rose-600 transition-colors" />
+            <Image src="/logo.png" alt="SatinGlanz" width={36} height={36} className="rounded-full" />
             <div className="flex flex-col">
               <span className="text-lg font-bold text-gray-900 leading-tight tracking-tight">
                 SatinGlanz

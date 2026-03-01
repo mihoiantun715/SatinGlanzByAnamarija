@@ -7,7 +7,8 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
-import { Flower2, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import Image from 'next/image';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const { t } = useLanguage();
@@ -50,7 +51,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 sm:p-10">
           <div className="text-center mb-8">
-            <Flower2 className="w-10 h-10 text-rose-500 mx-auto mb-3" />
+            <Image src="/logo.png" alt="SatinGlanz" width={48} height={48} className="rounded-full mx-auto mb-3" />
             <h1 className="text-2xl font-bold text-gray-900">{t.auth.loginTitle}</h1>
           </div>
 

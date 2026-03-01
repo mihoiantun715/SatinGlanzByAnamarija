@@ -13,16 +13,11 @@ const CARD_PRICE = 2;
 
 const roseColors = [
   { key: 'Red', hex: '#dc2626', image: '/Roses For Bouquete/Red.png' },
-  { key: 'Blue', hex: '#2563eb', image: '/Roses For Bouquete/Blue.png' },
-  { key: 'Pink', hex: '#ec4899', image: '/Roses For Bouquete/Pink.png' },
-  { key: 'Burgundy', hex: '#881337', image: '/Roses For Bouquete/Burgundy.png' },
-  { key: 'White', hex: '#e5e5e5', image: '/Roses For Bouquete/White.png' },
-  { key: 'Lavender', hex: '#a855f7', image: '/Roses For Bouquete/Lavender.png' },
+  { key: 'Cherry Red', hex: '#9f1239', image: '/Roses For Bouquete/Cherry red.png' },
+  { key: 'Dusty Rose', hex: '#d4a0a0', image: '/Roses For Bouquete/Dusty rose.png' },
   { key: 'Peach', hex: '#fb923c', image: '/Roses For Bouquete/Peach.png' },
-  { key: 'Gold', hex: '#eab308', image: '/Roses For Bouquete/Gold.png' },
-  { key: 'Coral', hex: '#f97316', image: '/Roses For Bouquete/Coral.png' },
-  { key: 'Ivory', hex: '#fef3c7', image: '/Roses For Bouquete/Ivory.png' },
-  { key: 'Mixed', hex: 'linear-gradient(135deg, #ec4899, #a855f7, #eab308)', image: '/Roses For Bouquete/Mixed.png' },
+  { key: 'Royal Blue', hex: '#1d4ed8', image: '/Roses For Bouquete/Royal Blue.png' },
+  { key: 'Sunflower Yellow', hex: '#eab308', image: '/Roses For Bouquete/Sunflower yellow.png' },
 ];
 
 const presetCounts = [1, 3, 5, 7, 10, 12, 15, 20, 24, 25, 30, 50, 100];
@@ -143,7 +138,7 @@ export default function BuildBouquetPage() {
   };
 
   // Generate thumbnail previews based on selected color
-  const thumbColors = [selectedColor, 'Pink', 'Blue', 'White', 'Gold'];
+  const thumbColors = [selectedColor, ...roseColors.filter(c => c.key !== selectedColor).slice(0, 4).map(c => c.key)];
   const currentColorObj = roseColors.find(c => c.key === selectedColor);
 
   return (
@@ -192,9 +187,7 @@ export default function BuildBouquetPage() {
                 gridTemplateColumns: `repeat(${Math.min(Math.ceil(Math.sqrt(Math.min(roseCount, 36))), 6)}, 1fr)`,
               }}>
                 {Array.from({ length: Math.min(roseCount, 36) }).map((_, i) => {
-                  const colorForRose = selectedColor === 'Mixed'
-                    ? roseColors[i % (roseColors.length - 1)]
-                    : currentColorObj;
+                  const colorForRose = currentColorObj;
                   return (
                     <div key={i} className="flex items-center justify-center">
                       <img

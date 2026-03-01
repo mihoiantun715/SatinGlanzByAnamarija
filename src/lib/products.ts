@@ -18,15 +18,20 @@ export const categoryTranslations: Record<string, Record<string, string>> = {
 
 export const colorTranslations: Record<string, Record<string, string>> = {
   'Red': { en: 'Red', de: 'Rot', hr: 'Crvena', ro: 'Roșu', bg: 'Червено', tr: 'Kırmızı' },
+  'Cherry Red': { en: 'Cherry Red', de: 'Kirschrot', hr: 'Trešnja crvena', ro: 'Roșu cireș', bg: 'Черешово червено', tr: 'Kiraz Kırmızı' },
+  'Dusty Rose': { en: 'Dusty Rose', de: 'Altrosa', hr: 'Prašnjava ruža', ro: 'Trandafir prăfuit', bg: 'Прашна роза', tr: 'Pudra Gülü' },
+  'Peach': { en: 'Peach', de: 'Pfirsich', hr: 'Breskva', ro: 'Piersică', bg: 'Праскова', tr: 'Şeftali' },
+  'Royal Blue': { en: 'Royal Blue', de: 'Königsblau', hr: 'Kraljevsko plava', ro: 'Albastru regal', bg: 'Кралско синьо', tr: 'Kraliyet Mavisi' },
+  'Sunflower Yellow': { en: 'Sunflower Yellow', de: 'Sonnenblumengelb', hr: 'Suncokretno žuta', ro: 'Galben floarea-soarelui', bg: 'Слънчогледово жълто', tr: 'Ayçiçeği Sarısı' },
   'Pink': { en: 'Pink', de: 'Rosa', hr: 'Ružičasta', ro: 'Roz', bg: 'Розово', tr: 'Pembe' },
   'White': { en: 'White', de: 'Weiß', hr: 'Bijela', ro: 'Alb', bg: 'Бяло', tr: 'Beyaz' },
   'Burgundy': { en: 'Burgundy', de: 'Burgund', hr: 'Bordo', ro: 'Burgundy', bg: 'Бордо', tr: 'Bordo' },
-  'Peach': { en: 'Peach', de: 'Pfirsich', hr: 'Breskva', ro: 'Piersică', bg: 'Праскова', tr: 'Şeftali' },
   'Lavender': { en: 'Lavender', de: 'Lavendel', hr: 'Lavanda', ro: 'Lavandă', bg: 'Лавандула', tr: 'Lavanta' },
   'Gold': { en: 'Gold', de: 'Gold', hr: 'Zlatna', ro: 'Auriu', bg: 'Златно', tr: 'Altın' },
   'Ivory': { en: 'Ivory', de: 'Elfenbein', hr: 'Bjelokost', ro: 'Ivoriu', bg: 'Слонова кост', tr: 'Fildişi' },
   'Coral': { en: 'Coral', de: 'Koralle', hr: 'Koraljna', ro: 'Coral', bg: 'Корал', tr: 'Mercan' },
   'Mixed': { en: 'Mixed', de: 'Gemischt', hr: 'Mješovito', ro: 'Mixt', bg: 'Смесени', tr: 'Karışık' },
+  'Blue': { en: 'Blue', de: 'Blau', hr: 'Plava', ro: 'Albastru', bg: 'Синьо', tr: 'Mavi' },
 };
 
 export const products: Product[] = [
