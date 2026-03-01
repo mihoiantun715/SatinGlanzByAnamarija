@@ -23,14 +23,17 @@ const roseColors = [
 const presetCounts = [1, 3, 5, 7, 10, 12, 15, 20, 24, 25, 30, 50, 100];
 
 const wrappingOptions = [
-  { key: 'blue', hex: '#93c5fd', label: 'Blue' },
-  { key: 'teal', hex: '#5eead4', label: 'Teal' },
-  { key: 'mint', hex: '#a7f3d0', label: 'Mint' },
-  { key: 'black', hex: '#1f2937', label: 'Black' },
-  { key: 'red', hex: '#dc2626', label: 'Red' },
-  { key: 'cream', hex: '#fef3c7', label: 'Cream' },
-  { key: 'pink', hex: '#fbcfe8', label: 'Pink' },
-  { key: 'lace', hex: '#f5f5f4', label: 'Lace' },
+  { key: 'blush-pink', label: 'Blush Pink', image: '/Wrapping Paper/Blush Pink.png' },
+  { key: 'dusty-pink', label: 'Dusty Pink', image: '/Wrapping Paper/Dusty Pink.png' },
+  { key: 'light-beige-ivory', label: 'Light Beige Ivory', image: '/Wrapping Paper/Light beige ivory.png' },
+  { key: 'black-gold-marble', label: 'Black Marble Gold', image: '/Wrapping Paper/Black marble with gold veins.png' },
+  { key: 'blush-marble-gold', label: 'Blush Marble Gold', image: '/Wrapping Paper/Blush marble with gold veins.png' },
+  { key: 'elegant-blush-marble', label: 'Elegant Blush Marble', image: '/Wrapping Paper/Elegant blush marble with warm gold accents.png' },
+  { key: 'black-golden-edges', label: 'Black & Gold Edges', image: '/Wrapping Paper/Black and golden edges.png' },
+  { key: 'white-golden-edges', label: 'White & Gold Edges', image: '/Wrapping Paper/White and golden edges.png' },
+  { key: 'gold-edge-hex', label: 'Gold Edge Hex', image: '/Wrapping Paper/Gold Edge Hex.png' },
+  { key: 'earthy-red-glitter', label: 'Earthy Red Glitter', image: '/Wrapping Paper/Earthy red with subtle multicolor glitter specks.png' },
+  { key: 'antique-newspaper', label: 'Antique Newspaper', image: '/Wrapping Paper/Antique newspaper.png' },
 ];
 
 const decorationOptions = [
@@ -62,7 +65,7 @@ export default function BuildBouquetPage() {
   const [roseCount, setRoseCount] = useState(50);
   const [ribbonOption, setRibbonOption] = useState('none');
   const [ribbonOpen, setRibbonOpen] = useState(false);
-  const [wrapping, setWrapping] = useState('blue');
+  const [wrapping, setWrapping] = useState('blush-pink');
   const [selectedDecorations, setSelectedDecorations] = useState<string[]>(['noThanks']);
   const [selectedCard, setSelectedCard] = useState('noThanks');
   const [added, setAdded] = useState(false);
@@ -182,7 +185,7 @@ export default function BuildBouquetPage() {
             </div>
 
             {/* Main Image — Round Bouquet */}
-            <div className="flex-1 relative aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden flex items-center justify-center">
+            <div className="flex-1 relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden flex items-center justify-center" style={{ aspectRatio: '4/3' }}>
               {(() => {
                 // Build circular layout positions
                 const displayCount = Math.min(roseCount, 37);
@@ -210,7 +213,7 @@ export default function BuildBouquetPage() {
                 // Rose size based on how many are displayed
                 const roseSize = displayCount <= 1 ? 40 : displayCount <= 7 ? 28 : displayCount <= 19 ? 20 : 15;
                 return (
-                  <div className="absolute inset-0">
+                  <div className="absolute inset-0" style={{ zIndex: 2 }}>
                     {positions.map((pos, i) => (
                       <img
                         key={i}
@@ -235,11 +238,18 @@ export default function BuildBouquetPage() {
                   +{roseCount - 37} more
                 </div>
               )}
-              {/* Wrapping indicator */}
-              <div
-                className="absolute bottom-0 left-0 right-0 h-16 opacity-30 z-10"
-                style={{ backgroundColor: wrappingOptions.find(w => w.key === wrapping)?.hex }}
-              />
+              {/* Wrapping paper image behind roses */}
+              {(() => {
+                const wrapObj = wrappingOptions.find(w => w.key === wrapping);
+                return wrapObj ? (
+                  <img
+                    src={wrapObj.image}
+                    alt={wrapObj.label}
+                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[70%] h-[65%] object-cover object-top rounded-t-lg opacity-80"
+                    style={{ zIndex: 0 }}
+                  />
+                ) : null;
+              })()}
             </div>
           </div>
 
@@ -372,17 +382,23 @@ export default function BuildBouquetPage() {
                 {t.bouquetBuilder.wrappingPaper} <span className="text-rose-500">*</span>{' '}
                 <span className="font-normal text-gray-500">{wrappingOptions.find(w => w.key === wrapping)?.label}</span>
               </p>
-              <div className="flex flex-wrap gap-2 mt-3">
+              <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 mt-3">
                 {wrappingOptions.map((opt) => (
                   <button
                     key={opt.key}
                     onClick={() => setWrapping(opt.key)}
-                    className={`w-14 h-14 rounded-lg border-2 transition-all ${
+                    className={`relative rounded-lg border-2 overflow-hidden transition-all aspect-[3/4] ${
                       wrapping === opt.key ? 'border-gray-900 ring-1 ring-gray-900' : 'border-gray-200 hover:border-gray-400'
                     }`}
-                    style={{ backgroundColor: opt.hex }}
                     title={opt.label}
-                  />
+                  >
+                    <img
+                      src={opt.image}
+                      alt={opt.label}
+                      className="w-full h-full object-cover"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
+                  </button>
                 ))}
               </div>
             </div>
