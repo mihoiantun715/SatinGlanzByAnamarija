@@ -28,7 +28,7 @@ const roseColors = [
   { key: 'Sunflower Yellow', hex: '#eab308', image: '/Roses For Bouquete/Sunflower yellow.png' },
 ];
 
-const presetCounts = [1, 3, 5, 7, 10, 12, 15, 20, 24, 25, 30, 50, 100];
+const presetCounts = [1, 3, 5, 7, 10, 12, 15, 20, 24, 25, 30, 50, 101];
 
 const wrappingOptions = [
   { key: 'blush-pink', label: 'Blush Pink', image: '/Wrapping Paper/Blush Pink.png' },
@@ -54,15 +54,6 @@ const decorationOptions = [
   { key: 'noThanks', image: '', translationKey: 'noThanks' as const },
 ];
 
-const greetingCardOptions = [
-  { key: 'iLoveYou', emoji: '💕', translationKey: 'iLoveYou' as const },
-  { key: 'romantic', emoji: '🌹', translationKey: 'romantic' as const },
-  { key: 'kiss', emoji: '💋', translationKey: 'kiss' as const },
-  { key: 'floral', emoji: '🌸', translationKey: 'floral' as const },
-  { key: 'elegant', emoji: '✨', translationKey: 'elegant' as const },
-  { key: 'classic', emoji: '🎀', translationKey: 'classic' as const },
-  { key: 'noThanks', emoji: '🚫', translationKey: 'noThanks' as const },
-];
 
 export default function BuildBouquetPage() {
   const { locale, t } = useLanguage();
@@ -73,7 +64,6 @@ export default function BuildBouquetPage() {
   const [selectedRibbon, setSelectedRibbon] = useState('none');
   const [wrapping, setWrapping] = useState('blush-pink');
   const [selectedDecorations, setSelectedDecorations] = useState<string[]>(['noThanks']);
-  const [selectedCard, setSelectedCard] = useState('noThanks');
   const [added, setAdded] = useState(false);
   const [activeThumb, setActiveThumb] = useState(0);
   const [customCount, setCustomCount] = useState('');
@@ -98,9 +88,8 @@ export default function BuildBouquetPage() {
     if (selectedRibbon !== 'none') price += RIBBON_PRICE;
     const decoCount = selectedDecorations.filter(d => d !== 'noThanks').length;
     price += decoCount * DECORATION_PRICE;
-    if (selectedCard !== 'noThanks') price += CARD_PRICE;
     return price;
-  }, [roseCount, selectedRibbon, selectedDecorations, selectedCard]);
+  }, [roseCount, selectedRibbon, selectedDecorations]);
 
   const handleAddToCart = () => {
     const colorName = colorTranslations[selectedColor]?.[locale] || selectedColor;
@@ -493,28 +482,6 @@ export default function BuildBouquetPage() {
               </div>
             </div>
 
-            {/* Greeting Card */}
-            <div className="mb-8">
-              <p className="text-sm font-bold text-gray-900 mb-3">{t.bouquetBuilder.greetingCard}</p>
-              <div className="flex flex-wrap gap-2">
-                {greetingCardOptions.map((card) => (
-                  <button
-                    key={card.key}
-                    onClick={() => setSelectedCard(card.key)}
-                    className={`flex flex-col items-center justify-center w-16 h-16 rounded-lg border-2 text-xs transition-all ${
-                      selectedCard === card.key
-                        ? 'border-gray-900 bg-gray-50 ring-1 ring-gray-900'
-                        : 'border-gray-200 hover:border-gray-400'
-                    }`}
-                  >
-                    <span className="text-xl mb-0.5">{card.emoji}</span>
-                    <span className="text-[10px] text-gray-600 leading-tight text-center truncate w-full px-0.5">
-                      {t.bouquetBuilder.cards[card.translationKey]}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
 
             {/* Price + Add to Cart */}
             <div className="border-t border-gray-200 pt-6">
