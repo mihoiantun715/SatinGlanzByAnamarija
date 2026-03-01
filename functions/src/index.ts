@@ -34,6 +34,30 @@ export const createPaymentIntent = functions.https.onCall(async (data: any, cont
   }
 
   try {
+    // Rate limiting: max 5 payment intents per user per 10 minutes
+    const userId = context.auth.uid;
+    const rateLimitRef = admin.firestore().collection('payment_rate_limit').doc(userId);
+    const rateLimitDoc = await rateLimitRef.get();
+    const now = Date.now();
+    const tenMinutes = 10 * 60 * 1000;
+
+    if (rateLimitDoc.exists) {
+      const data = rateLimitDoc.data();
+      const recentAttempts = (data?.timestamps || []).filter((ts: number) => now - ts < tenMinutes);
+      
+      if (recentAttempts.length >= 5) {
+        throw new functions.https.HttpsError('resource-exhausted', 'Too many payment attempts. Please try again later.');
+      }
+      
+      await rateLimitRef.update({
+        timestamps: [...recentAttempts, now]
+      });
+    } else {
+      await rateLimitRef.set({
+        timestamps: [now]
+      });
+    }
+
     const stripe = getStripe();
     const { amount, currency, customerEmail, orderId } = data;
 
@@ -256,7 +280,7 @@ export const sendOrderEmail = functions.https.onCall(async (data: any, context) 
 });
 
 // Send contact form email (no auth required - public contact form)
-export const sendContactEmail = functions.https.onCall(async (data: any) => {
+export const sendContactEmail = functions.https.onCall(async (data: any, context) => {
   try {
     const { name, email, subject, message } = data;
 
@@ -264,11 +288,38 @@ export const sendContactEmail = functions.https.onCall(async (data: any) => {
     if (!name || !email || !subject || !message) {
       throw new functions.https.HttpsError('invalid-argument', 'All fields are required.');
     }
-    if (typeof email !== 'string' || !email.includes('@') || email.length > 254) {
+    
+    // Better email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (typeof email !== 'string' || !emailRegex.test(email) || email.length > 254) {
       throw new functions.https.HttpsError('invalid-argument', 'Invalid email address.');
     }
+    
     if (String(name).length > 200 || String(subject).length > 500 || String(message).length > 5000) {
       throw new functions.https.HttpsError('invalid-argument', 'Input too long.');
+    }
+
+    // Rate limiting: max 3 messages per email per hour
+    const rateLimitRef = admin.firestore().collection('contact_rate_limit').doc(email);
+    const rateLimitDoc = await rateLimitRef.get();
+    const now = Date.now();
+    const oneHour = 60 * 60 * 1000;
+
+    if (rateLimitDoc.exists) {
+      const data = rateLimitDoc.data();
+      const recentMessages = (data?.timestamps || []).filter((ts: number) => now - ts < oneHour);
+      
+      if (recentMessages.length >= 3) {
+        throw new functions.https.HttpsError('resource-exhausted', 'Too many messages. Please try again later.');
+      }
+      
+      await rateLimitRef.update({
+        timestamps: [...recentMessages, now]
+      });
+    } else {
+      await rateLimitRef.set({
+        timestamps: [now]
+      });
     }
 
     const transporter = createTransporter();
