@@ -14,7 +14,7 @@ import { useCart } from '@/context/CartContext';
 import { Lock, MapPin, Check, ShoppingBag, ArrowRight, Truck, CreditCard, Shield } from 'lucide-react';
 
 const DHL_PRICE = 5.19;
-const GLS_PRICE = 5.59;
+const DPD_PRICE = 4.99;
 
 const stripePromise = loadStripe('pk_test_51T6HdeRtazItoQroQhhnCNc9DZv9PpgrnHSZJtvEICpz40czkzfcasdxzuImY5PleiAuRZ3e7EohhtODWWpYXUsN00aB1M1Ew5');
 
@@ -42,7 +42,7 @@ function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
 
-  const [selectedCarrier, setSelectedCarrier] = useState<'dhl' | 'gls'>('dhl');
+  const [selectedCarrier, setSelectedCarrier] = useState<'dhl' | 'dpd'>('dhl');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [street, setStreet] = useState('');
@@ -55,7 +55,7 @@ function CheckoutForm() {
   const [error, setError] = useState('');
   const [cardComplete, setCardComplete] = useState(false);
 
-  const shippingCost = totalPrice >= 50 ? 0 : (selectedCarrier === 'dhl' ? DHL_PRICE : GLS_PRICE);
+  const shippingCost = totalPrice >= 50 ? 0 : (selectedCarrier === 'dhl' ? DHL_PRICE : DPD_PRICE);
   const total = totalPrice + shippingCost;
 
   // Order success
@@ -343,22 +343,22 @@ function CheckoutForm() {
 
                     <button
                       type="button"
-                      onClick={() => setSelectedCarrier('gls')}
+                      onClick={() => setSelectedCarrier('dpd')}
                       className={`relative text-left p-5 rounded-xl border-2 transition-all ${
-                        selectedCarrier === 'gls'
+                        selectedCarrier === 'dpd'
                           ? 'border-blue-400 bg-blue-50 shadow-sm'
                           : 'border-gray-200 hover:border-gray-300 bg-white'
                       }`}
                     >
-                      {selectedCarrier === 'gls' && (
+                      {selectedCarrier === 'dpd' && (
                         <div className="absolute top-3 right-3">
                           <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
                             <Check className="w-3 h-3 text-white" />
                           </div>
                         </div>
                       )}
-                      <span className="text-2xl font-black text-blue-600">GLS</span>
-                      <div className="text-xl font-bold text-gray-900 mt-2">{t.common.currency}{GLS_PRICE.toFixed(2)}</div>
+                      <span className="text-2xl font-black text-blue-600">DPD</span>
+                      <div className="text-xl font-bold text-gray-900 mt-2">{t.common.currency}{DPD_PRICE.toFixed(2)}</div>
                       <p className="text-xs text-gray-500 mt-1">✓ {t.cart.tracking}</p>
                     </button>
                   </div>

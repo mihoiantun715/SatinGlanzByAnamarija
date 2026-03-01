@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
-import { User, Package, LogOut, ShoppingBag, ArrowRight } from 'lucide-react';
+import { User, Package, LogOut, ShoppingBag, ArrowRight, Truck, ExternalLink } from 'lucide-react';
 
 interface OrderItem {
   name: string;
@@ -23,6 +23,7 @@ interface Order {
   status: string;
   shippingCarrier: string;
   shippingCost: number;
+  trackingNumber?: string;
   items: OrderItem[];
   shippingAddress: {
     firstName: string;
@@ -33,6 +34,17 @@ interface Order {
     country: string;
   };
 }
+
+const getTrackingUrl = (carrier: string, trackingNumber: string): string => {
+  switch (carrier) {
+    case 'dhl':
+      return `https://www.dhl.de/en/privatkunden/pakete-empfangen/verfolgen.html?piececode=${trackingNumber}`;
+    case 'dpd':
+      return `https://tracking.dpd.de/status/en_DE/parcel/${trackingNumber}`;
+    default:
+      return '';
+  }
+};
 
 export default function AccountPage() {
   const { locale, t } = useLanguage();
@@ -53,13 +65,14 @@ export default function AccountPage() {
       try {
         const q = query(
           collection(db, 'orders'),
-          where('userId', '==', user.uid),
-          orderBy('createdAt', 'desc')
+          where('userId', '==', user.uid)
         );
         const snap = await getDocs(q);
         const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Order[];
+        data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         setOrders(data);
-      } catch {
+      } catch (err) {
+        console.error('Failed to fetch orders:', err);
         setOrders([]);
       } finally {
         setLoadingOrders(false);
@@ -76,6 +89,9 @@ export default function AccountPage() {
   const statusLabel = (status: string) => {
     switch (status) {
       case 'pending': return t.auth.statusPending;
+      case 'pending_payment': return 'Awaiting Payment';
+      case 'paid': return 'Paid';
+      case 'payment_failed': return 'Payment Failed';
       case 'processing': return t.auth.statusProcessing;
       case 'shipped': return t.auth.statusShipped;
       case 'delivered': return t.auth.statusDelivered;
@@ -86,6 +102,9 @@ export default function AccountPage() {
   const statusColor = (status: string) => {
     switch (status) {
       case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'pending_payment': return 'bg-orange-100 text-orange-800';
+      case 'paid': return 'bg-emerald-100 text-emerald-800';
+      case 'payment_failed': return 'bg-red-100 text-red-800';
       case 'processing': return 'bg-blue-100 text-blue-800';
       case 'shipped': return 'bg-purple-100 text-purple-800';
       case 'delivered': return 'bg-green-100 text-green-800';
@@ -179,9 +198,31 @@ export default function AccountPage() {
                     ))}
                   </div>
 
+                  {/* Tracking */}
+                  {order.trackingNumber && (order.status === 'shipped' || order.status === 'delivered') && (
+                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 mb-3 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Truck className="w-4 h-4 text-purple-600" />
+                        <span className="text-sm text-purple-800 font-medium">
+                          {order.shippingCarrier.toUpperCase()} Tracking: <span className="font-mono">{order.trackingNumber}</span>
+                        </span>
+                      </div>
+                      {getTrackingUrl(order.shippingCarrier, order.trackingNumber) && (
+                        <a
+                          href={getTrackingUrl(order.shippingCarrier, order.trackingNumber)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-xs font-semibold text-purple-600 hover:text-purple-800 transition-colors"
+                        >
+                          Track Package <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+                    </div>
+                  )}
+
                   <div className="border-t border-gray-100 pt-3 flex justify-between">
                     <span className="text-sm text-gray-500">
-                      {order.shippingCarrier.toUpperCase()} · {t.common.currency}{order.shippingCost.toFixed(2)}
+                      {order.shippingCarrier.toUpperCase()} · {order.shippingCost === 0 ? 'FREE' : `${t.common.currency}${order.shippingCost.toFixed(2)}`}
                     </span>
                     <span className="font-bold text-gray-900">
                       {t.auth.orderTotal}: {t.common.currency}{order.total.toFixed(2)}

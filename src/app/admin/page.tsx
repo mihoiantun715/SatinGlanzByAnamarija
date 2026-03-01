@@ -8,13 +8,48 @@ import { useAuth } from '@/context/AuthContext';
 import { useProducts } from '@/context/ProductsContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { Product, Locale } from '@/lib/types';
-import { Plus, Trash2, Edit3, Save, X, ShieldCheck, Package, Upload, Image as ImageIcon } from 'lucide-react';
+import { Plus, Trash2, Edit3, Save, X, ShieldCheck, Package, Upload, Image as ImageIcon, ClipboardList, Truck, ExternalLink } from 'lucide-react';
 
 const LOCALES: Locale[] = ['en', 'de', 'hr', 'ro', 'bg', 'tr'];
 const LOCALE_LABELS: Record<Locale, string> = { en: 'EN', de: 'DE', hr: 'HR', ro: 'RO', bg: 'BG', tr: 'TR' };
 
 const CATEGORIES = ['Single Roses', 'Bouquets', 'Arrangements', 'Wedding', 'Gift Sets'];
 const ALL_COLORS = ['Red', 'Pink', 'White', 'Burgundy', 'Peach', 'Lavender', 'Gold', 'Ivory', 'Coral', 'Mixed'];
+const ORDER_STATUSES = ['pending_payment', 'paid', 'processing', 'shipped', 'delivered', 'payment_failed', 'cancelled'] as const;
+
+interface AdminOrder {
+  id: string;
+  createdAt: string;
+  total: number;
+  subtotal: number;
+  status: string;
+  shippingCarrier: string;
+  shippingCost: number;
+  trackingNumber?: string;
+  stripePaymentIntentId?: string;
+  userEmail: string;
+  items: { name: string; quantity: number; price: number; color?: string }[];
+  shippingAddress: {
+    firstName: string;
+    lastName: string;
+    street: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    phone: string;
+  };
+}
+
+const getTrackingUrl = (carrier: string, trackingNumber: string): string => {
+  switch (carrier) {
+    case 'dhl':
+      return `https://www.dhl.de/en/privatkunden/pakete-empfangen/verfolgen.html?piececode=${trackingNumber}`;
+    case 'dpd':
+      return `https://tracking.dpd.de/status/en_DE/parcel/${trackingNumber}`;
+    default:
+      return '';
+  }
+};
 
 interface ProductForm {
   slug: string;
@@ -61,11 +96,69 @@ export default function AdminPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Orders state
+  const [adminOrders, setAdminOrders] = useState<AdminOrder[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(true);
+  const [activeTab, setActiveTab] = useState<'products' | 'orders'>('orders');
+  const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
+
   useEffect(() => {
     if (!authLoading && user && isAdmin) {
       fetchProducts();
+      fetchOrders();
     }
   }, [authLoading, user, isAdmin]);
+
+  const fetchOrders = async () => {
+    try {
+      const snap = await getDocs(collection(db, 'orders'));
+      const data = snap.docs.map(d => ({ id: d.id, ...d.data() })) as AdminOrder[];
+      data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      setAdminOrders(data);
+    } catch (err) {
+      console.error('Failed to fetch orders:', err);
+      setAdminOrders([]);
+    } finally {
+      setLoadingOrders(false);
+    }
+  };
+
+  const updateOrderStatus = async (orderId: string, newStatus: string) => {
+    setUpdatingOrder(orderId);
+    try {
+      await updateDoc(doc(db, 'orders', orderId), { status: newStatus });
+      setAdminOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+    } catch (err) {
+      console.error('Failed to update order status:', err);
+    } finally {
+      setUpdatingOrder(null);
+    }
+  };
+
+  const updateTrackingNumber = async (orderId: string, trackingNumber: string) => {
+    setUpdatingOrder(orderId);
+    try {
+      await updateDoc(doc(db, 'orders', orderId), { trackingNumber });
+      setAdminOrders(prev => prev.map(o => o.id === orderId ? { ...o, trackingNumber } : o));
+    } catch (err) {
+      console.error('Failed to update tracking number:', err);
+    } finally {
+      setUpdatingOrder(null);
+    }
+  };
+
+  const orderStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending_payment': return 'bg-orange-100 text-orange-800';
+      case 'paid': return 'bg-emerald-100 text-emerald-800';
+      case 'processing': return 'bg-blue-100 text-blue-800';
+      case 'shipped': return 'bg-purple-100 text-purple-800';
+      case 'delivered': return 'bg-green-100 text-green-800';
+      case 'payment_failed': return 'bg-red-100 text-red-800';
+      case 'cancelled': return 'bg-gray-100 text-gray-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -255,12 +348,42 @@ export default function AdminPage() {
             <ShieldCheck className="w-7 h-7 text-rose-500" />
             <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
           </div>
+          <div className="flex items-center gap-3">
+            {activeTab === 'products' && (
+              <button
+                onClick={handleNewProduct}
+                className="flex items-center gap-2 px-5 py-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-semibold text-sm transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                Add Product
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-2 mb-6">
           <button
-            onClick={handleNewProduct}
-            className="flex items-center gap-2 px-5 py-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-semibold text-sm transition-all"
+            onClick={() => setActiveTab('orders')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+              activeTab === 'orders'
+                ? 'bg-gray-900 text-white'
+                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+            }`}
           >
-            <Plus className="w-4 h-4" />
-            Add Product
+            <ClipboardList className="w-4 h-4" />
+            Orders ({adminOrders.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('products')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+              activeTab === 'products'
+                ? 'bg-gray-900 text-white'
+                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <Package className="w-4 h-4" />
+            Products ({firestoreProducts.length})
           </button>
         </div>
 
@@ -503,8 +626,117 @@ export default function AdminPage() {
           </div>
         )}
 
+        {/* Orders Management */}
+        {activeTab === 'orders' && (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
+              <ClipboardList className="w-5 h-5 text-gray-500" />
+              <h2 className="font-bold text-gray-900">Orders ({adminOrders.length})</h2>
+            </div>
+
+            {loadingOrders ? (
+              <div className="p-8 text-center text-gray-400">{t.common.loading}</div>
+            ) : adminOrders.length === 0 ? (
+              <div className="p-12 text-center">
+                <ClipboardList className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-500">No orders yet.</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-100">
+                {adminOrders.map((order) => (
+                  <div key={order.id} className="p-5 hover:bg-gray-50 transition-colors">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <div className="flex items-center gap-3 mb-1">
+                          <span className="text-sm font-mono font-bold text-gray-900">#{order.id.slice(0, 8).toUpperCase()}</span>
+                          <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${orderStatusColor(order.status)}`}>
+                            {order.status.replace(/_/g, ' ').toUpperCase()}
+                          </span>
+                          <span className="text-lg font-bold text-rose-500">€{order.total.toFixed(2)}</span>
+                        </div>
+                        <p className="text-sm text-gray-500">
+                          {order.shippingAddress.firstName} {order.shippingAddress.lastName} · {order.userEmail}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {new Date(order.createdAt).toLocaleString()} · {order.shippingCarrier.toUpperCase()} · {order.shippingAddress.street}, {order.shippingAddress.postalCode} {order.shippingAddress.city}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Items */}
+                    <div className="bg-gray-50 rounded-lg p-3 mb-3">
+                      {order.items.map((item, idx) => (
+                        <div key={idx} className="flex justify-between text-sm">
+                          <span className="text-gray-700">{item.name} × {item.quantity}{item.color ? ` (${item.color})` : ''}</span>
+                          <span className="font-medium">€{(item.price * item.quantity).toFixed(2)}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Controls */}
+                    <div className="flex flex-wrap items-center gap-3">
+                      {/* Status */}
+                      <div className="flex items-center gap-2">
+                        <label className="text-xs font-semibold text-gray-500">Status:</label>
+                        <select
+                          value={order.status}
+                          onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                          disabled={updatingOrder === order.id}
+                          className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-rose-300"
+                        >
+                          {ORDER_STATUSES.map(s => (
+                            <option key={s} value={s}>{s.replace(/_/g, ' ').toUpperCase()}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Tracking */}
+                      <div className="flex items-center gap-2">
+                        <label className="text-xs font-semibold text-gray-500">Tracking:</label>
+                        <input
+                          type="text"
+                          placeholder="Enter tracking number"
+                          defaultValue={order.trackingNumber || ''}
+                          onBlur={(e) => {
+                            const val = e.target.value.trim();
+                            if (val !== (order.trackingNumber || '')) {
+                              updateTrackingNumber(order.id, val);
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              (e.target as HTMLInputElement).blur();
+                            }
+                          }}
+                          className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 bg-white w-52 font-mono focus:outline-none focus:ring-2 focus:ring-rose-300"
+                        />
+                      </div>
+
+                      {/* Track link */}
+                      {order.trackingNumber && getTrackingUrl(order.shippingCarrier, order.trackingNumber) && (
+                        <a
+                          href={getTrackingUrl(order.shippingCarrier, order.trackingNumber)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-xs font-semibold text-purple-600 hover:text-purple-800 transition-colors"
+                        >
+                          <Truck className="w-3.5 h-3.5" /> Track <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+
+                      {order.stripePaymentIntentId && (
+                        <span className="text-[10px] font-mono text-gray-400">Stripe: {order.stripePaymentIntentId.slice(0, 20)}...</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Products Table */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        {activeTab === 'products' && <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
             <Package className="w-5 h-5 text-gray-500" />
             <h2 className="font-bold text-gray-900">Products ({firestoreProducts.length})</h2>
@@ -584,7 +816,7 @@ export default function AdminPage() {
               ))}
             </div>
           )}
-        </div>
+        </div>}
       </div>
     </div>
   );
