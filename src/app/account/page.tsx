@@ -199,7 +199,7 @@ export default function AccountPage() {
                   </div>
 
                   {/* Tracking */}
-                  {order.trackingNumber && (order.status === 'shipped' || order.status === 'delivered') && (
+                  {order.trackingNumber && (
                     <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 mb-3 flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Truck className="w-4 h-4 text-purple-600" />

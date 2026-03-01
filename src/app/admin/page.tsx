@@ -101,6 +101,13 @@ export default function AdminPage() {
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [activeTab, setActiveTab] = useState<'products' | 'orders'>('orders');
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
+  const [deleteOrderConfirm, setDeleteOrderConfirm] = useState<string | null>(null);
+  const [editingOrder, setEditingOrder] = useState<AdminOrder | null>(null);
+  const [orderForm, setOrderForm] = useState({
+    firstName: '', lastName: '', street: '', city: '', postalCode: '', country: '', phone: '',
+    shippingCarrier: 'dhl', shippingCost: 0, status: '', trackingNumber: '',
+  });
+  const [savingOrder, setSavingOrder] = useState(false);
 
   useEffect(() => {
     if (!authLoading && user && isAdmin) {
@@ -144,6 +151,65 @@ export default function AdminPage() {
       console.error('Failed to update tracking number:', err);
     } finally {
       setUpdatingOrder(null);
+    }
+  };
+
+  const deleteOrder = async (orderId: string) => {
+    try {
+      await deleteDoc(doc(db, 'orders', orderId));
+      setAdminOrders(prev => prev.filter(o => o.id !== orderId));
+      setDeleteOrderConfirm(null);
+    } catch (err) {
+      console.error('Failed to delete order:', err);
+    }
+  };
+
+  const openEditOrder = (order: AdminOrder) => {
+    setEditingOrder(order);
+    setOrderForm({
+      firstName: order.shippingAddress.firstName,
+      lastName: order.shippingAddress.lastName,
+      street: order.shippingAddress.street,
+      city: order.shippingAddress.city,
+      postalCode: order.shippingAddress.postalCode,
+      country: order.shippingAddress.country,
+      phone: order.shippingAddress.phone,
+      shippingCarrier: order.shippingCarrier,
+      shippingCost: order.shippingCost,
+      status: order.status,
+      trackingNumber: order.trackingNumber || '',
+    });
+  };
+
+  const saveOrderEdit = async () => {
+    if (!editingOrder) return;
+    setSavingOrder(true);
+    try {
+      const updates = {
+        status: orderForm.status,
+        shippingCarrier: orderForm.shippingCarrier,
+        shippingCost: orderForm.shippingCost,
+        trackingNumber: orderForm.trackingNumber,
+        shippingAddress: {
+          firstName: orderForm.firstName,
+          lastName: orderForm.lastName,
+          street: orderForm.street,
+          city: orderForm.city,
+          postalCode: orderForm.postalCode,
+          country: orderForm.country,
+          phone: orderForm.phone,
+        },
+      };
+      await updateDoc(doc(db, 'orders', editingOrder.id), updates);
+      setAdminOrders(prev => prev.map(o => o.id === editingOrder.id ? {
+        ...o,
+        ...updates,
+      } : o));
+      setEditingOrder(null);
+    } catch (err) {
+      console.error('Failed to save order:', err);
+    } finally {
+      setSavingOrder(false);
     }
   };
 
@@ -727,11 +793,202 @@ export default function AdminPage() {
                       {order.stripePaymentIntentId && (
                         <span className="text-[10px] font-mono text-gray-400">Stripe: {order.stripePaymentIntentId.slice(0, 20)}...</span>
                       )}
+
+                      {/* Spacer */}
+                      <div className="flex-1" />
+
+                      {/* Edit / Delete */}
+                      <button
+                        onClick={() => openEditOrder(order)}
+                        className="p-2 rounded-lg text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                        title="Edit order"
+                      >
+                        <Edit3 className="w-4 h-4" />
+                      </button>
+                      {deleteOrderConfirm === order.id ? (
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => deleteOrder(order.id)}
+                            className="px-3 py-1.5 bg-red-500 text-white text-xs font-bold rounded-lg hover:bg-red-600 transition-colors"
+                          >
+                            Confirm
+                          </button>
+                          <button
+                            onClick={() => setDeleteOrderConfirm(null)}
+                            className="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-bold rounded-lg hover:bg-gray-200 transition-colors"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setDeleteOrderConfirm(order.id)}
+                          className="p-2 rounded-lg text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors"
+                          title="Delete order"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Edit Order Modal */}
+        {editingOrder && (
+          <div className="fixed inset-0 z-50 flex items-start justify-center pt-10 px-4 bg-black/40 overflow-y-auto">
+            <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 w-full max-w-2xl p-8 mb-10">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-900">
+                  Edit Order <span className="font-mono text-gray-400">#{editingOrder.id.slice(0, 8).toUpperCase()}</span>
+                </h2>
+                <button onClick={() => setEditingOrder(null)} className="text-gray-400 hover:text-gray-600">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-5">
+                {/* Status + Carrier + Tracking */}
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Status</label>
+                    <select
+                      value={orderForm.status}
+                      onChange={(e) => setOrderForm(prev => ({ ...prev, status: e.target.value }))}
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+                    >
+                      {ORDER_STATUSES.map(s => (
+                        <option key={s} value={s}>{s.replace(/_/g, ' ').toUpperCase()}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Carrier</label>
+                    <select
+                      value={orderForm.shippingCarrier}
+                      onChange={(e) => setOrderForm(prev => ({ ...prev, shippingCarrier: e.target.value }))}
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+                    >
+                      <option value="dhl">DHL</option>
+                      <option value="gls">GLS</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Tracking #</label>
+                    <input
+                      type="text"
+                      value={orderForm.trackingNumber}
+                      onChange={(e) => setOrderForm(prev => ({ ...prev, trackingNumber: e.target.value }))}
+                      placeholder="Tracking number"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-rose-300"
+                    />
+                  </div>
+                </div>
+
+                {/* Shipping Address */}
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Shipping Address</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">First Name</label>
+                      <input
+                        type="text"
+                        value={orderForm.firstName}
+                        onChange={(e) => setOrderForm(prev => ({ ...prev, firstName: e.target.value }))}
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Last Name</label>
+                      <input
+                        type="text"
+                        value={orderForm.lastName}
+                        onChange={(e) => setOrderForm(prev => ({ ...prev, lastName: e.target.value }))}
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <label className="block text-xs text-gray-500 mb-1">Street</label>
+                      <input
+                        type="text"
+                        value={orderForm.street}
+                        onChange={(e) => setOrderForm(prev => ({ ...prev, street: e.target.value }))}
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Postal Code</label>
+                      <input
+                        type="text"
+                        value={orderForm.postalCode}
+                        onChange={(e) => setOrderForm(prev => ({ ...prev, postalCode: e.target.value }))}
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">City</label>
+                      <input
+                        type="text"
+                        value={orderForm.city}
+                        onChange={(e) => setOrderForm(prev => ({ ...prev, city: e.target.value }))}
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Country</label>
+                      <input
+                        type="text"
+                        value={orderForm.country}
+                        onChange={(e) => setOrderForm(prev => ({ ...prev, country: e.target.value }))}
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Phone</label>
+                      <input
+                        type="text"
+                        value={orderForm.phone}
+                        onChange={(e) => setOrderForm(prev => ({ ...prev, phone: e.target.value }))}
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Order info (read-only) */}
+                <div className="bg-gray-50 rounded-xl p-4 text-sm text-gray-500">
+                  <div className="flex justify-between mb-1">
+                    <span>Customer: {editingOrder.shippingAddress.firstName} {editingOrder.shippingAddress.lastName}</span>
+                    <span>Email: {editingOrder.userEmail}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Items: {editingOrder.items.length}</span>
+                    <span className="font-bold text-gray-900">Total: €{editingOrder.total.toFixed(2)}</span>
+                  </div>
+                </div>
+
+                {/* Save */}
+                <div className="flex gap-3 pt-2">
+                  <button
+                    onClick={saveOrderEdit}
+                    disabled={savingOrder}
+                    className="flex-1 flex items-center justify-center gap-2 bg-rose-500 hover:bg-rose-600 disabled:bg-rose-300 text-white py-3 rounded-xl font-semibold text-sm transition-all"
+                  >
+                    <Save className="w-4 h-4" />
+                    {savingOrder ? 'Saving...' : 'Save Changes'}
+                  </button>
+                  <button
+                    onClick={() => setEditingOrder(null)}
+                    className="px-6 py-3 border-2 border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl font-semibold text-sm transition-all"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
