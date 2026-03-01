@@ -15,11 +15,31 @@ const getStripe = () => {
   return _stripe;
 };
 
+// HTML sanitizer to prevent XSS in email templates
+const sanitize = (str: string): string => {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+};
+
 // Create Stripe Payment Intent
-export const createPaymentIntent = functions.https.onCall(async (data: any) => {
+export const createPaymentIntent = functions.https.onCall(async (data: any, context) => {
+  // Auth check: only authenticated users can create payment intents
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'You must be logged in to make a payment.');
+  }
+
   try {
     const stripe = getStripe();
     const { amount, currency, customerEmail, orderId } = data;
+
+    if (typeof amount !== 'number' || isNaN(amount)) {
+      throw new functions.https.HttpsError('invalid-argument', 'Invalid amount.');
+    }
 
     // amount should be in cents
     const amountInCents = Math.round(amount * 100);
@@ -28,12 +48,18 @@ export const createPaymentIntent = functions.https.onCall(async (data: any) => {
       throw new functions.https.HttpsError('invalid-argument', 'Amount must be at least €0.50');
     }
 
+    // Max €10,000 to prevent abuse
+    if (amountInCents > 1000000) {
+      throw new functions.https.HttpsError('invalid-argument', 'Amount exceeds maximum allowed.');
+    }
+
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amountInCents,
       currency: currency || 'eur',
-      receipt_email: customerEmail,
+      receipt_email: customerEmail || context.auth.token.email,
       metadata: {
         orderId: orderId || '',
+        userId: context.auth.uid,
       },
     });
 
@@ -43,43 +69,59 @@ export const createPaymentIntent = functions.https.onCall(async (data: any) => {
   } catch (error: any) {
     console.error('Stripe error:', error);
     if (error instanceof functions.https.HttpsError) throw error;
-    throw new functions.https.HttpsError('internal', error.message || 'Failed to create payment intent');
+    throw new functions.https.HttpsError('internal', 'Failed to create payment intent');
   }
 });
 
-// Gmail SMTP transporter
+// Gmail SMTP transporter (credentials from .env)
 const createTransporter = () => {
   return nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'satinglanzbyanamarija@gmail.com',
-      pass: 'ypap zoep xdlc sqrw'
+      user: process.env.GMAIL_USER || '',
+      pass: process.env.GMAIL_APP_PASSWORD || '',
     }
   });
 };
 
+const GMAIL_FROM = `SatinGlanz by Anamarija <${process.env.GMAIL_USER || 'satinglanzbyanamarija@gmail.com'}>`;
+const GMAIL_TO = process.env.GMAIL_USER || 'satinglanzbyanamarija@gmail.com';
+
 // Send order confirmation email to customer
-export const sendOrderEmail = functions.https.onCall(async (data: any) => {
+export const sendOrderEmail = functions.https.onCall(async (data: any, context) => {
+  // Auth check: only authenticated users can trigger order emails
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'You must be logged in.');
+  }
+
   try {
     const transporter = createTransporter();
 
     const { orderData, orderId } = data;
-    const orderNumber = orderId.slice(0, 8).toUpperCase();
 
-    // Build items HTML
+    if (!orderData || !orderId) {
+      throw new functions.https.HttpsError('invalid-argument', 'Missing order data.');
+    }
+
+    const orderNumber = sanitize(orderId.slice(0, 8).toUpperCase());
+
+    // Build items HTML (sanitized)
     const itemsHtml = orderData.items.map((item: any) => `
       <tr>
         <td style="padding: 12px; border-bottom: 1px solid #f3f4f6;">
-          <strong>${item.name}</strong>
-          ${item.color ? `<br><span style="color: #9ca3af; font-size: 13px;">Color: ${item.color}</span>` : ''}
+          <strong>${sanitize(item.name)}</strong>
+          ${item.color ? `<br><span style="color: #9ca3af; font-size: 13px;">Color: ${sanitize(item.color)}</span>` : ''}
         </td>
-        <td style="padding: 12px; border-bottom: 1px solid #f3f4f6; text-align: center;">${item.quantity}</td>
-        <td style="padding: 12px; border-bottom: 1px solid #f3f4f6; text-align: right;">€${(item.price * item.quantity).toFixed(2)}</td>
+        <td style="padding: 12px; border-bottom: 1px solid #f3f4f6; text-align: center;">${Number(item.quantity)}</td>
+        <td style="padding: 12px; border-bottom: 1px solid #f3f4f6; text-align: right;">€${(Number(item.price) * Number(item.quantity)).toFixed(2)}</td>
       </tr>
     `).join('');
 
     const addr = orderData.shippingAddress;
-    const shippingLabel = orderData.shippingCost === 0 ? 'FREE' : `€${orderData.shippingCost.toFixed(2)}`;
+    if (!addr || !addr.firstName) {
+      throw new functions.https.HttpsError('invalid-argument', 'Missing shipping address.');
+    }
+    const shippingLabel = orderData.shippingCost === 0 ? 'FREE' : `€${Number(orderData.shippingCost).toFixed(2)}`;
 
     const htmlContent = `
       <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -90,7 +132,7 @@ export const sendOrderEmail = functions.https.onCall(async (data: any) => {
         
         <div style="background: #ffffff; padding: 30px; border-radius: 0 0 16px 16px; border: 1px solid #f3e8f0;">
           <p style="color: #374151; font-size: 16px; line-height: 1.6;">
-            Dear <strong>${addr.firstName} ${addr.lastName}</strong>,
+            Dear <strong>${sanitize(addr.firstName)} ${sanitize(addr.lastName)}</strong>,
           </p>
           <p style="color: #6b7280; line-height: 1.6;">
             Thank you for your order! We've received it and will begin preparing your handcrafted satin roses with care.
@@ -132,11 +174,11 @@ export const sendOrderEmail = functions.https.onCall(async (data: any) => {
 
           <h3 style="color: #1f2937; margin: 25px 0 12px 0; font-size: 16px;">📍 Shipping Address</h3>
           <div style="background: #f9fafb; padding: 16px; border-radius: 10px; color: #374151; font-size: 14px; line-height: 1.8;">
-            ${addr.firstName} ${addr.lastName}<br>
-            ${addr.street}<br>
-            ${addr.postalCode} ${addr.city}<br>
-            ${addr.country}<br>
-            📞 ${addr.phone}
+            ${sanitize(addr.firstName)} ${sanitize(addr.lastName)}<br>
+            ${sanitize(addr.street)}<br>
+            ${sanitize(addr.postalCode)} ${sanitize(addr.city)}<br>
+            ${sanitize(addr.country)}<br>
+            📞 ${sanitize(addr.phone)}
           </div>
 
           <div style="background: #fef3c7; border: 1px solid #fbbf24; padding: 16px; border-radius: 10px; margin: 20px 0;">
@@ -163,10 +205,15 @@ export const sendOrderEmail = functions.https.onCall(async (data: any) => {
       </div>
     `;
 
-    // Send to customer
+    // Send to customer (use auth email as fallback for safety)
+    const recipientEmail = orderData.userEmail || context.auth?.token.email;
+    if (!recipientEmail) {
+      throw new functions.https.HttpsError('invalid-argument', 'No recipient email.');
+    }
+
     await transporter.sendMail({
-      from: 'SatinGlanz by Anamarija <satinglanzbyanamarija@gmail.com>',
-      to: orderData.userEmail,
+      from: GMAIL_FROM,
+      to: recipientEmail,
       subject: `🌹 Order Confirmation #${orderNumber} | SatinGlanz by Anamarija`,
       html: htmlContent
     });
@@ -179,15 +226,15 @@ export const sendOrderEmail = functions.https.onCall(async (data: any) => {
           <p style="margin: 8px 0 0 0; font-size: 14px; opacity: 0.8;">Order #${orderNumber}</p>
         </div>
         <div style="background: white; padding: 25px; border: 1px solid #e5e7eb; border-radius: 0 0 12px 12px;">
-          <p><strong>Customer:</strong> ${addr.firstName} ${addr.lastName}</p>
-          <p><strong>Email:</strong> ${orderData.userEmail}</p>
-          <p><strong>Phone:</strong> ${addr.phone}</p>
-          <p><strong>Address:</strong> ${addr.street}, ${addr.postalCode} ${addr.city}, ${addr.country}</p>
-          <p><strong>Shipping:</strong> ${orderData.shippingCarrier.toUpperCase()} (${shippingLabel})</p>
+          <p><strong>Customer:</strong> ${sanitize(addr.firstName)} ${sanitize(addr.lastName)}</p>
+          <p><strong>Email:</strong> ${sanitize(orderData.userEmail)}</p>
+          <p><strong>Phone:</strong> ${sanitize(addr.phone)}</p>
+          <p><strong>Address:</strong> ${sanitize(addr.street)}, ${sanitize(addr.postalCode)} ${sanitize(addr.city)}, ${sanitize(addr.country)}</p>
+          <p><strong>Shipping:</strong> ${sanitize(String(orderData.shippingCarrier).toUpperCase())} (${shippingLabel})</p>
           <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 15px 0;">
           <p><strong>Items:</strong></p>
           <ul style="padding-left: 20px;">
-            ${orderData.items.map((item: any) => `<li>${item.name} × ${item.quantity} — €${(item.price * item.quantity).toFixed(2)}${item.color ? ` (${item.color})` : ''}</li>`).join('')}
+            ${orderData.items.map((item: any) => `<li>${sanitize(item.name)} × ${Number(item.quantity)} — €${(Number(item.price) * Number(item.quantity)).toFixed(2)}${item.color ? ` (${sanitize(item.color)})` : ''}</li>`).join('')}
           </ul>
           <p style="font-size: 18px; font-weight: bold; color: #f43f5e;">Total: €${orderData.total.toFixed(2)}</p>
         </div>
@@ -195,9 +242,9 @@ export const sendOrderEmail = functions.https.onCall(async (data: any) => {
     `;
 
     await transporter.sendMail({
-      from: 'SatinGlanz by Anamarija <satinglanzbyanamarija@gmail.com>',
-      to: 'satinglanzbyanamarija@gmail.com',
-      subject: `🛒 New Order #${orderNumber} — €${orderData.total.toFixed(2)} from ${addr.firstName} ${addr.lastName}`,
+      from: GMAIL_FROM,
+      to: GMAIL_TO,
+      subject: `🛒 New Order #${orderNumber} — €${Number(orderData.total).toFixed(2)} from ${sanitize(addr.firstName)} ${sanitize(addr.lastName)}`,
       html: ownerHtml
     });
 
@@ -208,12 +255,23 @@ export const sendOrderEmail = functions.https.onCall(async (data: any) => {
   }
 });
 
-// Send contact form email
+// Send contact form email (no auth required - public contact form)
 export const sendContactEmail = functions.https.onCall(async (data: any) => {
   try {
-    const transporter = createTransporter();
-
     const { name, email, subject, message } = data;
+
+    // Input validation
+    if (!name || !email || !subject || !message) {
+      throw new functions.https.HttpsError('invalid-argument', 'All fields are required.');
+    }
+    if (typeof email !== 'string' || !email.includes('@') || email.length > 254) {
+      throw new functions.https.HttpsError('invalid-argument', 'Invalid email address.');
+    }
+    if (String(name).length > 200 || String(subject).length > 500 || String(message).length > 5000) {
+      throw new functions.https.HttpsError('invalid-argument', 'Input too long.');
+    }
+
+    const transporter = createTransporter();
 
     const htmlContent = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -222,10 +280,10 @@ export const sendContactEmail = functions.https.onCall(async (data: any) => {
           <p style="margin: 8px 0 0 0; font-size: 14px; opacity: 0.9;">SatinGlanz by Anamarija</p>
         </div>
         <div style="background: white; padding: 25px; border: 1px solid #e5e7eb; border-radius: 0 0 12px 12px;">
-          <p><strong>From:</strong> ${name} (${email})</p>
-          <p><strong>Subject:</strong> ${subject}</p>
+          <p><strong>From:</strong> ${sanitize(name)} (${sanitize(email)})</p>
+          <p><strong>Subject:</strong> ${sanitize(subject)}</p>
           <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 15px 0;">
-          <p style="white-space: pre-line; color: #374151; line-height: 1.6;">${message}</p>
+          <p style="white-space: pre-line; color: #374151; line-height: 1.6;">${sanitize(message)}</p>
           <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 15px 0;">
           <p style="color: #9ca3af; font-size: 12px;">Reply directly to this email to respond to the customer.</p>
         </div>
@@ -233,10 +291,10 @@ export const sendContactEmail = functions.https.onCall(async (data: any) => {
     `;
 
     await transporter.sendMail({
-      from: 'SatinGlanz by Anamarija <satinglanzbyanamarija@gmail.com>',
-      replyTo: email,
-      to: 'satinglanzbyanamarija@gmail.com',
-      subject: `📬 Contact: ${subject} — from ${name}`,
+      from: GMAIL_FROM,
+      replyTo: sanitize(email),
+      to: GMAIL_TO,
+      subject: `📬 Contact: ${sanitize(subject)} — from ${sanitize(name)}`,
       html: htmlContent
     });
 
