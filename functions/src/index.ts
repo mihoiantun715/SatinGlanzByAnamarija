@@ -147,7 +147,7 @@ export const sendOrderEmail = functions.https.onCall(async (data: any) => {
           </div>
           
           <div style="text-align: center; margin: 30px 0 10px 0;">
-            <a href="https://anamarijasatinroses.web.app/account" style="background: #f43f5e; color: white; padding: 14px 32px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 600; font-size: 14px;">
+            <a href="https://satinglanzbyanamarija.com/account" style="background: #f43f5e; color: white; padding: 14px 32px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 600; font-size: 14px;">
               View My Orders
             </a>
           </div>
@@ -156,7 +156,7 @@ export const sendOrderEmail = functions.https.onCall(async (data: any) => {
             <p style="color: #6b7280; font-size: 13px; margin: 5px 0;">Made with ❤️ by Anamarija</p>
             <p style="color: #9ca3af; font-size: 12px; margin: 5px 0;">
               📧 satinglanzbyanamarija@gmail.com<br>
-              🌐 <a href="https://anamarijasatinroses.web.app" style="color: #f43f5e;">anamarijasatinroses.web.app</a>
+              🌐 <a href="https://satinglanzbyanamarija.com/" style="color: #f43f5e;">satinglanzbyanamarija.com</a>
             </p>
           </div>
         </div>

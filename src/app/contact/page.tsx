@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { app } from '@/lib/firebase';
 import { useLanguage } from '@/context/LanguageContext';
-import { Mail, MapPin, Phone, Instagram, Facebook, Send, CheckCircle, Loader2 } from 'lucide-react';
+import { Mail, MapPin, Phone, Instagram, Send, CheckCircle, Loader2 } from 'lucide-react';
 
 export default function ContactPage() {
   const { t } = useLanguage();
@@ -153,11 +153,13 @@ export default function ContactPage() {
             <div className="mt-10">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">{t.contact.followUs}</h3>
               <div className="flex gap-3">
-                <a href="#" className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white hover:opacity-90 transition-opacity">
+                <a href="https://www.instagram.com/satinglanzbyanamarija?igsh=NG03Ymw1MDBueGl5" target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white hover:opacity-90 transition-opacity">
                   <Instagram className="w-6 h-6" />
                 </a>
-                <a href="#" className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white hover:opacity-90 transition-opacity">
-                  <Facebook className="w-6 h-6" />
+                <a href="https://www.tiktok.com/@satinglanzbyanamarija" target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center text-white hover:opacity-90 transition-opacity">
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.72a8.24 8.24 0 004.76 1.5v-3.4a4.85 4.85 0 01-1-.13z"/>
+                  </svg>
                 </a>
               </div>
             </div>

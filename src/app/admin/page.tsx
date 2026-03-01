@@ -44,8 +44,8 @@ const getTrackingUrl = (carrier: string, trackingNumber: string): string => {
   switch (carrier) {
     case 'dhl':
       return `https://www.dhl.de/en/privatkunden/pakete-empfangen/verfolgen.html?piececode=${trackingNumber}`;
-    case 'dpd':
-      return `https://tracking.dpd.de/status/en_DE/parcel/${trackingNumber}`;
+    case 'gls':
+      return `https://gls-group.com/DE/en/parcel-tracking?match=${trackingNumber}`;
     default:
       return '';
   }
