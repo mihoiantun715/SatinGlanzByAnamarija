@@ -184,34 +184,40 @@ export default function BuildBouquetPage() {
               })}
             </div>
 
-            {/* Main Image — Round Bouquet */}
-            <div className="flex-1 relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden flex items-center justify-center" style={{ aspectRatio: '4/3' }}>
+            {/* Main Image — Bouquet on Wrapping Paper */}
+            <div className="flex-1 relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden" style={{ aspectRatio: '3/4', maxHeight: '420px' }}>
+              {/* Wrapping paper — fills the container */}
               {(() => {
-                // Build circular layout positions
+                const wrapObj = wrappingOptions.find(w => w.key === wrapping);
+                return wrapObj ? (
+                  <img
+                    src={wrapObj.image}
+                    alt={wrapObj.label}
+                    className="absolute inset-0 w-full h-full object-contain"
+                    style={{ zIndex: 0 }}
+                  />
+                ) : null;
+              })()}
+              {/* Roses — tight spiral on top of wrapping paper */}
+              {(() => {
                 const displayCount = Math.min(roseCount, 37);
                 const positions: { x: number; y: number }[] = [];
-                if (displayCount >= 1) positions.push({ x: 50, y: 50 }); // center
-                // concentric rings
-                const rings = [
-                  { count: 6, radius: 14 },
-                  { count: 12, radius: 27 },
-                  { count: 18, radius: 40 },
-                ];
-                let placed = 1;
-                for (const ring of rings) {
-                  if (placed >= displayCount) break;
-                  const n = Math.min(ring.count, displayCount - placed);
-                  for (let j = 0; j < n; j++) {
-                    const angle = (2 * Math.PI * j) / ring.count - Math.PI / 2;
+                // Spiral layout: center rose, then each subsequent rose placed
+                // along an expanding spiral (Fermat's spiral)
+                for (let i = 0; i < displayCount; i++) {
+                  if (i === 0) {
+                    positions.push({ x: 50, y: 48 });
+                  } else {
+                    const angle = i * 2.4; // golden angle in radians
+                    const r = 8 * Math.sqrt(i); // tighter spacing
                     positions.push({
-                      x: 50 + ring.radius * Math.cos(angle),
-                      y: 50 + ring.radius * Math.sin(angle),
+                      x: 50 + r * Math.cos(angle),
+                      y: 48 + r * Math.sin(angle),
                     });
-                    placed++;
                   }
                 }
-                // Rose size based on how many are displayed
-                const roseSize = displayCount <= 1 ? 40 : displayCount <= 7 ? 28 : displayCount <= 19 ? 20 : 15;
+                // Rose size: smaller when more roses
+                const roseSize = displayCount <= 1 ? 35 : displayCount <= 3 ? 25 : displayCount <= 7 ? 20 : displayCount <= 15 ? 16 : displayCount <= 25 ? 13 : 11;
                 return (
                   <div className="absolute inset-0" style={{ zIndex: 2 }}>
                     {positions.map((pos, i) => (
@@ -219,7 +225,7 @@ export default function BuildBouquetPage() {
                         key={i}
                         src={currentColorObj?.image}
                         alt=""
-                        className="absolute object-contain"
+                        className="absolute object-contain drop-shadow-md"
                         style={{
                           width: `${roseSize}%`,
                           height: `${roseSize}%`,
@@ -234,22 +240,10 @@ export default function BuildBouquetPage() {
                 );
               })()}
               {roseCount > 37 && (
-                <div className="absolute bottom-4 right-4 bg-black/60 text-white text-sm px-3 py-1 rounded-full z-10">
+                <div className="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2.5 py-1 rounded-full z-10">
                   +{roseCount - 37} more
                 </div>
               )}
-              {/* Wrapping paper image behind roses */}
-              {(() => {
-                const wrapObj = wrappingOptions.find(w => w.key === wrapping);
-                return wrapObj ? (
-                  <img
-                    src={wrapObj.image}
-                    alt={wrapObj.label}
-                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[70%] h-[65%] object-cover object-top rounded-t-lg opacity-80"
-                    style={{ zIndex: 0 }}
-                  />
-                ) : null;
-              })()}
             </div>
           </div>
 
