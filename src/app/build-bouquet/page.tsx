@@ -236,7 +236,7 @@ export default function BuildBouquetPage() {
                     placed++;
                   }
                 }
-                const roseSize = displayCount <= 1 ? 30 : displayCount <= 7 ? 22 : displayCount <= 19 ? 17 : 13;
+                const roseSize = displayCount <= 1 ? 60 : displayCount <= 7 ? 44 : displayCount <= 19 ? 34 : 26;
                 return (
                   <div className="absolute inset-0" style={{ zIndex: 2 }}>
                     {positions.map((pos, i) => (
@@ -283,8 +283,8 @@ export default function BuildBouquetPage() {
                           alt={decoKey}
                           className="absolute object-contain drop-shadow-lg"
                           style={{
-                            width: '25%',
-                            height: '25%',
+                            width: '50%',
+                            height: '50%',
                             left: `${pos.x}%`,
                             top: `${pos.y}%`,
                             transform: 'translate(-50%, -50%)',
@@ -306,8 +306,8 @@ export default function BuildBouquetPage() {
                     alt={ribObj.label}
                     className="absolute object-contain drop-shadow-lg"
                     style={{
-                      width: '22%',
-                      height: '22%',
+                      width: '44%',
+                      height: '44%',
                       left: '50%',
                       bottom: '8%',
                       transform: 'translateX(-50%)',
