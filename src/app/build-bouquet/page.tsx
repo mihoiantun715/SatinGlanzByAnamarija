@@ -181,33 +181,63 @@ export default function BuildBouquetPage() {
               })}
             </div>
 
-            {/* Main Image */}
+            {/* Main Image — Round Bouquet */}
             <div className="flex-1 relative aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden flex items-center justify-center">
-              <div className="grid gap-1 p-8" style={{
-                gridTemplateColumns: `repeat(${Math.min(Math.ceil(Math.sqrt(Math.min(roseCount, 36))), 6)}, 1fr)`,
-              }}>
-                {Array.from({ length: Math.min(roseCount, 36) }).map((_, i) => {
-                  const colorForRose = currentColorObj;
-                  return (
-                    <div key={i} className="flex items-center justify-center">
+              {(() => {
+                // Build circular layout positions
+                const displayCount = Math.min(roseCount, 37);
+                const positions: { x: number; y: number }[] = [];
+                if (displayCount >= 1) positions.push({ x: 50, y: 50 }); // center
+                // concentric rings
+                const rings = [
+                  { count: 6, radius: 14 },
+                  { count: 12, radius: 27 },
+                  { count: 18, radius: 40 },
+                ];
+                let placed = 1;
+                for (const ring of rings) {
+                  if (placed >= displayCount) break;
+                  const n = Math.min(ring.count, displayCount - placed);
+                  for (let j = 0; j < n; j++) {
+                    const angle = (2 * Math.PI * j) / ring.count - Math.PI / 2;
+                    positions.push({
+                      x: 50 + ring.radius * Math.cos(angle),
+                      y: 50 + ring.radius * Math.sin(angle),
+                    });
+                    placed++;
+                  }
+                }
+                // Rose size based on how many are displayed
+                const roseSize = displayCount <= 1 ? 40 : displayCount <= 7 ? 28 : displayCount <= 19 ? 20 : 15;
+                return (
+                  <div className="absolute inset-0">
+                    {positions.map((pos, i) => (
                       <img
-                        src={colorForRose?.image}
+                        key={i}
+                        src={currentColorObj?.image}
                         alt=""
-                        className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
+                        className="absolute object-contain"
+                        style={{
+                          width: `${roseSize}%`,
+                          height: `${roseSize}%`,
+                          left: `${pos.x}%`,
+                          top: `${pos.y}%`,
+                          transform: 'translate(-50%, -50%)',
+                        }}
                         onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                       />
-                    </div>
-                  );
-                })}
-              </div>
-              {roseCount > 36 && (
-                <div className="absolute bottom-4 right-4 bg-black/60 text-white text-sm px-3 py-1 rounded-full">
-                  +{roseCount - 36} more
+                    ))}
+                  </div>
+                );
+              })()}
+              {roseCount > 37 && (
+                <div className="absolute bottom-4 right-4 bg-black/60 text-white text-sm px-3 py-1 rounded-full z-10">
+                  +{roseCount - 37} more
                 </div>
               )}
               {/* Wrapping indicator */}
               <div
-                className="absolute bottom-0 left-0 right-0 h-16 opacity-30"
+                className="absolute bottom-0 left-0 right-0 h-16 opacity-30 z-10"
                 style={{ backgroundColor: wrappingOptions.find(w => w.key === wrapping)?.hex }}
               />
             </div>
