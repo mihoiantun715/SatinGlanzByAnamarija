@@ -43,7 +43,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-rose-400" />
-                <a href="mailto:info@satinroses.com" className="hover:text-rose-400 transition-colors">info@satinroses.com</a>
+                <a href="mailto:satinglanzbyanamarija@gmail.com" className="hover:text-rose-400 transition-colors">satinglanzbyanamarija@gmail.com</a>
               </li>
             </ul>
           </div>
