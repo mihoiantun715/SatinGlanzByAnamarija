@@ -132,13 +132,12 @@ export const bg: Translation = {
     roses: 'рози',
     perRose: 'на роза',
     decorations: {
-      heart: 'Сърце',
-      loveHeart: 'Любовно сърце',
-      mom: 'МАМА',
-      happyBirthday: 'Честит рожден ден',
-      teddyBear: 'Мече',
-      butterfly: 'Пеперуда',
       crown: 'Корона',
+      goldCrown: 'Златна корона',
+      ledLight: 'LED светлина',
+      pearls: 'Перли',
+      redButterfly: 'Червена пеперуда',
+      silverButterfly: 'Сребърна пеперуда',
       noThanks: 'НЕ БЛАГОДАРЯ',
     },
     cards: {

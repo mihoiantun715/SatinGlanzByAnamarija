@@ -132,13 +132,12 @@ export const hr: Translation = {
     roses: 'ruža',
     perRose: 'po ruži',
     decorations: {
-      heart: 'Srce',
-      loveHeart: 'Ljubavno srce',
-      mom: 'MAMA',
-      happyBirthday: 'Sretan rođendan',
-      teddyBear: 'Medvjedić',
-      butterfly: 'Leptir',
       crown: 'Kruna',
+      goldCrown: 'Zlatna kruna',
+      ledLight: 'LED lampica',
+      pearls: 'Biseri',
+      redButterfly: 'Crveni leptir',
+      silverButterfly: 'Srebrni leptir',
       noThanks: 'NE HVALA',
     },
     cards: {

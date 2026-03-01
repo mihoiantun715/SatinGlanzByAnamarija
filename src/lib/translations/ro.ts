@@ -132,13 +132,12 @@ export const ro: Translation = {
     roses: 'trandafiri',
     perRose: 'per trandafir',
     decorations: {
-      heart: 'Inimă',
-      loveHeart: 'Inimă de dragoste',
-      mom: 'MAMA',
-      happyBirthday: 'La mulți ani',
-      teddyBear: 'Ursuleț',
-      butterfly: 'Fluture',
       crown: 'Coroană',
+      goldCrown: 'Coroană de aur',
+      ledLight: 'Lumină LED',
+      pearls: 'Perle',
+      redButterfly: 'Fluture roșu',
+      silverButterfly: 'Fluture argintiu',
       noThanks: 'NU MULȚUMESC',
     },
     cards: {

@@ -153,13 +153,12 @@ export interface Translation {
     roses: string;
     perRose: string;
     decorations: {
-      heart: string;
-      loveHeart: string;
-      mom: string;
-      happyBirthday: string;
-      teddyBear: string;
-      butterfly: string;
       crown: string;
+      goldCrown: string;
+      ledLight: string;
+      pearls: string;
+      redButterfly: string;
+      silverButterfly: string;
       noThanks: string;
     };
     cards: {

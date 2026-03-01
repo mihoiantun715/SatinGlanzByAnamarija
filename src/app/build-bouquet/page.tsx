@@ -37,14 +37,13 @@ const wrappingOptions = [
 ];
 
 const decorationOptions = [
-  { key: 'heart', emoji: '💎', translationKey: 'heart' as const },
-  { key: 'loveHeart', emoji: '💖', translationKey: 'loveHeart' as const },
-  { key: 'mom', emoji: '👩', translationKey: 'mom' as const },
-  { key: 'happyBirthday', emoji: '🎂', translationKey: 'happyBirthday' as const },
-  { key: 'teddyBear', emoji: '🧸', translationKey: 'teddyBear' as const },
-  { key: 'butterfly', emoji: '🦋', translationKey: 'butterfly' as const },
-  { key: 'crown', emoji: '👑', translationKey: 'crown' as const },
-  { key: 'noThanks', emoji: '🚫', translationKey: 'noThanks' as const },
+  { key: 'crown', image: '/Extra Decoration/Crown.png', translationKey: 'crown' as const },
+  { key: 'goldCrown', image: '/Extra Decoration/Gold Crown.png', translationKey: 'goldCrown' as const },
+  { key: 'ledLight', image: '/Extra Decoration/Led Light.png', translationKey: 'ledLight' as const },
+  { key: 'pearls', image: '/Extra Decoration/Pearls.png', translationKey: 'pearls' as const },
+  { key: 'redButterfly', image: '/Extra Decoration/Red Butterfly.png', translationKey: 'redButterfly' as const },
+  { key: 'silverButterfly', image: '/Extra Decoration/Silver Butterfly.png', translationKey: 'silverButterfly' as const },
+  { key: 'noThanks', image: '', translationKey: 'noThanks' as const },
 ];
 
 const greetingCardOptions = [
@@ -239,6 +238,44 @@ export default function BuildBouquetPage() {
                   </div>
                 );
               })()}
+              {/* Selected decorations overlay */}
+              {(() => {
+                const activeDecos = selectedDecorations.filter(d => d !== 'noThanks');
+                if (activeDecos.length === 0) return null;
+                // Position decorations around the bouquet
+                const decoPositions = [
+                  { x: 50, y: 15 },   // top center
+                  { x: 78, y: 25 },   // top right
+                  { x: 22, y: 25 },   // top left
+                  { x: 80, y: 55 },   // mid right
+                  { x: 20, y: 55 },   // mid left
+                  { x: 50, y: 85 },   // bottom center
+                ];
+                return (
+                  <div className="absolute inset-0" style={{ zIndex: 3 }}>
+                    {activeDecos.map((decoKey, i) => {
+                      const decoObj = decorationOptions.find(d => d.key === decoKey);
+                      if (!decoObj?.image) return null;
+                      const pos = decoPositions[i % decoPositions.length];
+                      return (
+                        <img
+                          key={decoKey}
+                          src={decoObj.image}
+                          alt={decoKey}
+                          className="absolute object-contain drop-shadow-lg"
+                          style={{
+                            width: '18%',
+                            height: '18%',
+                            left: `${pos.x}%`,
+                            top: `${pos.y}%`,
+                            transform: 'translate(-50%, -50%)',
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
+                );
+              })()}
               {roseCount > 37 && (
                 <div className="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2.5 py-1 rounded-full z-10">
                   +{roseCount - 37} more
@@ -401,18 +438,22 @@ export default function BuildBouquetPage() {
             <div className="mb-8">
               <p className="text-sm font-bold text-gray-900 mb-1">{t.bouquetBuilder.extraDecoration}</p>
               <p className="text-xs text-gray-400 mb-3">{t.bouquetBuilder.extraDecorationNote}</p>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
                 {decorationOptions.map((deco) => (
                   <button
                     key={deco.key}
                     onClick={() => toggleDecoration(deco.key)}
-                    className={`flex flex-col items-center justify-center w-16 h-16 rounded-lg border-2 text-xs transition-all ${
+                    className={`flex flex-col items-center justify-center rounded-lg border-2 text-xs transition-all aspect-square overflow-hidden ${
                       selectedDecorations.includes(deco.key)
                         ? 'border-gray-900 bg-gray-50 ring-1 ring-gray-900'
                         : 'border-gray-200 hover:border-gray-400'
                     }`}
                   >
-                    <span className="text-xl mb-0.5">{deco.emoji}</span>
+                    {deco.image ? (
+                      <img src={deco.image} alt={t.bouquetBuilder.decorations[deco.translationKey]} className="w-10 h-10 object-contain mb-0.5" />
+                    ) : (
+                      <span className="text-xl mb-0.5">🚫</span>
+                    )}
                     <span className="text-[10px] text-gray-600 leading-tight text-center truncate w-full px-0.5">
                       {t.bouquetBuilder.decorations[deco.translationKey]}
                     </span>

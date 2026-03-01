@@ -132,13 +132,12 @@ export const tr: Translation = {
     roses: 'gül',
     perRose: 'gül başına',
     decorations: {
-      heart: 'Kalp',
-      loveHeart: 'Aşk Kalbi',
-      mom: 'ANNE',
-      happyBirthday: 'Doğum Günü',
-      teddyBear: 'Oyuncak Ayı',
-      butterfly: 'Kelebek',
       crown: 'Taç',
+      goldCrown: 'Altın Taç',
+      ledLight: 'LED Işık',
+      pearls: 'İnciler',
+      redButterfly: 'Kırmızı Kelebek',
+      silverButterfly: 'Gümüş Kelebek',
       noThanks: 'HAYIR TEŞEKKÜRLER',
     },
     cards: {

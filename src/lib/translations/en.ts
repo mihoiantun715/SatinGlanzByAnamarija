@@ -132,13 +132,12 @@ export const en: Translation = {
     roses: 'roses',
     perRose: 'per rose',
     decorations: {
-      heart: 'Heart',
-      loveHeart: 'Love Heart',
-      mom: 'MOM',
-      happyBirthday: 'Happy Birthday',
-      teddyBear: 'Teddy Bear',
-      butterfly: 'Butterfly',
       crown: 'Crown',
+      goldCrown: 'Gold Crown',
+      ledLight: 'LED Light',
+      pearls: 'Pearls',
+      redButterfly: 'Red Butterfly',
+      silverButterfly: 'Silver Butterfly',
       noThanks: 'NO THANKS',
     },
     cards: {
