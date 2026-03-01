@@ -1,12 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import { useCart } from '@/context/CartContext';
 import { Product } from '@/lib/types';
 import { colorTranslations } from '@/lib/products';
-import { X, ChevronLeft, ChevronRight, ShoppingBag, Minus, Plus, ExternalLink } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, ShoppingBag, Minus, Plus } from 'lucide-react';
 
 const colorMap: Record<string, string> = {
   Red: 'bg-red-500',
@@ -214,15 +213,6 @@ export default function ProductQuickView({ product, onClose }: Props) {
               </div>
             )}
 
-            {/* View Full Page link */}
-            <Link
-              href={`/shop/${product.slug}`}
-              onClick={onClose}
-              className="flex items-center justify-center gap-1.5 mt-3 text-sm text-gray-400 hover:text-rose-500 transition-colors"
-            >
-              <ExternalLink className="w-3.5 h-3.5" />
-              View full product page
-            </Link>
           </div>
         </div>
       </div>
