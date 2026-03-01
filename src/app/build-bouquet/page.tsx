@@ -4,12 +4,20 @@ import React, { useState, useMemo } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { useCart } from '@/context/CartContext';
 import { colorTranslations } from '@/lib/products';
-import { Check, ShoppingBag, ChevronDown } from 'lucide-react';
+import { Check, ShoppingBag } from 'lucide-react';
 
 const PRICE_PER_ROSE = 2.5;
 const RIBBON_PRICE = 3;
 const DECORATION_PRICE = 2;
 const CARD_PRICE = 2;
+
+const ribbonOptions = [
+  { key: 'baby-blue', label: 'Baby Blue', image: '/Ribbons/Baby blue.png' },
+  { key: 'burgundy', label: 'Burgundy', image: '/Ribbons/Burgundy.png' },
+  { key: 'light-gold', label: 'Light Gold', image: '/Ribbons/Light gold.png' },
+  { key: 'soft-pearl', label: 'Soft Pearl', image: '/Ribbons/Soft pearl.png' },
+  { key: 'none', label: 'No Thanks', image: '' },
+];
 
 const roseColors = [
   { key: 'Red', hex: '#dc2626', image: '/Roses For Bouquete/Red.png' },
@@ -62,8 +70,7 @@ export default function BuildBouquetPage() {
 
   const [selectedColor, setSelectedColor] = useState('Red');
   const [roseCount, setRoseCount] = useState(50);
-  const [ribbonOption, setRibbonOption] = useState('none');
-  const [ribbonOpen, setRibbonOpen] = useState(false);
+  const [selectedRibbon, setSelectedRibbon] = useState('none');
   const [wrapping, setWrapping] = useState('blush-pink');
   const [selectedDecorations, setSelectedDecorations] = useState<string[]>(['noThanks']);
   const [selectedCard, setSelectedCard] = useState('noThanks');
@@ -88,16 +95,17 @@ export default function BuildBouquetPage() {
 
   const totalPrice = useMemo(() => {
     let price = roseCount * PRICE_PER_ROSE;
-    if (ribbonOption === 'yes') price += RIBBON_PRICE;
+    if (selectedRibbon !== 'none') price += RIBBON_PRICE;
     const decoCount = selectedDecorations.filter(d => d !== 'noThanks').length;
     price += decoCount * DECORATION_PRICE;
     if (selectedCard !== 'noThanks') price += CARD_PRICE;
     return price;
-  }, [roseCount, ribbonOption, selectedDecorations, selectedCard]);
+  }, [roseCount, selectedRibbon, selectedDecorations, selectedCard]);
 
   const handleAddToCart = () => {
     const colorName = colorTranslations[selectedColor]?.[locale] || selectedColor;
     const wrapName = wrappingOptions.find(w => w.key === wrapping)?.label || wrapping;
+    const ribbonName = ribbonOptions.find(r => r.key === selectedRibbon)?.label || '';
 
     const customProduct = {
       id: `custom-bouquet-${Date.now()}`,
@@ -117,12 +125,12 @@ export default function BuildBouquetPage() {
         tr: `Özel Buket (${roseCount} gül)`,
       },
       description: {
-        en: `${roseCount}x ${colorName} roses, ${wrapName} wrap${ribbonOption === 'yes' ? ', with blessing ribbon' : ''}`,
-        de: `${roseCount}x ${colorName} Rosen, ${wrapName} Verpackung`,
-        hr: `${roseCount}x ${colorName} ruža, ${wrapName} omot`,
-        ro: `${roseCount}x ${colorName} trandafiri, ${wrapName} ambalaj`,
-        bg: `${roseCount}x ${colorName} рози, ${wrapName} опаковка`,
-        tr: `${roseCount}x ${colorName} gül, ${wrapName} ambalaj`,
+        en: `${roseCount}x ${colorName} roses, ${wrapName} wrap${ribbonName ? `, ${ribbonName} ribbon` : ''}`,
+        de: `${roseCount}x ${colorName} Rosen, ${wrapName} Verpackung${ribbonName ? `, ${ribbonName} Band` : ''}`,
+        hr: `${roseCount}x ${colorName} ruža, ${wrapName} omot${ribbonName ? `, ${ribbonName} vrpca` : ''}`,
+        ro: `${roseCount}x ${colorName} trandafiri, ${wrapName} ambalaj${ribbonName ? `, ${ribbonName} panglică` : ''}`,
+        bg: `${roseCount}x ${colorName} рози, ${wrapName} опаковка${ribbonName ? `, ${ribbonName} лента` : ''}`,
+        tr: `${roseCount}x ${colorName} gül, ${wrapName} ambalaj${ribbonName ? `, ${ribbonName} kurdele` : ''}`,
       },
       shortDescription: {
         en: `Custom ${roseCount}-rose bouquet`,
@@ -197,26 +205,38 @@ export default function BuildBouquetPage() {
                   />
                 ) : null;
               })()}
-              {/* Roses — tight spiral on top of wrapping paper */}
+              {/* Roses — tight circular bouquet */}
               {(() => {
                 const displayCount = Math.min(roseCount, 37);
                 const positions: { x: number; y: number }[] = [];
-                // Spiral layout: center rose, then each subsequent rose placed
-                // along an expanding spiral (Fermat's spiral)
-                for (let i = 0; i < displayCount; i++) {
-                  if (i === 0) {
-                    positions.push({ x: 50, y: 48 });
-                  } else {
-                    const angle = i * 2.4; // golden angle in radians
-                    const r = 8 * Math.sqrt(i); // tighter spacing
-                    positions.push({
-                      x: 50 + r * Math.cos(angle),
-                      y: 48 + r * Math.sin(angle),
-                    });
+                const cx = 50, cy = 46;
+                // Concentric rings with tight spacing
+                // Ring 0: 1 center, Ring 1: up to 6, Ring 2: up to 12, Ring 3: up to 18
+                const rings = [
+                  { count: 1, radius: 0 },
+                  { count: 6, radius: 11 },
+                  { count: 12, radius: 22 },
+                  { count: 18, radius: 33 },
+                ];
+                let placed = 0;
+                for (const ring of rings) {
+                  if (placed >= displayCount) break;
+                  const n = Math.min(ring.count, displayCount - placed);
+                  for (let j = 0; j < n; j++) {
+                    if (ring.radius === 0) {
+                      positions.push({ x: cx, y: cy });
+                    } else {
+                      const startAngle = ring.count === 6 ? -Math.PI / 2 : -Math.PI / 2 + Math.PI / ring.count;
+                      const angle = startAngle + (2 * Math.PI * j) / ring.count;
+                      positions.push({
+                        x: cx + ring.radius * Math.cos(angle),
+                        y: cy + ring.radius * Math.sin(angle),
+                      });
+                    }
+                    placed++;
                   }
                 }
-                // Rose size: smaller when more roses
-                const roseSize = displayCount <= 1 ? 35 : displayCount <= 3 ? 25 : displayCount <= 7 ? 20 : displayCount <= 15 ? 16 : displayCount <= 25 ? 13 : 11;
+                const roseSize = displayCount <= 1 ? 30 : displayCount <= 7 ? 22 : displayCount <= 19 ? 17 : 13;
                 return (
                   <div className="absolute inset-0" style={{ zIndex: 2 }}>
                     {positions.map((pos, i) => (
@@ -242,14 +262,13 @@ export default function BuildBouquetPage() {
               {(() => {
                 const activeDecos = selectedDecorations.filter(d => d !== 'noThanks');
                 if (activeDecos.length === 0) return null;
-                // Position decorations around the bouquet
                 const decoPositions = [
-                  { x: 50, y: 15 },   // top center
-                  { x: 78, y: 25 },   // top right
-                  { x: 22, y: 25 },   // top left
-                  { x: 80, y: 55 },   // mid right
-                  { x: 20, y: 55 },   // mid left
-                  { x: 50, y: 85 },   // bottom center
+                  { x: 50, y: 8 },
+                  { x: 82, y: 20 },
+                  { x: 18, y: 20 },
+                  { x: 85, y: 50 },
+                  { x: 15, y: 50 },
+                  { x: 50, y: 88 },
                 ];
                 return (
                   <div className="absolute inset-0" style={{ zIndex: 3 }}>
@@ -264,8 +283,8 @@ export default function BuildBouquetPage() {
                           alt={decoKey}
                           className="absolute object-contain drop-shadow-lg"
                           style={{
-                            width: '18%',
-                            height: '18%',
+                            width: '25%',
+                            height: '25%',
                             left: `${pos.x}%`,
                             top: `${pos.y}%`,
                             transform: 'translate(-50%, -50%)',
@@ -274,6 +293,27 @@ export default function BuildBouquetPage() {
                       );
                     })}
                   </div>
+                );
+              })()}
+              {/* Selected ribbon overlay */}
+              {(() => {
+                if (selectedRibbon === 'none') return null;
+                const ribObj = ribbonOptions.find(r => r.key === selectedRibbon);
+                if (!ribObj?.image) return null;
+                return (
+                  <img
+                    src={ribObj.image}
+                    alt={ribObj.label}
+                    className="absolute object-contain drop-shadow-lg"
+                    style={{
+                      width: '22%',
+                      height: '22%',
+                      left: '50%',
+                      bottom: '8%',
+                      transform: 'translateX(-50%)',
+                      zIndex: 4,
+                    }}
+                  />
                 );
               })()}
               {roseCount > 37 && (
@@ -369,41 +409,32 @@ export default function BuildBouquetPage() {
               </div>
             </div>
 
-            {/* Blessing Ribbon Dropdown */}
+            {/* Ribbon Selection */}
             <div className="mb-8">
-              <p className="text-sm font-bold text-gray-900 mb-3">
-                {t.bouquetBuilder.blessingRibbon} <span className="text-rose-500">*</span>
+              <p className="text-sm font-bold text-gray-900 mb-1">
+                {t.bouquetBuilder.ribbon} <span className="font-normal text-gray-500">{ribbonOptions.find(r => r.key === selectedRibbon)?.label}</span>
               </p>
-              <div className="relative">
-                <button
-                  onClick={() => setRibbonOpen(!ribbonOpen)}
-                  className="w-full flex items-center justify-between px-4 py-3 border-2 border-gray-200 rounded-lg text-sm text-gray-700 hover:border-gray-400 transition-colors"
-                >
-                  <span>
-                    {ribbonOption === 'none'
-                      ? t.bouquetBuilder.pleaseChoose
-                      : ribbonOption === 'yes'
-                      ? `🎀 ${t.bouquetBuilder.yesAdd} (+${t.common.currency}${RIBBON_PRICE})`
-                      : t.bouquetBuilder.noThanks}
-                  </span>
-                  <ChevronDown className={`w-4 h-4 transition-transform ${ribbonOpen ? 'rotate-180' : ''}`} />
-                </button>
-                {ribbonOpen && (
-                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
-                    <button
-                      onClick={() => { setRibbonOption('yes'); setRibbonOpen(false); }}
-                      className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 transition-colors"
-                    >
-                      🎀 {t.bouquetBuilder.yesAdd} (+{t.common.currency}{RIBBON_PRICE})
-                    </button>
-                    <button
-                      onClick={() => { setRibbonOption('no'); setRibbonOpen(false); }}
-                      className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 transition-colors border-t border-gray-100"
-                    >
-                      {t.bouquetBuilder.noThanks}
-                    </button>
-                  </div>
-                )}
+              <p className="text-xs text-gray-400 mb-3">(+{t.common.currency}{RIBBON_PRICE})</p>
+              <div className="grid grid-cols-5 gap-2">
+                {ribbonOptions.map((rib) => (
+                  <button
+                    key={rib.key}
+                    onClick={() => setSelectedRibbon(rib.key)}
+                    className={`flex flex-col items-center justify-center rounded-lg border-2 text-xs transition-all aspect-square overflow-hidden ${
+                      selectedRibbon === rib.key ? 'border-gray-900 ring-1 ring-gray-900' : 'border-gray-200 hover:border-gray-400'
+                    }`}
+                    title={rib.label}
+                  >
+                    {rib.image ? (
+                      <img src={rib.image} alt={rib.label} className="w-12 h-12 object-contain mb-0.5" />
+                    ) : (
+                      <span className="text-xl mb-0.5">🚫</span>
+                    )}
+                    <span className="text-[10px] text-gray-600 leading-tight text-center truncate w-full px-0.5">
+                      {rib.label}
+                    </span>
+                  </button>
+                ))}
               </div>
             </div>
 

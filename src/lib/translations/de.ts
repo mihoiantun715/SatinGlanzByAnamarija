@@ -118,6 +118,7 @@ export const de: Translation = {
     color: 'Farbe',
     roseCount: 'Rosenanzahl',
     roseCountNote: 'Wählen Sie die Anzahl der Rosen in Ihrem Strauß',
+    ribbon: 'Schleife',
     blessingRibbon: 'Segen-Schleife hinzufügen?',
     pleaseChoose: 'Bitte wählen',
     yesAdd: 'Ja, Schleife hinzufügen',

@@ -139,6 +139,7 @@ export interface Translation {
     color: string;
     roseCount: string;
     roseCountNote: string;
+    ribbon: string;
     blessingRibbon: string;
     pleaseChoose: string;
     yesAdd: string;

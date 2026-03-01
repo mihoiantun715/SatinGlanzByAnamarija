@@ -118,6 +118,7 @@ export const en: Translation = {
     color: 'Color',
     roseCount: 'Rose Count',
     roseCountNote: 'Choose how many roses in your bouquet',
+    ribbon: 'Ribbon',
     blessingRibbon: 'Whether To Add a Blessing Bouquet Ribbon',
     pleaseChoose: 'Please choose',
     yesAdd: 'Yes, add ribbon',

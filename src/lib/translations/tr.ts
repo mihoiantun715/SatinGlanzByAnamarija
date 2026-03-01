@@ -118,6 +118,7 @@ export const tr: Translation = {
     color: 'Renk',
     roseCount: 'Gül Sayısı',
     roseCountNote: 'Buketinizde kaç gül istediğinizi seçin',
+    ribbon: 'Kurdele',
     blessingRibbon: 'Kutsama kurdelesi eklemek ister misiniz?',
     pleaseChoose: 'Lütfen seçin',
     yesAdd: 'Evet, kurdele ekle',

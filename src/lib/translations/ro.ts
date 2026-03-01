@@ -118,6 +118,7 @@ export const ro: Translation = {
     color: 'Culoare',
     roseCount: 'Număr de trandafiri',
     roseCountNote: 'Alegeți câți trandafiri doriți în buchet',
+    ribbon: 'Panglică',
     blessingRibbon: 'Doriți să adăugați o panglică cu binecuvântare?',
     pleaseChoose: 'Vă rugăm alegeți',
     yesAdd: 'Da, adaugă panglică',

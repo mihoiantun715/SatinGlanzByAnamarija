@@ -118,6 +118,7 @@ export const bg: Translation = {
     color: 'Цвят',
     roseCount: 'Брой рози',
     roseCountNote: 'Изберете колко рози искате в букета',
+    ribbon: 'Панделка',
     blessingRibbon: 'Желаете ли да добавите панделка с благословия?',
     pleaseChoose: 'Моля изберете',
     yesAdd: 'Да, добави панделка',

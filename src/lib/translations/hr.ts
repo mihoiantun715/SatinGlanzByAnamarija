@@ -118,6 +118,7 @@ export const hr: Translation = {
     color: 'Boja',
     roseCount: 'Broj ruža',
     roseCountNote: 'Odaberite koliko ruža želite u buketu',
+    ribbon: 'Vrpca',
     blessingRibbon: 'Želite li dodati vrpcu s blagoslovom?',
     pleaseChoose: 'Molimo odaberite',
     yesAdd: 'Da, dodaj vrpcu',
