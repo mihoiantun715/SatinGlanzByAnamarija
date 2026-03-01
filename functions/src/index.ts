@@ -1,8 +1,51 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import * as nodemailer from 'nodemailer';
+import Stripe from 'stripe';
 
 admin.initializeApp();
+
+let _stripe: Stripe | null = null;
+const getStripe = () => {
+  if (!_stripe) {
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+      apiVersion: '2025-04-30.basil' as any,
+    });
+  }
+  return _stripe;
+};
+
+// Create Stripe Payment Intent
+export const createPaymentIntent = functions.https.onCall(async (data: any) => {
+  try {
+    const stripe = getStripe();
+    const { amount, currency, customerEmail, orderId } = data;
+
+    // amount should be in cents
+    const amountInCents = Math.round(amount * 100);
+
+    if (amountInCents < 50) {
+      throw new functions.https.HttpsError('invalid-argument', 'Amount must be at least €0.50');
+    }
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amountInCents,
+      currency: currency || 'eur',
+      receipt_email: customerEmail,
+      metadata: {
+        orderId: orderId || '',
+      },
+    });
+
+    return {
+      clientSecret: paymentIntent.client_secret,
+    };
+  } catch (error: any) {
+    console.error('Stripe error:', error);
+    if (error instanceof functions.https.HttpsError) throw error;
+    throw new functions.https.HttpsError('internal', error.message || 'Failed to create payment intent');
+  }
+});
 
 // Gmail SMTP transporter
 const createTransporter = () => {

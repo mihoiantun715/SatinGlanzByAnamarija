@@ -1,24 +1,46 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { collection, addDoc } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { db, app } from '@/lib/firebase';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
-import { Lock, MapPin, Check, ShoppingBag, ArrowRight, Truck } from 'lucide-react';
+import { Lock, MapPin, Check, ShoppingBag, ArrowRight, Truck, CreditCard, Shield } from 'lucide-react';
 
 const DHL_PRICE = 5.19;
 const GLS_PRICE = 5.59;
 
-export default function CheckoutPage() {
+const stripePromise = loadStripe('pk_test_51T6HdeRtazItoQroQhhnCNc9DZv9PpgrnHSZJtvEICpz40czkzfcasdxzuImY5PleiAuRZ3e7EohhtODWWpYXUsN00aB1M1Ew5');
+
+const cardElementOptions = {
+  style: {
+    base: {
+      fontSize: '16px',
+      color: '#1f2937',
+      fontFamily: '"Inter", "Segoe UI", sans-serif',
+      '::placeholder': {
+        color: '#9ca3af',
+      },
+    },
+    invalid: {
+      color: '#ef4444',
+      iconColor: '#ef4444',
+    },
+  },
+};
+
+function CheckoutForm() {
   const { locale, t } = useLanguage();
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const { items, totalPrice, clearCart } = useCart();
-  const router = useRouter();
+  const stripe = useStripe();
+  const elements = useElements();
 
   const [selectedCarrier, setSelectedCarrier] = useState<'dhl' | 'gls'>('dhl');
   const [firstName, setFirstName] = useState('');
@@ -31,64 +53,10 @@ export default function CheckoutPage() {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderId, setOrderId] = useState('');
   const [error, setError] = useState('');
+  const [cardComplete, setCardComplete] = useState(false);
 
   const shippingCost = totalPrice >= 50 ? 0 : (selectedCarrier === 'dhl' ? DHL_PRICE : GLS_PRICE);
   const total = totalPrice + shippingCost;
-
-  // Not logged in
-  if (!authLoading && !user) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="text-center max-w-md">
-          <Lock className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">{t.checkout.loginRequired}</h1>
-          <p className="text-gray-500 mb-6">{t.checkout.loginToCheckout}</p>
-          <div className="flex gap-3 justify-center">
-            <Link
-              href="/login"
-              className="px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-semibold text-sm transition-all"
-            >
-              {t.auth.login}
-            </Link>
-            <Link
-              href="/register"
-              className="px-6 py-3 border-2 border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl font-semibold text-sm transition-all"
-            >
-              {t.auth.register}
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Loading auth
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-400">{t.common.loading}</div>
-      </div>
-    );
-  }
-
-  // Empty cart
-  if (items.length === 0 && !orderPlaced) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <ShoppingBag className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">{t.cart.empty}</h1>
-          <Link
-            href="/shop"
-            className="inline-flex items-center gap-2 text-rose-500 hover:text-rose-600 font-semibold mt-4 transition-colors"
-          >
-            {t.cart.continueShopping}
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   // Order success
   if (orderPlaced) {
@@ -131,12 +99,24 @@ export default function CheckoutPage() {
       return;
     }
 
+    if (!stripe || !elements) {
+      setError('Payment system is loading. Please wait.');
+      return;
+    }
+
+    const cardElement = elements.getElement(CardElement);
+    if (!cardElement) {
+      setError('Payment card not found. Please refresh the page.');
+      return;
+    }
+
     setLoading(true);
     try {
+      // 1. Save order to Firestore first
       const orderData = {
         userId: user!.uid,
         userEmail: user!.email,
-        status: 'pending',
+        status: 'pending_payment',
         createdAt: new Date().toISOString(),
         shippingCarrier: selectedCarrier,
         shippingCost,
@@ -161,20 +141,68 @@ export default function CheckoutPage() {
       };
 
       const docRef = await addDoc(collection(db, 'orders'), orderData);
-      setOrderId(docRef.id);
-      setOrderPlaced(true);
-      clearCart();
 
-      // Send order confirmation email (non-blocking)
-      try {
-        const functions = getFunctions(app, 'us-central1');
-        const sendOrderEmail = httpsCallable(functions, 'sendOrderEmail');
-        await sendOrderEmail({ orderData, orderId: docRef.id });
-      } catch (emailErr) {
-        console.error('Email send failed (order still placed):', emailErr);
+      // 2. Create payment intent via Cloud Function
+      const functions = getFunctions(app, 'us-central1');
+      const createPaymentIntent = httpsCallable(functions, 'createPaymentIntent');
+      const result = await createPaymentIntent({
+        amount: total,
+        currency: 'eur',
+        customerEmail: user!.email,
+        orderId: docRef.id,
+      });
+
+      const { clientSecret } = result.data as { clientSecret: string };
+
+      // 3. Confirm payment with Stripe
+      const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: {
+            name: `${firstName} ${lastName}`,
+            email: user!.email || undefined,
+            phone: phone,
+            address: {
+              line1: street,
+              city: city,
+              postal_code: postalCode,
+              country: 'DE',
+            },
+          },
+        },
+      });
+
+      if (stripeError) {
+        setError(stripeError.message || 'Payment failed. Please try again.');
+        // Update order status to failed
+        const { doc, updateDoc } = await import('firebase/firestore');
+        await updateDoc(doc(db, 'orders', docRef.id), { status: 'payment_failed' });
+        return;
       }
-    } catch {
-      setError(t.auth.errorGeneric);
+
+      if (paymentIntent && paymentIntent.status === 'succeeded') {
+        // 4. Update order status to paid
+        const { doc, updateDoc } = await import('firebase/firestore');
+        await updateDoc(doc(db, 'orders', docRef.id), {
+          status: 'paid',
+          stripePaymentIntentId: paymentIntent.id,
+        });
+
+        setOrderId(docRef.id);
+        setOrderPlaced(true);
+        clearCart();
+
+        // 5. Send order confirmation email (non-blocking)
+        try {
+          const sendOrderEmail = httpsCallable(functions, 'sendOrderEmail');
+          await sendOrderEmail({ orderData: { ...orderData, status: 'paid' }, orderId: docRef.id });
+        } catch (emailErr) {
+          console.error('Email send failed (order still placed):', emailErr);
+        }
+      }
+    } catch (err: any) {
+      console.error('Order error:', err);
+      setError(err?.message || t.auth.errorGeneric);
     } finally {
       setLoading(false);
     }
@@ -187,7 +215,7 @@ export default function CheckoutPage() {
 
         <form onSubmit={handlePlaceOrder}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-            {/* Left: Address + Shipping */}
+            {/* Left: Address + Shipping + Payment */}
             <div className="lg:col-span-2 space-y-6">
               {/* Shipping Address */}
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
@@ -336,6 +364,26 @@ export default function CheckoutPage() {
                   </div>
                 )}
               </div>
+
+              {/* Payment */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <CreditCard className="w-5 h-5 text-gray-700" />
+                  <h2 className="text-lg font-bold text-gray-900">Payment</h2>
+                </div>
+
+                <div className="border border-gray-200 rounded-xl p-4 bg-gray-50 focus-within:ring-2 focus-within:ring-rose-300 focus-within:border-rose-300 transition-all">
+                  <CardElement
+                    options={cardElementOptions}
+                    onChange={(e) => setCardComplete(e.complete)}
+                  />
+                </div>
+
+                <div className="flex items-center gap-2 mt-4 text-xs text-gray-400">
+                  <Shield className="w-4 h-4" />
+                  <span>Secured by Stripe. Your card details are encrypted and never stored on our servers.</span>
+                </div>
+              </div>
             </div>
 
             {/* Right: Order Summary */}
@@ -384,10 +432,23 @@ export default function CheckoutPage() {
 
                 <button
                   type="submit"
-                  disabled={loading}
-                  className="w-full bg-rose-500 hover:bg-rose-600 disabled:bg-rose-300 text-white py-4 rounded-full font-semibold text-lg transition-all hover:shadow-lg hover:shadow-rose-200"
+                  disabled={loading || !stripe || !cardComplete}
+                  className="w-full bg-rose-500 hover:bg-rose-600 disabled:bg-rose-300 text-white py-4 rounded-full font-semibold text-lg transition-all hover:shadow-lg hover:shadow-rose-200 flex items-center justify-center gap-2"
                 >
-                  {loading ? t.common.loading : t.checkout.placeOrder}
+                  {loading ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <Lock className="w-4 h-4" />
+                      Pay {t.common.currency}{total.toFixed(2)}
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -395,5 +456,72 @@ export default function CheckoutPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  const { t } = useLanguage();
+  const { user, loading: authLoading } = useAuth();
+  const { items } = useCart();
+
+  // Not logged in
+  if (!authLoading && !user) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <Lock className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{t.checkout.loginRequired}</h1>
+          <p className="text-gray-500 mb-6">{t.checkout.loginToCheckout}</p>
+          <div className="flex gap-3 justify-center">
+            <Link
+              href="/login"
+              className="px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-semibold text-sm transition-all"
+            >
+              {t.auth.login}
+            </Link>
+            <Link
+              href="/register"
+              className="px-6 py-3 border-2 border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl font-semibold text-sm transition-all"
+            >
+              {t.auth.register}
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Loading auth
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-400">{t.common.loading}</div>
+      </div>
+    );
+  }
+
+  // Empty cart
+  if (items.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <ShoppingBag className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{t.cart.empty}</h1>
+          <Link
+            href="/shop"
+            className="inline-flex items-center gap-2 text-rose-500 hover:text-rose-600 font-semibold mt-4 transition-colors"
+          >
+            {t.cart.continueShopping}
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <Elements stripe={stripePromise}>
+      <CheckoutForm />
+    </Elements>
   );
 }
