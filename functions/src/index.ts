@@ -168,30 +168,30 @@ export const sendOrderEmail = functions.https.onCall(async (data: any, context) 
     const htmlContent = `
       <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="background: linear-gradient(135deg, #f43f5e, #ec4899); color: white; padding: 35px 30px; text-align: center; border-radius: 16px 16px 0 0;">
-          <h1 style="margin: 0; font-size: 26px; font-weight: 700;">🌹 Thank You for Your Order!</h1>
+          <h1 style="margin: 0; font-size: 26px; font-weight: 700;">🌹 Vielen Dank für Ihre Bestellung!</h1>
           <p style="margin: 10px 0 0 0; font-size: 15px; opacity: 0.9;">SatinGlanz by Anamarija</p>
         </div>
         
         <div style="background: #ffffff; padding: 30px; border-radius: 0 0 16px 16px; border: 1px solid #f3e8f0;">
           <p style="color: #374151; font-size: 16px; line-height: 1.6;">
-            Dear <strong>${sanitize(addr.firstName)} ${sanitize(addr.lastName)}</strong>,
+            Liebe/r <strong>${sanitize(addr.firstName)} ${sanitize(addr.lastName)}</strong>,
           </p>
           <p style="color: #6b7280; line-height: 1.6;">
-            Thank you for your order! We've received it and will begin preparing your handcrafted satin roses with care.
+            Vielen Dank für Ihre Bestellung! Wir haben sie erhalten und werden Ihre handgefertigten Satinrosen mit Sorgfalt vorbereiten.
           </p>
           
           <div style="background: #fdf2f8; padding: 16px 20px; border-radius: 12px; margin: 20px 0; text-align: center;">
-            <p style="margin: 0; color: #9d174d; font-size: 13px;">Order Number</p>
+            <p style="margin: 0; color: #9d174d; font-size: 13px;">Bestellnummer</p>
             <p style="margin: 5px 0 0 0; color: #1f2937; font-size: 22px; font-weight: 700; letter-spacing: 2px;">#${orderNumber}</p>
           </div>
 
-          <h3 style="color: #1f2937; margin: 25px 0 12px 0; font-size: 16px;">📦 Order Details</h3>
+          <h3 style="color: #1f2937; margin: 25px 0 12px 0; font-size: 16px;">📦 Bestelldetails</h3>
           <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
             <thead>
               <tr style="background: #fdf2f8;">
-                <th style="padding: 10px 12px; text-align: left; color: #6b7280; font-weight: 600;">Item</th>
-                <th style="padding: 10px 12px; text-align: center; color: #6b7280; font-weight: 600;">Qty</th>
-                <th style="padding: 10px 12px; text-align: right; color: #6b7280; font-weight: 600;">Price</th>
+                <th style="padding: 10px 12px; text-align: left; color: #6b7280; font-weight: 600;">Artikel</th>
+                <th style="padding: 10px 12px; text-align: center; color: #6b7280; font-weight: 600;">Anz.</th>
+                <th style="padding: 10px 12px; text-align: right; color: #6b7280; font-weight: 600;">Preis</th>
               </tr>
             </thead>
             <tbody>
@@ -201,20 +201,20 @@ export const sendOrderEmail = functions.https.onCall(async (data: any, context) 
 
           <div style="margin-top: 16px; padding: 16px; background: #f9fafb; border-radius: 10px;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-              <span style="color: #6b7280; font-size: 14px;">Subtotal</span>
+              <span style="color: #6b7280; font-size: 14px;">Zwischensumme</span>
               <span style="color: #1f2937; font-size: 14px; font-weight: 600;">€${orderData.subtotal.toFixed(2)}</span>
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-              <span style="color: #6b7280; font-size: 14px;">Shipping (${orderData.shippingCarrier.toUpperCase()})</span>
+              <span style="color: #6b7280; font-size: 14px;">Versand (${orderData.shippingCarrier.toUpperCase()})</span>
               <span style="color: ${orderData.shippingCost === 0 ? '#10b981' : '#1f2937'}; font-size: 14px; font-weight: 600;">${shippingLabel}</span>
             </div>
             <div style="border-top: 2px solid #e5e7eb; margin-top: 10px; padding-top: 10px; display: flex; justify-content: space-between;">
-              <span style="color: #1f2937; font-size: 16px; font-weight: 700;">Total</span>
+              <span style="color: #1f2937; font-size: 16px; font-weight: 700;">Gesamt</span>
               <span style="color: #f43f5e; font-size: 16px; font-weight: 700;">€${orderData.total.toFixed(2)}</span>
             </div>
           </div>
 
-          <h3 style="color: #1f2937; margin: 25px 0 12px 0; font-size: 16px;">📍 Shipping Address</h3>
+          <h3 style="color: #1f2937; margin: 25px 0 12px 0; font-size: 16px;">📍 Lieferadresse</h3>
           <div style="background: #f9fafb; padding: 16px; border-radius: 10px; color: #374151; font-size: 14px; line-height: 1.8;">
             ${sanitize(addr.firstName)} ${sanitize(addr.lastName)}<br>
             ${sanitize(addr.street)}<br>
@@ -225,22 +225,21 @@ export const sendOrderEmail = functions.https.onCall(async (data: any, context) 
 
           <div style="background: #fef3c7; border: 1px solid #fbbf24; padding: 16px; border-radius: 10px; margin: 20px 0;">
             <p style="margin: 0; color: #92400e; font-size: 13px;">
-              <strong>💡 What's next?</strong><br>
-              We'll carefully handcraft your order and send you a shipping confirmation once it's on its way. Each piece is made with love and attention to detail.
+              <strong>💡 Wie geht es weiter?</strong><br>
+              Wir werden Ihre Bestellung sorgfältig handgefertigen und Ihnen eine Versandbestätigung senden, sobald sie unterwegs ist. Jedes Stück wird mit Liebe und Aufmerksamkeit für Details hergestellt.
             </p>
           </div>
           
           <div style="text-align: center; margin: 30px 0 10px 0;">
             <a href="https://satinglanzbyanamarija.com/account" style="background: #f43f5e; color: white; padding: 14px 32px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 600; font-size: 14px;">
-              View My Orders
+              Meine Bestellungen ansehen
             </a>
           </div>
 
           <div style="border-top: 1px solid #f3e8f0; padding-top: 20px; margin-top: 25px; text-align: center;">
-            <p style="color: #6b7280; font-size: 13px; margin: 5px 0;">Made with ❤️ by Anamarija</p>
+            <p style="color: #6b7280; font-size: 13px; margin: 5px 0;">Mit ❤️ von Anamarija</p>
             <p style="color: #9ca3af; font-size: 12px; margin: 5px 0;">
-              📧 satinglanzbyanamarija@gmail.com<br>
-              🌐 <a href="https://satinglanzbyanamarija.com/" style="color: #f43f5e;">satinglanzbyanamarija.com</a>
+              📧 satinglanzbyanamarija@gmail.com
             </p>
           </div>
         </div>
@@ -256,7 +255,7 @@ export const sendOrderEmail = functions.https.onCall(async (data: any, context) 
     await transporter.sendMail({
       from: GMAIL_FROM,
       to: recipientEmail,
-      subject: `🌹 Order Confirmation #${orderNumber} | SatinGlanz by Anamarija`,
+      subject: `🌹 Bestellbestätigung #${orderNumber} | SatinGlanz by Anamarija`,
       html: htmlContent
     });
 
@@ -316,47 +315,46 @@ export const sendWelcomeEmail = functions.https.onCall(async (data: any, context
     const htmlContent = `
       <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="background: linear-gradient(135deg, #f43f5e, #ec4899); color: white; padding: 40px 30px; text-align: center; border-radius: 16px 16px 0 0;">
-          <h1 style="margin: 0; font-size: 28px; font-weight: 700;">🌹 Welcome to SatinGlanz!</h1>
-          <p style="margin: 12px 0 0 0; font-size: 16px; opacity: 0.95;">Handcrafted Satin Roses by Anamarija</p>
+          <h1 style="margin: 0; font-size: 28px; font-weight: 700;">🌹 Willkommen bei SatinGlanz!</h1>
+          <p style="margin: 12px 0 0 0; font-size: 16px; opacity: 0.95;">Handgefertigte Satinrosen von Anamarija</p>
         </div>
         
         <div style="background: #ffffff; padding: 35px; border-radius: 0 0 16px 16px; border: 1px solid #f3e8f0;">
           <p style="color: #374151; font-size: 17px; line-height: 1.7;">
-            Dear <strong>${sanitize(displayName)}</strong>,
+            Liebe/r <strong>${sanitize(displayName)}</strong>,
           </p>
           <p style="color: #6b7280; line-height: 1.7; font-size: 15px;">
-            Thank you for joining our community! We're thrilled to have you here. Each satin rose we create is handcrafted with love and attention to detail, making every piece unique and special.
+            Vielen Dank, dass Sie unserer Community beigetreten sind! Wir freuen uns sehr, Sie hier zu haben. Jede Satinrose, die wir kreieren, wird mit Liebe und Aufmerksamkeit für Details handgefertigt, wodurch jedes Stück einzigartig und besonders wird.
           </p>
           
           <div style="background: #fdf2f8; padding: 20px; border-radius: 12px; margin: 25px 0;">
-            <h3 style="color: #9d174d; margin: 0 0 12px 0; font-size: 16px;">✨ What makes us special:</h3>
+            <h3 style="color: #9d174d; margin: 0 0 12px 0; font-size: 16px;">✨ Was uns besonders macht:</h3>
             <ul style="color: #374151; line-height: 1.8; padding-left: 20px; margin: 0;">
-              <li>100% handcrafted satin roses</li>
-              <li>Perfect for weddings, events, and gifts</li>
-              <li>Custom bouquets available</li>
-              <li>Fast and reliable shipping</li>
+              <li>100% handgefertigte Satinrosen</li>
+              <li>Perfekt für Hochzeiten, Events und Geschenke</li>
+              <li>Individuelle Bouquets verfügbar</li>
+              <li>Schneller und zuverlässiger Versand</li>
             </ul>
           </div>
 
           <div style="text-align: center; margin: 30px 0;">
             <a href="https://satinglanzbyanamarija.com/shop" style="background: #f43f5e; color: white; padding: 16px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 600; font-size: 15px; box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);">
-              Start Shopping 🛍️
+              Jetzt einkaufen 🛍️
             </a>
           </div>
 
           <div style="background: #f0fdf4; border: 1px solid #86efac; padding: 18px; border-radius: 10px; margin: 25px 0;">
             <p style="margin: 0; color: #166534; font-size: 14px;">
-              <strong>🎁 Special Offer:</strong> Use code <strong>WELCOME10</strong> for 10% off your first order!
+              <strong>🎁 Sonderangebot:</strong> Verwenden Sie den Code <strong>WELCOME10</strong> für 10% Rabatt auf Ihre erste Bestellung!
             </p>
           </div>
 
           <div style="border-top: 1px solid #f3e8f0; padding-top: 25px; margin-top: 30px; text-align: center;">
-            <p style="color: #6b7280; font-size: 14px; margin: 8px 0;">Need help? We're here for you!</p>
+            <p style="color: #6b7280; font-size: 14px; margin: 8px 0;">Brauchen Sie Hilfe? Wir sind für Sie da!</p>
             <p style="color: #9ca3af; font-size: 13px; margin: 5px 0;">
-              📧 <a href="mailto:satinglanzbyanamarija@gmail.com" style="color: #f43f5e; text-decoration: none;">satinglanzbyanamarija@gmail.com</a><br>
-              🌐 <a href="https://satinglanzbyanamarija.com/" style="color: #f43f5e; text-decoration: none;">satinglanzbyanamarija.com</a>
+              📧 <a href="mailto:satinglanzbyanamarija@gmail.com" style="color: #f43f5e; text-decoration: none;">satinglanzbyanamarija@gmail.com</a>
             </p>
-            <p style="color: #9ca3af; font-size: 12px; margin: 15px 0 0 0;">Made with ❤️ by Anamarija</p>
+            <p style="color: #9ca3af; font-size: 12px; margin: 15px 0 0 0;">Mit ❤️ von Anamarija</p>
           </div>
         </div>
       </div>
@@ -365,7 +363,7 @@ export const sendWelcomeEmail = functions.https.onCall(async (data: any, context
     await transporter.sendMail({
       from: GMAIL_FROM,
       to: userEmail,
-      subject: '🌹 Welcome to SatinGlanz by Anamarija!',
+      subject: '🌹 Willkommen bei SatinGlanz by Anamarija!',
       html: htmlContent
     });
 
