@@ -10,16 +10,20 @@ import { calculateCartShipping, getRecommendedCarrier } from '@/lib/shippingCalc
 export default function CartPage() {
   const { locale, t } = useLanguage();
   const { items, removeFromCart, updateQuantity, totalPrice, loading } = useCart();
-  
-  const recommendedCarrier = useMemo(() => {
+  const [selectedCarrier, setSelectedCarrier] = useState<'dhl' | 'gls'>('dhl');
+
+  // Calculate shipping cost - must be called unconditionally (React hooks rule)
+  const shippingCost = useMemo(() => {
+    if (items.length === 0) return 0;
     try {
-      return getRecommendedCarrier(items);
-    } catch {
-      return 'dhl';
+      return calculateCartShipping(items, selectedCarrier);
+    } catch (error) {
+      console.error('Shipping calculation error:', error);
+      return selectedCarrier === 'dhl' ? 5.19 : 5.59;
     }
-  }, [items]);
-  
-  const [selectedCarrier, setSelectedCarrier] = useState<'dhl' | 'gls'>(recommendedCarrier);
+  }, [items, selectedCarrier]);
+
+  const total = totalPrice + shippingCost;
 
   // Show loading state while cart is being fetched from Firestore
   if (loading) {
@@ -50,17 +54,6 @@ export default function CartPage() {
       </div>
     );
   }
-
-  const shippingCost = useMemo(() => {
-    try {
-      return calculateCartShipping(items, selectedCarrier);
-    } catch (error) {
-      console.error('Shipping calculation error:', error);
-      // Fallback to default rate if calculation fails
-      return selectedCarrier === 'dhl' ? 5.19 : 5.59;
-    }
-  }, [items, selectedCarrier]);
-  const total = totalPrice + shippingCost;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -157,9 +150,6 @@ export default function CartPage() {
                         <p className="text-xs text-gray-500">✓ {t.cart.liability}</p>
                         <p className="text-xs text-gray-500">✓ {t.cart.tracking}</p>
                       </div>
-                      {recommendedCarrier === 'dhl' && (
-                        <p className="text-xs text-yellow-600 font-semibold mt-1">⭐ Empfohlen</p>
-                      )}
                     </button>
 
                     {/* GLS */}
@@ -188,9 +178,6 @@ export default function CartPage() {
                         <p className="text-xs text-gray-500">✓ {t.cart.liability}</p>
                         <p className="text-xs text-gray-500">✓ {t.cart.tracking}</p>
                       </div>
-                      {recommendedCarrier === 'gls' && (
-                        <p className="text-xs text-blue-600 font-semibold mt-1">⭐ Empfohlen</p>
-                      )}
                     </button>
                   </div>
             </div>
