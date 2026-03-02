@@ -13,6 +13,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { Lock, MapPin, Check, ShoppingBag, ArrowRight, Truck, CreditCard, Shield, AlertCircle } from 'lucide-react';
 import { calculateCartShipping, getRecommendedCarrier } from '@/lib/shippingCalculator';
+import AddressAutocomplete from '@/components/AddressAutocomplete';
 
 const stripePromise = loadStripe('pk_live_51T6HdURxZ5rzXIkdeQqyjWs9mTaYOvCQNeGlgukCgvMNs4MrasTO6Tr9zoIp2Dfcxdcak60DiBQkkAE6iuWGg9fO00OCC5EmrL');
 
@@ -55,6 +56,13 @@ function CheckoutForm() {
   const [orderId, setOrderId] = useState('');
   const [error, setError] = useState('');
   const [cardComplete, setCardComplete] = useState(false);
+
+  // Handle address autocomplete selection
+  const handlePlaceSelected = (place: { street: string; city: string; postalCode: string }) => {
+    setStreet(place.street);
+    setCity(place.city);
+    setPostalCode(place.postalCode);
+  };
 
   // Calculate shipping cost based on box sizes and bouquet rose counts
   const shippingCost = useMemo(() => {
@@ -199,7 +207,11 @@ function CheckoutForm() {
 
         setOrderId(docRef.id);
         setOrderPlaced(true);
-        clearCart();
+        
+        // Clear cart after a small delay to ensure state updates first
+        setTimeout(() => {
+          clearCart();
+        }, 100);
 
         // 5. Send order confirmation email (non-blocking)
         try {
@@ -262,12 +274,12 @@ function CheckoutForm() {
                   </div>
                   <div className="sm:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1.5">{t.checkout.street}</label>
-                    <input
-                      type="text"
+                    <AddressAutocomplete
                       value={street}
-                      onChange={(e) => setStreet(e.target.value)}
+                      onChange={setStreet}
+                      onPlaceSelected={handlePlaceSelected}
+                      placeholder={t.checkout.street}
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-300"
-                      required
                     />
                   </div>
                   <div>
