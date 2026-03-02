@@ -929,3 +929,117 @@ export const sendContactEmail = functions.https.onCall(async (data: any, context
     throw new functions.https.HttpsError('internal', 'Failed to send contact email');
   }
 });
+
+// Send special bouquet request email (for 101+ roses)
+export const sendSpecialBouquetRequest = functions.https.onCall(async (data: any, context) => {
+  try {
+    const transporter = createTransporter();
+    const { customerEmail, customerPhone, roseCount, message } = data;
+
+    if (!customerEmail || !customerPhone || !roseCount) {
+      throw new functions.https.HttpsError('invalid-argument', 'Missing required fields.');
+    }
+
+    // Email to Anamarija (shop owner)
+    const ownerHtml = `
+      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #f43f5e, #ec4899); color: white; padding: 35px 30px; text-align: center; border-radius: 16px 16px 0 0;">
+          <h1 style="margin: 0; font-size: 26px; font-weight: 700;">🌹 Spezielle Bouquet-Anfrage</h1>
+          <p style="margin: 10px 0 0 0; font-size: 15px; opacity: 0.9;">Mehr als 101 Rosen</p>
+        </div>
+        
+        <div style="background: #ffffff; padding: 30px; border-radius: 0 0 16px 16px; border: 1px solid #f3e8f0;">
+          <h3 style="color: #1f2937; margin: 0 0 20px 0; font-size: 18px;">Kundeninformationen</h3>
+          
+          <div style="background: #f9fafb; padding: 16px; border-radius: 10px; margin-bottom: 20px;">
+            <p style="margin: 0 0 8px 0; color: #374151; font-size: 14px;">
+              <strong>📧 E-Mail:</strong> ${sanitize(customerEmail)}
+            </p>
+            <p style="margin: 0 0 8px 0; color: #374151; font-size: 14px;">
+              <strong>📞 Telefon:</strong> ${sanitize(customerPhone)}
+            </p>
+            <p style="margin: 0; color: #374151; font-size: 14px;">
+              <strong>🌹 Anzahl der Rosen:</strong> ${Number(roseCount)}
+            </p>
+          </div>
+
+          <h3 style="color: #1f2937; margin: 20px 0 12px 0; font-size: 16px;">Nachricht vom Kunden</h3>
+          <div style="background: #fdf2f8; padding: 16px; border-radius: 10px; border-left: 4px solid #f43f5e;">
+            <p style="margin: 0; color: #374151; font-size: 14px; line-height: 1.6;">
+              ${sanitize(message)}
+            </p>
+          </div>
+
+          <div style="background: #fef3c7; border: 1px solid #fbbf24; padding: 16px; border-radius: 10px; margin-top: 20px;">
+            <p style="margin: 0; color: #92400e; font-size: 13px;">
+              <strong>💡 Nächste Schritte:</strong><br>
+              Bitte kontaktieren Sie den Kunden innerhalb von 24 Stunden, um ein individuelles Angebot für dieses spezielle Bouquet zu erstellen.
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    await transporter.sendMail({
+      from: GMAIL_FROM,
+      to: GMAIL_TO,
+      subject: `🌹 Spezielle Bouquet-Anfrage: ${roseCount} Rosen von ${sanitize(customerEmail)}`,
+      html: ownerHtml
+    });
+
+    // Confirmation email to customer
+    const customerHtml = `
+      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #f43f5e, #ec4899); color: white; padding: 35px 30px; text-align: center; border-radius: 16px 16px 0 0;">
+          <h1 style="margin: 0; font-size: 26px; font-weight: 700;">🌹 Anfrage erhalten!</h1>
+          <p style="margin: 10px 0 0 0; font-size: 15px; opacity: 0.9;">SatinGlanz by Anamarija</p>
+        </div>
+        
+        <div style="background: #ffffff; padding: 30px; border-radius: 0 0 16px 16px; border: 1px solid #f3e8f0;">
+          <p style="color: #374151; font-size: 16px; line-height: 1.6;">
+            Vielen Dank für Ihre Anfrage für ein spezielles Bouquet mit <strong>${Number(roseCount)} Rosen</strong>!
+          </p>
+          
+          <div style="background: #f0fdf4; border: 1px solid #86efac; padding: 18px; border-radius: 10px; margin: 20px 0;">
+            <p style="margin: 0; color: #166534; font-size: 14px;">
+              <strong>✓ Ihre Anfrage wurde erfolgreich gesendet</strong><br>
+              Anamarija wird sich innerhalb von 24 Stunden bei Ihnen melden, um Ihr individuelles Bouquet zu besprechen und ein Angebot zu erstellen.
+            </p>
+          </div>
+
+          <h3 style="color: #1f2937; margin: 20px 0 12px 0; font-size: 16px;">Ihre Anfrage-Details</h3>
+          <div style="background: #f9fafb; padding: 16px; border-radius: 10px;">
+            <p style="margin: 0 0 8px 0; color: #374151; font-size: 14px;">
+              <strong>Anzahl der Rosen:</strong> ${Number(roseCount)}
+            </p>
+            <p style="margin: 0 0 8px 0; color: #374151; font-size: 14px;">
+              <strong>E-Mail:</strong> ${sanitize(customerEmail)}
+            </p>
+            <p style="margin: 0; color: #374151; font-size: 14px;">
+              <strong>Telefon:</strong> ${sanitize(customerPhone)}
+            </p>
+          </div>
+
+          <div style="border-top: 1px solid #f3e8f0; padding-top: 20px; margin-top: 25px; text-align: center;">
+            <p style="color: #6b7280; font-size: 13px; margin: 5px 0;">Mit ❤️ von Anamarija</p>
+            <p style="color: #9ca3af; font-size: 12px; margin: 5px 0;">
+              📧 satinglanzbyanamarija@gmail.com
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    await transporter.sendMail({
+      from: GMAIL_FROM,
+      to: customerEmail,
+      subject: '🌹 Ihre spezielle Bouquet-Anfrage wurde erhalten | SatinGlanz by Anamarija',
+      html: customerHtml
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Special bouquet request error:', error);
+    throw new functions.https.HttpsError('internal', 'Failed to send special bouquet request');
+  }
+});

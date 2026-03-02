@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { collection, addDoc } from 'firebase/firestore';
@@ -12,9 +12,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { Lock, MapPin, Check, ShoppingBag, ArrowRight, Truck, CreditCard, Shield, AlertCircle } from 'lucide-react';
-
-const DHL_PRICE = 5.19;
-const GLS_PRICE = 5.59;
+import { calculateCartShipping, getRecommendedCarrier } from '@/lib/shippingCalculator';
 
 const stripePromise = loadStripe('pk_test_51T6HdeRtazItoQroQhhnCNc9DZv9PpgrnHSZJtvEICpz40czkzfcasdxzuImY5PleiAuRZ3e7EohhtODWWpYXUsN00aB1M1Ew5');
 
@@ -42,7 +40,10 @@ function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
 
-  const [selectedCarrier, setSelectedCarrier] = useState<'dhl' | 'gls'>('dhl');
+  // Get recommended carrier based on cart items (DHL for bouquets, GLS for products)
+  const recommendedCarrier = useMemo(() => getRecommendedCarrier(items), [items]);
+  
+  const [selectedCarrier, setSelectedCarrier] = useState<'dhl' | 'gls'>(recommendedCarrier);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [street, setStreet] = useState('');
@@ -55,8 +56,18 @@ function CheckoutForm() {
   const [error, setError] = useState('');
   const [cardComplete, setCardComplete] = useState(false);
 
-  const shippingCost = totalPrice >= 50 ? 0 : (selectedCarrier === 'dhl' ? DHL_PRICE : GLS_PRICE);
+  // Calculate shipping cost based on box sizes and bouquet rose counts
+  const shippingCost = useMemo(() => {
+    if (totalPrice >= 50) return 0; // Free shipping over €50
+    return calculateCartShipping(items, selectedCarrier);
+  }, [items, selectedCarrier, totalPrice]);
+  
   const total = totalPrice + shippingCost;
+
+  // Update selected carrier when recommended carrier changes
+  useEffect(() => {
+    setSelectedCarrier(recommendedCarrier);
+  }, [recommendedCarrier]);
 
   // Order success
   if (orderPlaced) {
@@ -337,8 +348,13 @@ function CheckoutForm() {
                         </div>
                       )}
                       <span className="text-2xl font-black text-yellow-500">DHL</span>
-                      <div className="text-xl font-bold text-gray-900 mt-2">{t.common.currency}{DHL_PRICE.toFixed(2)}</div>
+                      <div className="text-xl font-bold text-gray-900 mt-2">
+                        {t.common.currency}{calculateCartShipping(items, 'dhl').toFixed(2)}
+                      </div>
                       <p className="text-xs text-gray-500 mt-1">✓ {t.cart.tracking}</p>
+                      {recommendedCarrier === 'dhl' && (
+                        <p className="text-xs text-yellow-600 font-semibold mt-1">⭐ Empfohlen</p>
+                      )}
                     </button>
 
                     <button
@@ -358,8 +374,13 @@ function CheckoutForm() {
                         </div>
                       )}
                       <span className="text-2xl font-black text-blue-600">GLS</span>
-                      <div className="text-xl font-bold text-gray-900 mt-2">{t.common.currency}{GLS_PRICE.toFixed(2)}</div>
+                      <div className="text-xl font-bold text-gray-900 mt-2">
+                        {t.common.currency}{calculateCartShipping(items, 'gls').toFixed(2)}
+                      </div>
                       <p className="text-xs text-gray-500 mt-1">✓ {t.cart.tracking}</p>
+                      {recommendedCarrier === 'gls' && (
+                        <p className="text-xs text-blue-600 font-semibold mt-1">⭐ Empfohlen</p>
+                      )}
                     </button>
                   </div>
                 )}

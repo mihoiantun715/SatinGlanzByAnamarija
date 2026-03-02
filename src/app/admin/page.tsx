@@ -60,6 +60,9 @@ interface ProductForm {
   colors: string[];
   inStock: boolean;
   featured: boolean;
+  boxLength: number;
+  boxWidth: number;
+  boxHeight: number;
   name: Record<Locale, string>;
   description: Record<Locale, string>;
   shortDescription: Record<Locale, string>;
@@ -74,6 +77,9 @@ const emptyForm = (): ProductForm => ({
   colors: [],
   inStock: true,
   featured: false,
+  boxLength: 0,
+  boxWidth: 0,
+  boxHeight: 0,
   name: { en: '', de: '', hr: '', ro: '', bg: '', tr: '' },
   description: { en: '', de: '', hr: '', ro: '', bg: '', tr: '' },
   shortDescription: { en: '', de: '', hr: '', ro: '', bg: '', tr: '' },
@@ -383,6 +389,9 @@ export default function AdminPage() {
       colors: product.colors || [],
       inStock: product.inStock ?? true,
       featured: product.featured ?? false,
+      boxLength: (product as any).boxLength ?? 0,
+      boxWidth: (product as any).boxWidth ?? 0,
+      boxHeight: (product as any).boxHeight ?? 0,
       name: { ...emptyForm().name, ...product.name },
       description: { ...emptyForm().description, ...product.description },
       shortDescription: { ...emptyForm().shortDescription, ...product.shortDescription },
@@ -680,6 +689,49 @@ export default function AdminPage() {
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
                     />
                   </div>
+                </div>
+
+                {/* Box Size (Length, Width, Height in cm) */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    <Package className="w-4 h-4 inline mr-1" /> Box Size (cm) — for shipping calculation
+                  </label>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Length (cm)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={form.boxLength}
+                        onChange={(e) => setForm({ ...form, boxLength: parseInt(e.target.value) || 0 })}
+                        placeholder="0"
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Width (cm)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={form.boxWidth}
+                        onChange={(e) => setForm({ ...form, boxWidth: parseInt(e.target.value) || 0 })}
+                        placeholder="0"
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Height (cm)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={form.boxHeight}
+                        onChange={(e) => setForm({ ...form, boxHeight: parseInt(e.target.value) || 0 })}
+                        placeholder="0"
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">Leave at 0 for bouquets (shipping calculated by rose count)</p>
                 </div>
 
                 {/* Category */}

@@ -382,19 +382,36 @@ export default function BuildBouquetPage() {
                 <input
                   type="number"
                   min={1}
-                  max={500}
+                  max={101}
                   value={customCount}
                   onChange={(e) => {
                     const val = e.target.value;
                     setCustomCount(val);
                     const num = parseInt(val);
-                    if (num >= 1 && num <= 500) setRoseCount(num);
+                    if (num >= 1 && num <= 101) setRoseCount(num);
                   }}
-                  placeholder="1-500"
+                  placeholder="1-101"
                   className={`w-24 px-3 py-2.5 rounded-lg border-2 text-sm font-semibold text-center transition-all focus:outline-none focus:border-gray-900 ${
                     customCount !== '' ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-200 text-gray-700'
                   }`}
                 />
+              </div>
+              
+              {/* Special Request for 101+ Roses */}
+              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                <p className="text-sm font-semibold text-blue-900 mb-2">
+                  🌹 Need more than 101 roses?
+                </p>
+                <p className="text-xs text-blue-700 mb-3">
+                  For special orders with more than 101 roses, please contact Anamarija directly. We'll create a custom quote for your special bouquet!
+                </p>
+                <button
+                  type="button"
+                  onClick={() => window.location.href = '/special-request'}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 px-4 rounded-lg transition-colors"
+                >
+                  Request Special Order
+                </button>
               </div>
             </div>
 
