@@ -2,8 +2,9 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { CartItem, Product } from '@/lib/types';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { useAuth } from '@/context/AuthContext';
 
 interface CartContextType {
   items: CartItem[];
@@ -13,41 +14,60 @@ interface CartContextType {
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
+  loading: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
-  // Load cart from localStorage on mount
+  // Load cart from Firestore when user logs in
   useEffect(() => {
-    const saved = localStorage.getItem('cart');
-    if (saved) {
-      try {
-        const parsedItems = JSON.parse(saved);
-        setItems(parsedItems);
-        // Refresh product data from Firestore
-        refreshProductData(parsedItems);
-      } catch {
+    if (user) {
+      loadCartFromFirestore();
+    } else {
+      setItems([]);
+      setLoading(false);
+    }
+  }, [user]);
+
+  // Load cart from Firestore
+  const loadCartFromFirestore = async () => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const cartDoc = await getDoc(doc(db, 'carts', user.uid));
+      if (cartDoc.exists()) {
+        const cartData = cartDoc.data();
+        const cartItems = cartData.items || [];
+        
+        // Refresh product data to get latest box dimensions
+        await refreshProductData(cartItems);
+      } else {
         setItems([]);
       }
+    } catch (error) {
+      console.error('Failed to load cart:', error);
+      setItems([]);
+    } finally {
+      setLoading(false);
     }
-  }, []);
-
-  // Save cart to localStorage whenever it changes
-  useEffect(() => {
-    if (!isRefreshing) {
-      localStorage.setItem('cart', JSON.stringify(items));
-    }
-  }, [items, isRefreshing]);
+  };
 
   // Refresh product data from Firestore to get latest box dimensions
   const refreshProductData = async (cartItems: CartItem[]) => {
-    if (cartItems.length === 0) return;
+    if (cartItems.length === 0) {
+      setItems([]);
+      return;
+    }
     
-    setIsRefreshing(true);
     try {
       const productsSnap = await getDocs(collection(db, 'products'));
       const productsMap = new Map();
@@ -68,32 +88,50 @@ export function CartProvider({ children }: { children: ReactNode }) {
           };
         }
         return item;
-      });
+      }).filter(item => item.product); // Remove items where product no longer exists
 
       setItems(updatedItems);
     } catch (error) {
       console.error('Failed to refresh product data:', error);
-    } finally {
-      setIsRefreshing(false);
+      setItems(cartItems);
+    }
+  };
+
+  // Save cart to Firestore
+  const saveCartToFirestore = async (updatedItems: CartItem[]) => {
+    if (!user) return;
+
+    try {
+      await setDoc(doc(db, 'carts', user.uid), {
+        items: updatedItems,
+        updatedAt: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('Failed to save cart:', error);
     }
   };
 
   const addToCart = (product: Product, quantity: number = 1, color?: string) => {
-    setItems(prev => {
-      const existing = prev.find(item => item.product.id === product.id && item.selectedColor === color);
+    const updatedItems = (() => {
+      const existing = items.find(item => item.product.id === product.id && item.selectedColor === color);
       if (existing) {
-        return prev.map(item =>
+        return items.map(item =>
           item.product.id === product.id && item.selectedColor === color
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
-      return [...prev, { product, quantity, selectedColor: color }];
-    });
+      return [...items, { product, quantity, selectedColor: color }];
+    })();
+    
+    setItems(updatedItems);
+    saveCartToFirestore(updatedItems);
   };
 
   const removeFromCart = (productId: string) => {
-    setItems(prev => prev.filter(item => item.product.id !== productId));
+    const updatedItems = items.filter(item => item.product.id !== productId);
+    setItems(updatedItems);
+    saveCartToFirestore(updatedItems);
   };
 
   const updateQuantity = (productId: string, quantity: number) => {
@@ -101,20 +139,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
       removeFromCart(productId);
       return;
     }
-    setItems(prev =>
-      prev.map(item =>
-        item.product.id === productId ? { ...item, quantity } : item
-      )
+    const updatedItems = items.map(item =>
+      item.product.id === productId ? { ...item, quantity } : item
     );
+    setItems(updatedItems);
+    saveCartToFirestore(updatedItems);
   };
 
-  const clearCart = () => setItems([]);
+  const clearCart = async () => {
+    setItems([]);
+    if (user) {
+      try {
+        await deleteDoc(doc(db, 'carts', user.uid));
+      } catch (error) {
+        console.error('Failed to clear cart:', error);
+      }
+    }
+  };
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
   return (
-    <CartContext.Provider value={{ items, addToCart, removeFromCart, updateQuantity, clearCart, totalItems, totalPrice }}>
+    <CartContext.Provider value={{ items, addToCart, removeFromCart, updateQuantity, clearCart, totalItems, totalPrice, loading }}>
       {children}
     </CartContext.Provider>
   );
