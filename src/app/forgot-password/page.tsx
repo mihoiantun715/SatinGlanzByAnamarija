@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { auth, app } from '@/lib/firebase';
 import { useLanguage } from '@/context/LanguageContext';
 import Image from 'next/image';
 import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
@@ -27,7 +28,28 @@ export default function ForgotPasswordPage() {
 
     setLoading(true);
     try {
-      await sendPasswordResetEmail(auth, email);
+      // Generate Firebase password reset link
+      const actionCodeSettings = {
+        url: `${window.location.origin}/login`,
+        handleCodeInApp: false,
+      };
+      
+      await sendPasswordResetEmail(auth, email, actionCodeSettings);
+      
+      // Get the reset link from Firebase (this will be sent via Firebase's default email)
+      // But we'll also send our custom email
+      const functions = getFunctions(app, 'us-central1');
+      const sendCustomReset = httpsCallable(functions, 'sendPasswordResetEmail');
+      
+      // Create a custom reset link that points to Firebase's action handler
+      const resetLink = `${window.location.origin}/__/auth/action?mode=resetPassword&email=${encodeURIComponent(email)}`;
+      
+      try {
+        await sendCustomReset({ email, resetLink });
+      } catch (customEmailErr) {
+        console.error('Custom email failed, but Firebase default was sent:', customEmailErr);
+      }
+      
       setSuccess(true);
       setEmail('');
     } catch (err: unknown) {

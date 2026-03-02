@@ -29,12 +29,24 @@ export default function RegisterPage() {
     return null;
   }
 
+  const validatePassword = (pwd: string): string | null => {
+    if (pwd.length < 6) return 'Password must be at least 6 characters';
+    if (!/[A-Z]/.test(pwd)) return 'Password must contain at least one uppercase letter';
+    if (!/[a-z]/.test(pwd)) return 'Password must contain at least one lowercase letter';
+    if (!/[0-9]/.test(pwd)) return 'Password must contain at least one number';
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(pwd)) return 'Password must contain at least one special character';
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
     if (!email) { setError(t.auth.errorEmail); return; }
-    if (password.length < 6) { setError(t.auth.errorPassword); return; }
+    
+    const passwordError = validatePassword(password);
+    if (passwordError) { setError(passwordError); return; }
+    
     if (password !== confirmPassword) { setError(t.auth.errorPasswordMatch); return; }
 
     setLoading(true);
@@ -125,7 +137,7 @@ export default function RegisterPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-10 pr-12 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-300 transition-all"
-                  placeholder="••••••••"
+                  required
                 />
                 <button
                   type="button"
@@ -135,6 +147,25 @@ export default function RegisterPage() {
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+              {password && (
+                <div className="mt-2 text-xs space-y-1">
+                  <div className={password.length >= 6 ? 'text-green-600' : 'text-gray-400'}>
+                    ✓ At least 6 characters
+                  </div>
+                  <div className={/[A-Z]/.test(password) ? 'text-green-600' : 'text-gray-400'}>
+                    ✓ One uppercase letter
+                  </div>
+                  <div className={/[a-z]/.test(password) ? 'text-green-600' : 'text-gray-400'}>
+                    ✓ One lowercase letter
+                  </div>
+                  <div className={/[0-9]/.test(password) ? 'text-green-600' : 'text-gray-400'}>
+                    ✓ One number
+                  </div>
+                  <div className={/[!@#$%^&*(),.?":{}|<>]/.test(password) ? 'text-green-600' : 'text-gray-400'}>
+                    ✓ One special character
+                  </div>
+                </div>
+              )}
             </div>
 
             <div>

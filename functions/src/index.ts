@@ -543,6 +543,80 @@ export const sendOrderCompletionEmail = functions.https.onCall(async (data: any,
   }
 });
 
+// Send custom password reset email (German)
+export const sendPasswordResetEmail = functions.https.onCall(async (data: any) => {
+  try {
+    const transporter = createTransporter();
+    const { email, resetLink } = data;
+
+    if (!email || !resetLink) {
+      throw new functions.https.HttpsError('invalid-argument', 'Missing required fields.');
+    }
+
+    const htmlContent = `
+      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #f43f5e, #fb7185); color: white; padding: 35px 30px; text-align: center; border-radius: 16px 16px 0 0;">
+          <h1 style="margin: 0; font-size: 26px; font-weight: 700;">🔐 Passwort zurücksetzen</h1>
+          <p style="margin: 10px 0 0 0; font-size: 15px; opacity: 0.9;">SatinGlanz by Anamarija</p>
+        </div>
+        
+        <div style="background: #ffffff; padding: 30px; border-radius: 0 0 16px 16px; border: 1px solid #fecdd3;">
+          <p style="color: #374151; font-size: 16px; line-height: 1.6;">
+            Hallo,
+          </p>
+          <p style="color: #6b7280; line-height: 1.6;">
+            Sie haben eine Anfrage zum Zurücksetzen Ihres Passworts für Ihr SatinGlanz-Konto gestellt.
+          </p>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${sanitize(resetLink)}" style="background: #f43f5e; color: white; padding: 14px 32px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 600; font-size: 14px; box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);">
+              Passwort zurücksetzen 🔑
+            </a>
+          </div>
+
+          <p style="color: #6b7280; line-height: 1.6; font-size: 14px;">
+            Oder kopieren Sie diesen Link in Ihren Browser:
+          </p>
+          <p style="color: #9ca3af; font-size: 12px; word-break: break-all; background: #f9fafb; padding: 12px; border-radius: 8px; font-family: monospace;">
+            ${sanitize(resetLink)}
+          </p>
+
+          <div style="background: #fef3c7; border: 1px solid #fbbf24; padding: 16px; border-radius: 10px; margin: 20px 0;">
+            <p style="margin: 0; color: #92400e; font-size: 13px;">
+              <strong>⚠️ Wichtig:</strong><br>
+              Dieser Link ist nur 1 Stunde gültig. Wenn Sie diese Anfrage nicht gestellt haben, können Sie diese E-Mail ignorieren.
+            </p>
+          </div>
+
+          <p style="color: #6b7280; line-height: 1.6; margin-top: 25px;">
+            Aus Sicherheitsgründen wird dieser Link nach einmaliger Verwendung ungültig.
+          </p>
+
+          <div style="border-top: 1px solid #f3e8f0; padding-top: 20px; margin-top: 25px; text-align: center;">
+            <p style="color: #6b7280; font-size: 13px; margin: 5px 0;">Fragen?</p>
+            <p style="color: #9ca3af; font-size: 12px; margin: 5px 0;">
+              📧 <a href="mailto:satinglanzbyanamarija@gmail.com" style="color: #f43f5e; text-decoration: none;">satinglanzbyanamarija@gmail.com</a>
+            </p>
+            <p style="color: #9ca3af; font-size: 12px; margin: 15px 0 0 0;">Mit ❤️ von Anamarija</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    await transporter.sendMail({
+      from: GMAIL_FROM,
+      to: email,
+      subject: '🔐 Passwort zurücksetzen - SatinGlanz',
+      html: htmlContent
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Password reset email error:', error);
+    throw new functions.https.HttpsError('internal', 'Failed to send password reset email');
+  }
+});
+
 // Send tracking number notification email to customer
 export const sendTrackingEmail = functions.https.onCall(async (data: any, context) => {
   if (!context.auth) {
