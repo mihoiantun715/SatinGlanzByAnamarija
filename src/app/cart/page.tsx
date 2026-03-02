@@ -32,7 +32,7 @@ export default function CartPage() {
     );
   }
 
-  const shippingCost = totalPrice >= 50 ? 0 : (selectedCarrier === 'dhl' ? DHL_PRICE : GLS_PRICE);
+  const shippingCost = selectedCarrier === 'dhl' ? DHL_PRICE : GLS_PRICE;
   const total = totalPrice + shippingCost;
 
   return (
@@ -103,17 +103,7 @@ export default function CartPage() {
                 <p className="text-xs text-gray-400">{t.cart.shippingNote}</p>
               </div>
 
-              {totalPrice >= 50 ? (
-                <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3">
-                  <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-green-700">{t.cart.freeShipping} 🎉</p>
-                    <p className="text-xs text-green-600">{t.cart.freeShippingNote} {t.common.currency}50.00</p>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* DHL */}
                     <button
                       onClick={() => setSelectedCarrier('dhl')}
@@ -170,12 +160,6 @@ export default function CartPage() {
                       </div>
                     </button>
                   </div>
-
-                  <p className="text-xs text-gray-400 mt-4">
-                    {t.cart.freeShippingNote} {t.common.currency}50.00
-                  </p>
-                </>
-              )}
             </div>
           </div>
 
@@ -192,16 +176,10 @@ export default function CartPage() {
                 <div className="flex justify-between text-gray-600">
                   <span className="flex items-center gap-1.5">
                     {t.cart.shipping}
-                    {shippingCost > 0 && (
-                      <span className="text-xs text-gray-400">({selectedCarrier.toUpperCase()})</span>
-                    )}
+                    <span className="text-xs text-gray-400">({selectedCarrier.toUpperCase()})</span>
                   </span>
                   <span className="font-semibold">
-                    {shippingCost === 0 ? (
-                      <span className="text-green-500">{t.cart.freeShipping}</span>
-                    ) : (
-                      `${t.common.currency}${shippingCost.toFixed(2)}`
-                    )}
+                    {t.common.currency}{shippingCost.toFixed(2)}
                   </span>
                 </div>
                 <div className="border-t border-gray-100 pt-4 flex justify-between">

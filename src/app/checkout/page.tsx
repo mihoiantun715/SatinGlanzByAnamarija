@@ -58,9 +58,8 @@ function CheckoutForm() {
 
   // Calculate shipping cost based on box sizes and bouquet rose counts
   const shippingCost = useMemo(() => {
-    if (totalPrice >= 50) return 0; // Free shipping over €50
     return calculateCartShipping(items, selectedCarrier);
-  }, [items, selectedCarrier, totalPrice]);
+  }, [items, selectedCarrier]);
   
   const total = totalPrice + shippingCost;
 
@@ -321,16 +320,7 @@ function CheckoutForm() {
                   <h2 className="text-lg font-bold text-gray-900">{t.cart.selectShipping}</h2>
                 </div>
 
-                {totalPrice >= 50 ? (
-                  <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3">
-                    <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
-                    <div>
-                      <p className="font-semibold text-green-700">{t.cart.freeShipping} 🎉</p>
-                      <p className="text-xs text-green-600">{t.cart.freeShippingNote} {t.common.currency}50.00</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <button
                       type="button"
                       onClick={() => setSelectedCarrier('dhl')}
@@ -383,7 +373,6 @@ function CheckoutForm() {
                       )}
                     </button>
                   </div>
-                )}
               </div>
 
               {/* Important Notices */}
