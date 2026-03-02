@@ -1,13 +1,28 @@
 'use client';
 
 import React from 'react';
+import { useLanguage } from '@/context/LanguageContext';
+import Link from 'next/link';
 
 export default function RefundPolicyPage() {
+  const { locale } = useLanguage();
+
+  const content = {
+    de: { title: 'Widerrufsbelehrung & Rückgaberecht' },
+    en: { title: 'Refund Policy & Right of Withdrawal' },
+    hr: { title: 'Politika povrata & Pravo na odustajanje' },
+    ro: { title: 'Politica de rambursare & Dreptul de retragere' },
+    bg: { title: 'Политика за възстановяване & Право на отказ' },
+    tr: { title: 'İade Politikası & Cayma Hakkı' }
+  };
+
+  const currentContent = content[locale as keyof typeof content] || content.en;
+
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 sm:p-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Widerrufsbelehrung & Rückgaberecht</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-8">{currentContent.title}</h1>
           
           <div className="prose prose-gray max-w-none space-y-6 text-gray-700">
             <section>

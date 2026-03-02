@@ -1,17 +1,31 @@
 'use client';
 
 import React from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function ImprintPage() {
+  const { locale } = useLanguage();
+
+  const content = {
+    de: { title: 'Impressum', contact: 'Kontakt', email: 'E-Mail' },
+    en: { title: 'Imprint', contact: 'Contact', email: 'Email' },
+    hr: { title: 'Impresum', contact: 'Kontakt', email: 'E-mail' },
+    ro: { title: 'Impresum', contact: 'Contact', email: 'Email' },
+    bg: { title: 'Импресум', contact: 'Контакт', email: 'Имейл' },
+    tr: { title: 'Künye', contact: 'İletişim', email: 'E-posta' }
+  };
+
+  const currentContent = content[locale as keyof typeof content] || content.en;
+
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 sm:p-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Impressum</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-8">{currentContent.title}</h1>
           
           <div className="prose prose-gray max-w-none space-y-6 text-gray-700">
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">Angaben gemäß § 5 TMG</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">SatinGlanz by Anamarija</h2>
               <p>
                 <strong>SatinGlanz by Anamarija</strong><br />
                 Anamarija [Nachname]<br />
@@ -22,10 +36,9 @@ export default function ImprintPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">Kontakt</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">{currentContent.contact}</h2>
               <p>
-                Telefon: [Telefonnummer]<br />
-                E-Mail: satinglanzbyanamarija@gmail.com
+                {currentContent.email}: satinglanzbyanamarija@gmail.com
               </p>
             </section>
 
