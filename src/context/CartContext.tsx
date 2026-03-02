@@ -21,80 +21,81 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
-  // Load cart from Firestore when user logs in
+  // Load cart from localStorage on mount (for guest users)
+  useEffect(() => {
+    const saved = localStorage.getItem('cart');
+    if (saved) {
+      try {
+        setItems(JSON.parse(saved));
+      } catch {
+        setItems([]);
+      }
+    }
+  }, []);
+
+  // Sync with Firestore when user logs in/out
   useEffect(() => {
     if (user) {
-      loadCartFromFirestore();
-    } else {
-      setItems([]);
-      setLoading(false);
+      // User logged in - merge localStorage cart with Firestore cart
+      syncCartWithFirestore();
     }
   }, [user]);
 
-  // Load cart from Firestore
-  const loadCartFromFirestore = async () => {
-    if (!user) {
-      setLoading(false);
-      return;
+  // Save to localStorage whenever cart changes
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(items));
+    
+    // Also save to Firestore if user is logged in
+    if (user && items.length > 0) {
+      saveCartToFirestore(items);
     }
+  }, [items, user]);
+
+  // Sync cart with Firestore when user logs in
+  const syncCartWithFirestore = async () => {
+    if (!user) return;
 
     setLoading(true);
     try {
       const cartDoc = await getDoc(doc(db, 'carts', user.uid));
+      const localCart = items;
+      
       if (cartDoc.exists()) {
-        const cartData = cartDoc.data();
-        const cartItems = cartData.items || [];
-        
-        // Refresh product data to get latest box dimensions
-        await refreshProductData(cartItems);
-      } else {
-        setItems([]);
+        const firestoreCart = cartDoc.data().items || [];
+        // Merge local cart with Firestore cart
+        const mergedCart = mergeCarts(localCart, firestoreCart);
+        setItems(mergedCart);
+      } else if (localCart.length > 0) {
+        // Save local cart to Firestore
+        await saveCartToFirestore(localCart);
       }
     } catch (error) {
-      console.error('Failed to load cart:', error);
-      setItems([]);
+      console.error('Failed to sync cart:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  // Refresh product data from Firestore to get latest box dimensions
-  const refreshProductData = async (cartItems: CartItem[]) => {
-    if (cartItems.length === 0) {
-      setItems([]);
-      return;
-    }
+  // Merge two carts (combine quantities for same products)
+  const mergeCarts = (cart1: CartItem[], cart2: CartItem[]): CartItem[] => {
+    const merged = [...cart1];
     
-    try {
-      const productsSnap = await getDocs(collection(db, 'products'));
-      const productsMap = new Map();
-      productsSnap.docs.forEach(doc => {
-        productsMap.set(doc.id, { id: doc.id, ...doc.data() });
-      });
-
-      // Update cart items with fresh product data
-      const updatedItems = cartItems.map(item => {
-        const freshProduct = productsMap.get(item.product.id);
-        if (freshProduct) {
-          return {
-            ...item,
-            product: {
-              ...item.product,
-              ...freshProduct,
-            }
-          };
-        }
-        return item;
-      }).filter(item => item.product); // Remove items where product no longer exists
-
-      setItems(updatedItems);
-    } catch (error) {
-      console.error('Failed to refresh product data:', error);
-      setItems(cartItems);
-    }
+    cart2.forEach(item2 => {
+      const existing = merged.find(
+        item1 => item1.product.id === item2.product.id && item1.selectedColor === item2.selectedColor
+      );
+      
+      if (existing) {
+        existing.quantity += item2.quantity;
+      } else {
+        merged.push(item2);
+      }
+    });
+    
+    return merged;
   };
 
   // Save cart to Firestore
@@ -112,26 +113,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const addToCart = (product: Product, quantity: number = 1, color?: string) => {
-    const updatedItems = (() => {
-      const existing = items.find(item => item.product.id === product.id && item.selectedColor === color);
+    setItems(prev => {
+      const existing = prev.find(item => item.product.id === product.id && item.selectedColor === color);
       if (existing) {
-        return items.map(item =>
+        return prev.map(item =>
           item.product.id === product.id && item.selectedColor === color
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
-      return [...items, { product, quantity, selectedColor: color }];
-    })();
-    
-    setItems(updatedItems);
-    saveCartToFirestore(updatedItems);
+      return [...prev, { product, quantity, selectedColor: color }];
+    });
   };
 
   const removeFromCart = (productId: string) => {
-    const updatedItems = items.filter(item => item.product.id !== productId);
-    setItems(updatedItems);
-    saveCartToFirestore(updatedItems);
+    setItems(prev => prev.filter(item => item.product.id !== productId));
   };
 
   const updateQuantity = (productId: string, quantity: number) => {
@@ -139,21 +135,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
       removeFromCart(productId);
       return;
     }
-    const updatedItems = items.map(item =>
-      item.product.id === productId ? { ...item, quantity } : item
+    setItems(prev =>
+      prev.map(item =>
+        item.product.id === productId ? { ...item, quantity } : item
+      )
     );
-    setItems(updatedItems);
-    saveCartToFirestore(updatedItems);
   };
 
-  const clearCart = async () => {
+  const clearCart = () => {
     setItems([]);
+    localStorage.removeItem('cart');
     if (user) {
-      try {
-        await deleteDoc(doc(db, 'carts', user.uid));
-      } catch (error) {
-        console.error('Failed to clear cart:', error);
-      }
+      deleteDoc(doc(db, 'carts', user.uid)).catch(err => 
+        console.error('Failed to clear Firestore cart:', err)
+      );
     }
   };
 
