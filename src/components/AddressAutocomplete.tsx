@@ -46,10 +46,7 @@ export default function AddressAutocomplete({
     autocompleteRef.current.addListener('place_changed', () => {
       const place = autocompleteRef.current?.getPlace();
       
-      console.log('Place selected:', place);
-      
       if (!place || !place.address_components) {
-        console.log('No place or address components');
         return;
       }
 
@@ -61,7 +58,6 @@ export default function AddressAutocomplete({
       // Extract address components
       place.address_components.forEach((component) => {
         const types = component.types;
-        console.log('Component:', component.long_name, 'Types:', types);
 
         if (types.includes('route')) {
           street = component.long_name;
@@ -80,10 +76,7 @@ export default function AddressAutocomplete({
       // Combine street and number
       const fullStreet = streetNumber ? `${street} ${streetNumber}` : street;
 
-      console.log('Extracted - Street:', fullStreet, 'City:', city, 'Postal:', postalCode);
-
-      // Update parent component
-      onChange(fullStreet);
+      // Update parent component with all data at once
       onPlaceSelected({
         street: fullStreet,
         city,
