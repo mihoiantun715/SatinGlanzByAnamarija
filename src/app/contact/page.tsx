@@ -127,26 +127,6 @@ export default function ContactPage() {
                   </a>
                 </div>
               </div>
-
-              <div className="flex items-start gap-4 p-6 bg-gray-50 rounded-2xl">
-                <div className="w-12 h-12 bg-rose-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <Phone className="w-6 h-6 text-rose-500" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">{t.contact.phone}</h3>
-                  <p className="text-gray-600">+385 XX XXX XXXX</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4 p-6 bg-gray-50 rounded-2xl">
-                <div className="w-12 h-12 bg-rose-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <MapPin className="w-6 h-6 text-rose-500" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">{t.contact.address}</h3>
-                  <p className="text-gray-600">Croatia</p>
-                </div>
-              </div>
             </div>
 
             {/* Social */}
