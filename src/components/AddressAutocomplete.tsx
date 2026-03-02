@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useLoadScript } from '@react-google-maps/api';
 
 const libraries: ("places")[] = ["places"];
@@ -26,6 +26,7 @@ export default function AddressAutocomplete({
 }: AddressAutocompleteProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+  const isSelectingRef = useRef(false);
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: 'AIzaSyCx3mOepL7-LfPo9Pxyq-ZN4mnXoaNIexQ',
@@ -35,23 +36,49 @@ export default function AddressAutocomplete({
   useEffect(() => {
     if (!isLoaded || !inputRef.current) return;
 
+    const input = inputRef.current;
+
     // Initialize autocomplete
-    autocompleteRef.current = new google.maps.places.Autocomplete(inputRef.current, {
+    autocompleteRef.current = new google.maps.places.Autocomplete(input, {
       componentRestrictions: { country: 'de' }, // Restrict to Germany
       fields: ['address_components', 'formatted_address'],
       types: ['address'],
     });
 
+    // Prevent Enter key from submitting form
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+      }
+    };
+    input.addEventListener('keydown', handleKeyDown);
+
+    // Store the last extracted street value
+    let lastStreetValue = '';
+
+    // Intercept input changes to prevent formatted address from showing
+    const handleInput = (e: Event) => {
+      if (isSelectingRef.current && lastStreetValue) {
+        // Replace formatted address with our extracted street
+        setTimeout(() => {
+          if (inputRef.current) {
+            inputRef.current.value = lastStreetValue;
+          }
+        }, 0);
+      }
+    };
+    input.addEventListener('input', handleInput);
+
     // Handle place selection
-    autocompleteRef.current.addListener('place_changed', () => {
+    const placeChangedListener = autocompleteRef.current.addListener('place_changed', () => {
       const place = autocompleteRef.current?.getPlace();
       
-      console.log('Place selected:', place);
-      
       if (!place || !place.address_components) {
-        console.log('No place or address components');
+        isSelectingRef.current = false;
         return;
       }
+
+      isSelectingRef.current = true;
 
       let street = '';
       let streetNumber = '';
@@ -61,7 +88,6 @@ export default function AddressAutocomplete({
       // Extract address components
       place.address_components.forEach((component) => {
         const types = component.types;
-        console.log('Component:', component.long_name, 'Types:', types);
 
         if (types.includes('route')) {
           street = component.long_name;
@@ -80,23 +106,37 @@ export default function AddressAutocomplete({
       // Combine street and number
       const fullStreet = streetNumber ? `${street} ${streetNumber}` : street;
 
-      console.log('Extracted - Street:', fullStreet, 'City:', city, 'Postal:', postalCode);
+      // Store the street value for the input interceptor
+      lastStreetValue = fullStreet;
 
-      // Update parent component
-      onChange(fullStreet);
+      // Update parent component with all data at once FIRST
+      // This will trigger React to update all three fields
       onPlaceSelected({
         street: fullStreet,
         city,
         postalCode,
       });
+
+      // Then immediately update the input value to show only street
+      if (inputRef.current) {
+        inputRef.current.value = fullStreet;
+      }
+
+      // Reset flag after a delay
+      setTimeout(() => {
+        isSelectingRef.current = false;
+        lastStreetValue = '';
+      }, 200);
     });
 
     return () => {
+      input.removeEventListener('keydown', handleKeyDown);
+      input.removeEventListener('input', handleInput);
       if (autocompleteRef.current) {
         google.maps.event.clearInstanceListeners(autocompleteRef.current);
       }
     };
-  }, [isLoaded, onChange, onPlaceSelected]);
+  }, [isLoaded, onPlaceSelected]);
 
   if (loadError) {
     return (
@@ -123,12 +163,26 @@ export default function AddressAutocomplete({
     );
   }
 
+  // Sync value to input when it changes from parent
+  useEffect(() => {
+    if (inputRef.current && !isSelectingRef.current) {
+      inputRef.current.value = value;
+    }
+  }, [value]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Don't update if we're in the middle of selecting from autocomplete
+    if (!isSelectingRef.current) {
+      onChange(e.target.value);
+    }
+  };
+
   return (
     <input
       ref={inputRef}
       type="text"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
+      defaultValue={value}
+      onChange={handleChange}
       placeholder={placeholder}
       className={className}
     />
