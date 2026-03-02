@@ -136,7 +136,7 @@ export default function AddressAutocomplete({
         google.maps.event.clearInstanceListeners(autocompleteRef.current);
       }
     };
-  }, [isLoaded, onPlaceSelected]);
+  }, [isLoaded]);
 
   if (loadError) {
     return (
