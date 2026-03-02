@@ -113,6 +113,8 @@ export default function AdminPage() {
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [uploadingImages, setUploadingImages] = useState(false);
   const imageUploadRef = useRef<HTMLInputElement>(null);
+  const [modalNotification, setModalNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [sendingTracking, setSendingTracking] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && user && isAdmin) {
@@ -185,10 +187,10 @@ export default function AdminPage() {
 
       await updateDoc(doc(db, 'orders', order.id), { status: 'processing' });
       setAdminOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'processing' } : o));
-      alert('Order confirmed! Confirmation email sent to customer.');
+      setModalNotification({ message: 'Order confirmed! Confirmation email sent to customer.', type: 'success' });
     } catch (err) {
       console.error('Failed to confirm order:', err);
-      alert('Failed to send confirmation email.');
+      setModalNotification({ message: 'Failed to send confirmation email.', type: 'error' });
     } finally {
       setConfirmingOrder(null);
     }
@@ -210,7 +212,7 @@ export default function AdminPage() {
       setUploadedImages(prev => [...prev, ...urls]);
     } catch (err) {
       console.error('Failed to upload images:', err);
-      alert('Failed to upload images.');
+      setModalNotification({ message: 'Failed to upload images.', type: 'error' });
     } finally {
       setUploadingImages(false);
     }
@@ -218,7 +220,7 @@ export default function AdminPage() {
 
   const completeOrder = async () => {
     if (!completingOrder || uploadedImages.length === 0) {
-      alert('Please upload at least one image before completing the order.');
+      setModalNotification({ message: 'Please upload at least one image before completing the order.', type: 'error' });
       return;
     }
 
@@ -246,10 +248,40 @@ export default function AdminPage() {
       
       setCompletingOrder(null);
       setUploadedImages([]);
-      alert('Order completed! Email with images sent to customer.');
+      setModalNotification({ message: 'Order completed! Email with images sent to customer.', type: 'success' });
     } catch (err) {
       console.error('Failed to complete order:', err);
-      alert('Failed to send completion email.');
+      setModalNotification({ message: 'Failed to send completion email.', type: 'error' });
+    }
+  };
+
+  const sendTrackingEmail = async (order: AdminOrder) => {
+    if (!order.trackingNumber) {
+      setModalNotification({ message: 'Please enter a tracking number first.', type: 'error' });
+      return;
+    }
+
+    setSendingTracking(order.id);
+    try {
+      const { getFunctions, httpsCallable } = await import('firebase/functions');
+      const { app } = await import('@/lib/firebase');
+      const functions = getFunctions(app, 'us-central1');
+      const sendTracking = httpsCallable(functions, 'sendTrackingEmail');
+      
+      await sendTracking({
+        orderId: order.id,
+        trackingNumber: order.trackingNumber,
+        shippingCarrier: order.shippingCarrier,
+        customerEmail: order.userEmail,
+        customerName: `${order.shippingAddress.firstName} ${order.shippingAddress.lastName}`
+      });
+
+      setModalNotification({ message: 'Tracking email sent to customer!', type: 'success' });
+    } catch (err) {
+      console.error('Failed to send tracking email:', err);
+      setModalNotification({ message: 'Failed to send tracking email.', type: 'error' });
+    } finally {
+      setSendingTracking(null);
     }
   };
 
@@ -867,6 +899,18 @@ export default function AdminPage() {
                         />
                       </div>
 
+                      {/* Send Tracking Email Button */}
+                      {order.trackingNumber && (
+                        <button
+                          onClick={() => sendTrackingEmail(order)}
+                          disabled={sendingTracking === order.id}
+                          className="flex items-center gap-1 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white text-xs font-semibold rounded-lg transition-colors"
+                        >
+                          <Truck className="w-3.5 h-3.5" />
+                          {sendingTracking === order.id ? 'Sending...' : 'Send Tracking Email'}
+                        </button>
+                      )}
+
                       {/* Track link */}
                       {order.trackingNumber && getTrackingUrl(order.shippingCarrier, order.trackingNumber) && (
                         <a
@@ -1287,6 +1331,33 @@ export default function AdminPage() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Notification */}
+      {modalNotification && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+            <div className={`flex items-start gap-3 mb-4 ${modalNotification.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+              {modalNotification.type === 'success' ? (
+                <ShieldCheck className="w-6 h-6 flex-shrink-0" />
+              ) : (
+                <X className="w-6 h-6 flex-shrink-0" />
+              )}
+              <div>
+                <h3 className="font-bold text-lg text-gray-900">
+                  {modalNotification.type === 'success' ? 'Success' : 'Error'}
+                </h3>
+                <p className="text-gray-700 mt-1">{modalNotification.message}</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setModalNotification(null)}
+              className="w-full bg-gray-900 hover:bg-gray-800 text-white py-3 rounded-xl font-semibold transition-all"
+            >
+              OK
+            </button>
           </div>
         </div>
       )}
