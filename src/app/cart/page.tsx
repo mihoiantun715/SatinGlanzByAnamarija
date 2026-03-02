@@ -32,7 +32,15 @@ export default function CartPage() {
     );
   }
 
-  const shippingCost = useMemo(() => calculateCartShipping(items, selectedCarrier), [items, selectedCarrier]);
+  const shippingCost = useMemo(() => {
+    try {
+      return calculateCartShipping(items, selectedCarrier);
+    } catch (error) {
+      console.error('Shipping calculation error:', error);
+      // Fallback to default rate if calculation fails
+      return selectedCarrier === 'dhl' ? 5.19 : 5.59;
+    }
+  }, [items, selectedCarrier]);
   const total = totalPrice + shippingCost;
 
   return (

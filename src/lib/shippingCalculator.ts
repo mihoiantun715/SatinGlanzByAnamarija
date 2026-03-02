@@ -110,6 +110,11 @@ export function calculateCartShipping(
   }>,
   carrier: 'dhl' | 'gls'
 ): number {
+  // Safety check - if no items, return 0
+  if (!items || items.length === 0) {
+    return 0;
+  }
+
   let totalShipping = 0;
   let largestBoxLength = 0;
   let largestBoxWidth = 0;
@@ -117,8 +122,12 @@ export function calculateCartShipping(
   let totalBouquetRoses = 0;
   let hasBouquets = false;
   let hasProducts = false;
+  let hasProductsWithoutBoxSize = false;
 
   for (const item of items) {
+    // Safety check - ensure product exists
+    if (!item || !item.product) continue;
+    
     const product = item.product;
     
     // Check if it's a bouquet (has roseCount or category is Bouquets)
@@ -136,6 +145,9 @@ export function calculateCartShipping(
         if (product.boxWidth > largestBoxWidth) largestBoxWidth = product.boxWidth;
         if (product.boxHeight > largestBoxHeight) largestBoxHeight = product.boxHeight;
       }
+    } else {
+      // Product without box dimensions
+      hasProductsWithoutBoxSize = true;
     }
   }
 
@@ -150,6 +162,12 @@ export function calculateCartShipping(
       { length: largestBoxLength, width: largestBoxWidth, height: largestBoxHeight },
       carrier
     );
+  }
+
+  // Fallback: if there are products without box sizes, use default rate
+  if (hasProductsWithoutBoxSize && !hasProducts && !hasBouquets) {
+    // Use default medium rate as fallback
+    totalShipping = carrier === 'dhl' ? 5.19 : 5.59;
   }
 
   return totalShipping;
