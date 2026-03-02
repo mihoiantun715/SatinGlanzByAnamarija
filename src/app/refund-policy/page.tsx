@@ -56,40 +56,50 @@ export default function RefundPolicyPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">Ausschluss des Widerrufsrechts</h2>
-              <p>
-                <strong>Das Widerrufsrecht besteht NICHT bei folgenden Verträgen:</strong>
-              </p>
-              <p className="mt-4">
-                Gemäß § 312g Abs. 2 Nr. 1 BGB besteht das Widerrufsrecht nicht bei Verträgen zur Lieferung von Waren, die <strong>nach Kundenspezifikation angefertigt werden oder eindeutig auf die persönlichen Bedürfnisse zugeschnitten sind</strong>.
-              </p>
+              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">Widerrufsrecht für verschiedene Produkttypen</h2>
               
-              <div className="mt-6 bg-rose-50 border-2 border-rose-300 rounded-lg p-6">
-                <h3 className="text-lg font-bold text-rose-900 mb-3">⚠️ WICHTIG: Handgefertigte Produkte</h3>
-                <p className="text-rose-900 font-semibold mb-3">
-                  Alle unsere Produkte sind handgefertigte Einzelstücke, die nach Ihrer Bestellung speziell für Sie angefertigt werden.
+              <div className="mt-6 bg-green-50 border-2 border-green-300 rounded-lg p-6">
+                <h3 className="text-lg font-bold text-green-900 mb-3">✅ Fertige Produkte aus unserem Shop</h3>
+                <p className="text-green-900 font-semibold mb-3">
+                  Für alle fertigen, vorrätigen Produkte aus unserem Standard-Sortiment gilt das <strong>14-tägige Widerrufsrecht</strong>.
                 </p>
-                <p className="text-rose-800">
-                  <strong>Daher gilt:</strong> Das gesetzliche Widerrufsrecht ist für diese Produkte ausgeschlossen, da sie nach Kundenspezifikation individuell hergestellt werden (§ 312g Abs. 2 Nr. 1 BGB).
+                <p className="text-green-800">
+                  Sie können diese Produkte innerhalb von 14 Tagen ohne Angabe von Gründen zurückgeben. Die Widerrufsfrist beginnt ab dem Tag, an dem Sie die Ware erhalten haben.
                 </p>
-                <p className="text-rose-800 mt-3">
-                  <strong>Das bedeutet:</strong> Sie können handgefertigte Produkte nicht ohne Grund zurückgeben oder umtauschen.
+                <p className="text-green-800 mt-3">
+                  <strong>Hinweis:</strong> Die Kosten der Rücksendung trägt der Kunde. Bitte senden Sie die Ware in einwandfreiem Zustand zurück.
                 </p>
               </div>
 
-              <div className="mt-6 bg-green-50 border-2 border-green-300 rounded-lg p-6">
-                <h3 className="text-lg font-bold text-green-900 mb-3">✅ Ihre Rechte bei Mängeln</h3>
-                <p className="text-green-800">
-                  <strong>Gewährleistungsrechte bleiben unberührt!</strong> Sie haben weiterhin Anspruch auf:
+              <div className="mt-6 bg-rose-50 border-2 border-rose-300 rounded-lg p-6">
+                <h3 className="text-lg font-bold text-rose-900 mb-3">⚠️ Individuell konfigurierte Produkte (Build Your Bouquet)</h3>
+                <p className="text-rose-900 font-semibold mb-3">
+                  Für individuell zusammengestellte Produkte über unseren "Build Your Bouquet" Konfigurator besteht <strong>KEIN Widerrufsrecht</strong>.
                 </p>
-                <ul className="list-disc pl-6 mt-3 space-y-2 text-green-800">
+                <p className="text-rose-800">
+                  Gemäß § 312g Abs. 2 Nr. 1 BGB besteht das Widerrufsrecht nicht bei Verträgen zur Lieferung von Waren, die <strong>nach Kundenspezifikation angefertigt werden oder eindeutig auf die persönlichen Bedürfnisse zugeschnitten sind</strong>.
+                </p>
+                <p className="text-rose-800 mt-3">
+                  <strong>Das bedeutet:</strong> Wenn Sie ein Produkt individuell konfigurieren (Farbe, Anzahl der Rosen, Dekorationen, Grußkarten etc.), können Sie dieses nicht ohne Grund zurückgeben.
+                </p>
+                <p className="text-rose-800 mt-3 text-sm">
+                  Dies betrifft nur individuell zusammengestellte Bestellungen über den Bouquet-Builder, nicht unsere fertigen Standard-Produkte.
+                </p>
+              </div>
+
+              <div className="mt-6 bg-blue-50 border-2 border-blue-300 rounded-lg p-6">
+                <h3 className="text-lg font-bold text-blue-900 mb-3">✅ Gewährleistungsrechte gelten IMMER</h3>
+                <p className="text-blue-800">
+                  <strong>Unabhängig vom Produkttyp:</strong> Ihre gesetzlichen Gewährleistungsrechte bleiben unberührt! Sie haben bei ALLEN Produkten Anspruch auf:
+                </p>
+                <ul className="list-disc pl-6 mt-3 space-y-2 text-blue-800">
                   <li><strong>Rückgabe bei defekten Produkten</strong> (Herstellungsfehler, Materialfehler)</li>
                   <li><strong>Umtausch bei beschädigter Lieferung</strong> (Transportschäden)</li>
                   <li><strong>Ersatz bei falscher Lieferung</strong> (Sie haben etwas anderes erhalten als bestellt)</li>
                   <li><strong>Gesetzliche Gewährleistung</strong> nach § 437 BGB (2 Jahre)</li>
                 </ul>
-                <p className="text-green-800 mt-4">
-                  Bei berechtigten Reklamationen übernehmen wir selbstverständlich die Kosten für Rücksendung und Ersatz.
+                <p className="text-blue-800 mt-4">
+                  Bei berechtigten Reklamationen übernehmen wir die Kosten für Rücksendung und Ersatz.
                 </p>
               </div>
             </section>

@@ -366,33 +366,41 @@ function CheckoutForm() {
               </div>
 
               {/* Important Notices */}
-              <div className="bg-rose-50 border-2 border-rose-300 rounded-2xl p-6">
+              <div className="bg-blue-50 border-2 border-blue-300 rounded-2xl p-6">
                 <div className="flex items-start gap-3 mb-4">
-                  <AlertCircle className="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />
+                  <Shield className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="font-bold text-rose-900 mb-2">⚠️ Kein Widerrufsrecht für handgefertigte Produkte</h3>
-                    <p className="text-sm text-rose-900 leading-relaxed mb-2">
-                      <strong>Alle Produkte werden nach Ihrer Bestellung individuell handgefertigt.</strong>
-                    </p>
-                    <p className="text-sm text-rose-800 leading-relaxed">
-                      Gemäß § 312g Abs. 2 Nr. 1 BGB besteht für nach Kundenspezifikation angefertigte Waren <strong>kein gesetzliches Widerrufsrecht</strong>. Das bedeutet: Sie können die Bestellung nicht ohne Grund widerrufen oder zurückgeben.
-                    </p>
+                    <h3 className="font-bold text-blue-900 mb-2">ℹ️ Widerrufsrecht & Rückgabe</h3>
+                    <div className="space-y-3 text-sm">
+                      <div className="bg-white rounded-lg p-3 border border-blue-200">
+                        <p className="text-green-900 font-semibold mb-1">✅ Fertige Shop-Produkte:</p>
+                        <p className="text-gray-700">
+                          14-tägiges Widerrufsrecht. Sie können diese Produkte ohne Angabe von Gründen zurückgeben.
+                        </p>
+                      </div>
+                      <div className="bg-white rounded-lg p-3 border border-rose-200">
+                        <p className="text-rose-900 font-semibold mb-1">⚠️ Build Your Bouquet (individuell konfiguriert):</p>
+                        <p className="text-gray-700">
+                          Kein Widerrufsrecht gemäß § 312g Abs. 2 Nr. 1 BGB. Individuell zusammengestellte Produkte können nicht ohne Grund zurückgegeben werden.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-start gap-3 pt-4 border-t border-rose-200">
+                <div className="flex items-start gap-3 pt-4 border-t border-blue-200">
                   <Shield className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="font-bold text-green-900 mb-2">✅ Gewährleistungsrechte bleiben bestehen</h3>
+                    <h3 className="font-bold text-green-900 mb-2">✅ Gewährleistung gilt immer</h3>
                     <p className="text-sm text-green-800 leading-relaxed">
-                      Bei <strong>defekten, beschädigten oder falschen Produkten</strong> haben Sie selbstverständlich Anspruch auf Umtausch oder Rückerstattung. Die gesetzliche Gewährleistung (§ 437 BGB) bleibt unberührt.
+                      Bei <strong>defekten, beschädigten oder falschen Produkten</strong> haben Sie bei ALLEN Produkten Anspruch auf Umtausch oder Rückerstattung (§ 437 BGB).
                     </p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3 pt-4 border-t border-amber-200">
-                  <Shield className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div className="flex items-start gap-3 pt-4 border-t border-blue-200">
+                  <Shield className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-xs text-amber-800 leading-relaxed">
-                      Mit der Bestellung bestätigen Sie, dass Sie die <Link href="/terms" className="underline hover:text-amber-900 font-semibold">AGB</Link> und <Link href="/refund-policy" className="underline hover:text-amber-900 font-semibold">Widerrufsbelehrung</Link> gelesen haben und akzeptieren.
+                    <p className="text-xs text-blue-800 leading-relaxed">
+                      Mit der Bestellung bestätigen Sie, dass Sie die <Link href="/terms" className="underline hover:text-blue-900 font-semibold">AGB</Link> und <Link href="/refund-policy" className="underline hover:text-blue-900 font-semibold">Widerrufsbelehrung</Link> gelesen haben und akzeptieren.
                     </p>
                   </div>
                 </div>

@@ -115,10 +115,6 @@ export default function ProductCard({ product }: ProductCardProps) {
               ★ Featured
             </div>
           )}
-          <div className="absolute top-3 right-3 bg-rose-600 text-white text-xs font-semibold px-2 py-1 rounded-md flex items-center gap-1 z-10 shadow-md">
-            <AlertCircle className="w-3 h-3" />
-            Handmade
-          </div>
           {!product.inStock && (
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-10">
               <span className="bg-white text-gray-900 font-semibold px-4 py-2 rounded-full text-sm">

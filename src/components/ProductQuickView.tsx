@@ -168,21 +168,11 @@ export default function ProductQuickView({ product, onClose }: Props) {
 
             {/* Description */}
             {description && (
-              <div className="mb-4 flex-1 overflow-y-auto">
+              <div className="mb-6 flex-1 overflow-y-auto">
                 <p className="text-sm font-medium text-gray-700 mb-1.5">{t.product.description}</p>
                 <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">{description}</p>
               </div>
             )}
-
-            {/* Handmade Disclaimer */}
-            <div className="mb-4 bg-amber-50 border border-amber-200 rounded-lg p-3">
-              <div className="flex items-start gap-2">
-                <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-                <div className="text-xs text-amber-900">
-                  <strong>Handgefertigt:</strong> Kein Widerrufsrecht (§312g BGB). Gewährleistung bei Mängeln bleibt bestehen.
-                </div>
-              </div>
-            </div>
 
             {/* Quantity + Add to Cart */}
             {product.inStock ? (
