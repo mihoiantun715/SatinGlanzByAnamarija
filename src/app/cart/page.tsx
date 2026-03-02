@@ -47,8 +47,12 @@ export default function CartPage() {
             <div className="space-y-4">
               {items.map((item) => (
                 <div key={item.product.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex gap-6">
-                  <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-xl overflow-hidden flex-shrink-0">
-                    <img src="/Placeholder.jpg" alt="Satin Rose" className="w-full h-full object-cover" />
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
+                    <img 
+                      src={item.product.images?.[0] || item.product.imageUrl || '/Placeholder.jpg'} 
+                      alt={item.product.name[locale]} 
+                      className="w-full h-full object-cover" 
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <Link href={`/shop/${item.product.slug}`} className="font-semibold text-gray-900 hover:text-rose-600 transition-colors line-clamp-1">
