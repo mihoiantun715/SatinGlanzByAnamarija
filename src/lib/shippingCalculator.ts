@@ -100,8 +100,7 @@ export function calculateBouquetShipping(roseCount: number, carrier: 'dhl' | 'gl
 }
 
 /**
- * Calculate total shipping cost for cart items
- * Simplified to use basic rates to prevent crashes
+ * Calculate total shipping cost for cart items based on box dimensions and bouquet rose count
  */
 export function calculateCartShipping(
   items: Array<{
@@ -116,9 +115,73 @@ export function calculateCartShipping(
     return 0;
   }
 
-  // Use simple default rates for now
-  // DHL: €5.19, GLS: €5.59
-  return carrier === 'dhl' ? 5.19 : 5.59;
+  try {
+    let totalShipping = 0;
+    let largestBoxLength = 0;
+    let largestBoxWidth = 0;
+    let largestBoxHeight = 0;
+    let totalBouquetRoses = 0;
+    let hasBouquets = false;
+    let hasProducts = false;
+    let hasProductsWithoutBoxSize = false;
+
+    for (const item of items) {
+      // Safety check - ensure product exists
+      if (!item || !item.product) continue;
+      
+      const product = item.product;
+      
+      // Check if it's a bouquet (has roseCount or category is Bouquets)
+      const isBouquet = item.roseCount || product.category === 'Bouquets';
+      
+      if (isBouquet) {
+        hasBouquets = true;
+        const roses = item.roseCount || 1;
+        totalBouquetRoses += roses * (item.quantity || 1);
+      } else if (product.boxLength && product.boxWidth && product.boxHeight) {
+        hasProducts = true;
+        // Track largest box dimensions for products
+        const qty = item.quantity || 1;
+        for (let i = 0; i < qty; i++) {
+          if (product.boxLength > largestBoxLength) largestBoxLength = product.boxLength;
+          if (product.boxWidth > largestBoxWidth) largestBoxWidth = product.boxWidth;
+          if (product.boxHeight > largestBoxHeight) largestBoxHeight = product.boxHeight;
+        }
+      } else {
+        // Product without box dimensions
+        hasProductsWithoutBoxSize = true;
+      }
+    }
+
+    // Calculate bouquet shipping
+    if (hasBouquets && totalBouquetRoses > 0) {
+      totalShipping += calculateBouquetShipping(totalBouquetRoses, carrier);
+    }
+
+    // Calculate product shipping based on box dimensions
+    if (hasProducts && largestBoxLength > 0) {
+      totalShipping += calculateProductShipping(
+        { length: largestBoxLength, width: largestBoxWidth, height: largestBoxHeight },
+        carrier
+      );
+    }
+
+    // Fallback: if there are products without box sizes, use default rate
+    if (hasProductsWithoutBoxSize && !hasProducts && !hasBouquets) {
+      totalShipping = carrier === 'dhl' ? 5.19 : 5.59;
+    }
+
+    // If no shipping calculated, use default
+    if (totalShipping === 0) {
+      totalShipping = carrier === 'dhl' ? 5.19 : 5.59;
+    }
+
+    return totalShipping;
+  } catch (error) {
+    console.error('Shipping calculation error:', error);
+    // Fallback to default rates on any error
+    return carrier === 'dhl' ? 5.19 : 5.59;
+  }
 }
 
 /**

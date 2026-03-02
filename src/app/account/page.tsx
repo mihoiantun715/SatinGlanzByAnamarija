@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
-import { User, Package, LogOut, ShoppingBag, ArrowRight, Truck, ExternalLink } from 'lucide-react';
+import { User, Package, LogOut, ShoppingBag, ArrowRight, Truck, ExternalLink, Plus } from 'lucide-react';
 
 interface OrderItem {
   name: string;
@@ -52,6 +52,9 @@ export default function AccountPage() {
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
+  const [claimOrderNumber, setClaimOrderNumber] = useState('');
+  const [claimingOrder, setClaimingOrder] = useState(false);
+  const [claimMessage, setClaimMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -84,6 +87,67 @@ export default function AccountPage() {
   const handleLogout = async () => {
     await logout();
     router.push('/');
+  };
+
+  const claimOrder = async () => {
+    if (!user || !claimOrderNumber.trim()) {
+      setClaimMessage({ type: 'error', text: 'Please enter an order number' });
+      return;
+    }
+
+    setClaimingOrder(true);
+    setClaimMessage(null);
+
+    try {
+      // Try to find the order by ID
+      const orderRef = doc(db, 'orders', claimOrderNumber.trim().toLowerCase());
+      const orderSnap = await getDoc(orderRef);
+
+      if (!orderSnap.exists()) {
+        setClaimMessage({ type: 'error', text: 'Order not found. Please check the order number.' });
+        setClaimingOrder(false);
+        return;
+      }
+
+      const orderData = orderSnap.data();
+
+      // Check if order already has a userId
+      if (orderData.userId && orderData.userId !== user.uid) {
+        setClaimMessage({ type: 'error', text: 'This order is already claimed by another account.' });
+        setClaimingOrder(false);
+        return;
+      }
+
+      if (orderData.userId === user.uid) {
+        setClaimMessage({ type: 'error', text: 'This order is already in your account.' });
+        setClaimingOrder(false);
+        return;
+      }
+
+      // Claim the order by adding userId
+      await updateDoc(orderRef, {
+        userId: user.uid,
+        claimedAt: new Date().toISOString(),
+      });
+
+      // Refresh orders list
+      const q = query(
+        collection(db, 'orders'),
+        where('userId', '==', user.uid)
+      );
+      const snap = await getDocs(q);
+      const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Order[];
+      data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      setOrders(data);
+
+      setClaimMessage({ type: 'success', text: 'Order successfully added to your account!' });
+      setClaimOrderNumber('');
+    } catch (error) {
+      console.error('Failed to claim order:', error);
+      setClaimMessage({ type: 'error', text: 'Failed to claim order. Please try again.' });
+    } finally {
+      setClaimingOrder(false);
+    }
   };
 
   const statusLabel = (status: string) => {
@@ -145,6 +209,45 @@ export default function AccountPage() {
               {t.auth.logout}
             </button>
           </div>
+        </div>
+
+        {/* Claim Guest Order */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <Plus className="w-5 h-5 text-gray-700" />
+            <h2 className="text-lg font-bold text-gray-900">Claim Guest Order</h2>
+          </div>
+          <p className="text-sm text-gray-600 mb-4">
+            If you placed an order as a guest, you can add it to your account by entering the order number.
+          </p>
+          
+          <div className="flex gap-3">
+            <input
+              type="text"
+              value={claimOrderNumber}
+              onChange={(e) => setClaimOrderNumber(e.target.value)}
+              placeholder="Enter order number (e.g., abc123def)"
+              className="flex-1 px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+              disabled={claimingOrder}
+            />
+            <button
+              onClick={claimOrder}
+              disabled={claimingOrder || !claimOrderNumber.trim()}
+              className="px-6 py-3 bg-rose-500 hover:bg-rose-600 disabled:bg-gray-300 text-white rounded-xl font-semibold text-sm transition-colors"
+            >
+              {claimingOrder ? 'Claiming...' : 'Claim Order'}
+            </button>
+          </div>
+
+          {claimMessage && (
+            <div className={`mt-4 p-4 rounded-xl ${
+              claimMessage.type === 'success' 
+                ? 'bg-green-50 border border-green-200 text-green-700' 
+                : 'bg-red-50 border border-red-200 text-red-700'
+            }`}>
+              {claimMessage.text}
+            </div>
+          )}
         </div>
 
         {/* Orders */}
