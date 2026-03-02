@@ -14,7 +14,7 @@ import { useCart } from '@/context/CartContext';
 import { Lock, MapPin, Check, ShoppingBag, ArrowRight, Truck, CreditCard, Shield, AlertCircle } from 'lucide-react';
 import { calculateCartShipping, getRecommendedCarrier } from '@/lib/shippingCalculator';
 
-const stripePromise = loadStripe('pk_live_51T6HdURxZ5rzXIkdgnJUjXTLOJFRQlqRUYspTy0bvMETyqH0RrMdZ04GfuB5twnRaMT9ut4zmfusrz2sXR2J21Cb00eOFacudF');
+const stripePromise = loadStripe('pk_live_51T6HdURxZ5rzXIkdeQqyjWs9mTaYOvCQNeGlgukCgvMNs4MrasTO6Tr9zoIp2Dfcxdcak60DiBQkkAE6iuWGg9fO00OCC5EmrL');
 
 const cardElementOptions = {
   style: {
