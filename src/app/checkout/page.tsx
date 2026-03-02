@@ -157,7 +157,7 @@ function CheckoutForm() {
       const result = await createPaymentIntent({
         amount: total,
         currency: 'eur',
-        customerEmail: user!.email,
+        customerEmail: user?.email || `guest-${docRef.id}@satinglanz.com`,
         orderId: docRef.id,
       });
 
@@ -169,7 +169,7 @@ function CheckoutForm() {
           card: cardElement,
           billing_details: {
             name: `${firstName} ${lastName}`,
-            email: user!.email || undefined,
+            email: user?.email || undefined,
             phone: phone,
             address: {
               line1: street,
