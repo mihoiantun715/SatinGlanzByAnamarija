@@ -1,18 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import { useCart } from '@/context/CartContext';
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Truck, Check, MapPin } from 'lucide-react';
-
-const DHL_PRICE = 5.19;
-const GLS_PRICE = 5.59;
+import { calculateCartShipping, getRecommendedCarrier } from '@/lib/shippingCalculator';
 
 export default function CartPage() {
   const { locale, t } = useLanguage();
   const { items, removeFromCart, updateQuantity, totalPrice } = useCart();
-  const [selectedCarrier, setSelectedCarrier] = useState<'dhl' | 'gls'>('dhl');
+  
+  const recommendedCarrier = useMemo(() => getRecommendedCarrier(items), [items]);
+  const [selectedCarrier, setSelectedCarrier] = useState<'dhl' | 'gls'>(recommendedCarrier);
 
   if (items.length === 0) {
     return (
@@ -32,7 +32,7 @@ export default function CartPage() {
     );
   }
 
-  const shippingCost = selectedCarrier === 'dhl' ? DHL_PRICE : GLS_PRICE;
+  const shippingCost = useMemo(() => calculateCartShipping(items, selectedCarrier), [items, selectedCarrier]);
   const total = totalPrice + shippingCost;
 
   return (
@@ -124,12 +124,15 @@ export default function CartPage() {
                         <span className="text-2xl font-black text-yellow-500">DHL</span>
                       </div>
                       <div className="text-xl font-bold text-gray-900 mb-2">
-                        {t.common.currency}{DHL_PRICE.toFixed(2)}
+                        {t.common.currency}{calculateCartShipping(items, 'dhl').toFixed(2)}
                       </div>
                       <div className="space-y-1">
                         <p className="text-xs text-gray-500">✓ {t.cart.liability}</p>
                         <p className="text-xs text-gray-500">✓ {t.cart.tracking}</p>
                       </div>
+                      {recommendedCarrier === 'dhl' && (
+                        <p className="text-xs text-yellow-600 font-semibold mt-1">⭐ Empfohlen</p>
+                      )}
                     </button>
 
                     {/* GLS */}
@@ -152,12 +155,15 @@ export default function CartPage() {
                         <span className="text-2xl font-black text-blue-600">GLS</span>
                       </div>
                       <div className="text-xl font-bold text-gray-900 mb-2">
-                        {t.common.currency}{GLS_PRICE.toFixed(2)}
+                        {t.common.currency}{calculateCartShipping(items, 'gls').toFixed(2)}
                       </div>
                       <div className="space-y-1">
                         <p className="text-xs text-gray-500">✓ {t.cart.liability}</p>
                         <p className="text-xs text-gray-500">✓ {t.cart.tracking}</p>
                       </div>
+                      {recommendedCarrier === 'gls' && (
+                        <p className="text-xs text-blue-600 font-semibold mt-1">⭐ Empfohlen</p>
+                      )}
                     </button>
                   </div>
             </div>
