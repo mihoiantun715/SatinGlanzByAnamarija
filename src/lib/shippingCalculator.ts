@@ -116,6 +116,19 @@ export function calculateCartShipping(
   }
 
   try {
+    // Calculate total cart value
+    let totalCartValue = 0;
+    for (const item of items) {
+      if (item && item.product) {
+        totalCartValue += item.product.price * (item.quantity || 1);
+      }
+    }
+
+    // Free shipping for carts under €1 (for testing)
+    if (totalCartValue < 1) {
+      return 0;
+    }
+
     let totalShipping = 0;
     let largestBoxLength = 0;
     let largestBoxWidth = 0;
