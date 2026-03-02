@@ -166,6 +166,7 @@ export const de: Translation = {
     hasAccount: 'Bereits ein Konto?',
     loginLink: 'Hier anmelden',
     registerLink: 'Hier registrieren',
+    forgotPassword: 'Passwort vergessen?',
     errorEmail: 'Bitte geben Sie eine gültige E-Mail-Adresse ein',
     errorPassword: 'Passwort muss mindestens 6 Zeichen lang sein',
     errorPasswordMatch: 'Passwörter stimmen nicht überein',

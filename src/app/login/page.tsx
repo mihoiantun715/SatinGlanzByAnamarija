@@ -106,6 +106,12 @@ export default function LoginPage() {
             </button>
           </form>
 
+          <div className="text-center mt-4">
+            <Link href="/forgot-password" className="text-sm text-gray-600 hover:text-rose-500 transition-colors">
+              {t.auth.forgotPassword || 'Forgot password?'}
+            </Link>
+          </div>
+
           <p className="text-center text-sm text-gray-500 mt-6">
             {t.auth.noAccount}{' '}
             <Link href="/register" className="text-rose-500 hover:text-rose-600 font-semibold">

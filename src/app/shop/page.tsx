@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 import { useProducts } from '@/context/ProductsContext';
 import { categories, categoryTranslations, colorTranslations } from '@/lib/products';
 import ProductCard from '@/components/ProductCard';
+import AnimatedSection from '@/components/AnimatedSection';
 import { SlidersHorizontal } from 'lucide-react';
 
 const allColors = ['Red', 'Pink', 'White', 'Burgundy', 'Peach', 'Lavender', 'Gold', 'Ivory', 'Coral', 'Mixed'];
@@ -45,16 +47,31 @@ export default function ShopPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-br from-rose-50 via-pink-50 to-amber-50 py-16">
+      <div className="bg-gradient-to-br from-rose-50 via-pink-50 to-amber-50 py-16 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">{t.shop.title}</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">{t.shop.subtitle}</p>
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4"
+          >
+            {t.shop.title}
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-lg text-gray-600 max-w-2xl mx-auto"
+          >
+            {t.shop.subtitle}
+          </motion.p>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Filters */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-10">
+        <AnimatedSection>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-10">
           <div className="flex items-center gap-2 mb-4">
             <SlidersHorizontal className="w-5 h-5 text-gray-500" />
             <span className="font-semibold text-gray-700">Filters</span>
@@ -108,7 +125,8 @@ export default function ShopPage() {
               </select>
             </div>
           </div>
-        </div>
+          </div>
+        </AnimatedSection>
 
         {/* Products Grid */}
         {loading ? (
@@ -125,15 +143,39 @@ export default function ShopPage() {
             ))}
           </div>
         ) : filtered.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {filtered.map(product => (
-              <ProductCard key={product.id} product={product} />
+          <motion.div 
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              visible: {
+                transition: {
+                  staggerChildren: 0.1
+                }
+              }
+            }}
+          >
+            {filtered.map((product, index) => (
+              <motion.div
+                key={product.id}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0 }
+                }}
+                transition={{ duration: 0.5 }}
+              >
+                <ProductCard product={product} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         ) : (
-          <div className="text-center py-20">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-20"
+          >
             <p className="text-lg text-gray-500">{t.shop.noProducts}</p>
-          </div>
+          </motion.div>
         )}
       </div>
     </div>

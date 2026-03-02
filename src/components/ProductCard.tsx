@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState, useRef, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 import { useCart } from '@/context/CartContext';
 import { Product } from '@/lib/types';
-import { ShoppingBag, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ShoppingBag, ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react';
 import ProductQuickView from './ProductQuickView';
 
 interface ProductCardProps {
@@ -60,8 +61,10 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <>
-      <div
-        className="group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+      <motion.div
+        whileHover={{ y: -8, scale: 1.02 }}
+        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+        className="group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl cursor-pointer"
         onClick={() => setShowQuickView(true)}
       >
         <div
@@ -70,7 +73,13 @@ export default function ProductCard({ product }: ProductCardProps) {
           onTouchEnd={hasMultiple ? handleTouchEnd : undefined}
         >
           <div className="absolute inset-0 flex items-center justify-center">
-            <img src={allImages[currentImg]} alt="Satin Rose" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            <motion.img 
+              src={allImages[currentImg]} 
+              alt="Satin Rose" 
+              className="w-full h-full object-cover"
+              whileHover={{ scale: 1.1 }}
+              transition={{ duration: 0.5 }}
+            />
           </div>
           {/* Arrows */}
           {hasMultiple && (
@@ -106,6 +115,10 @@ export default function ProductCard({ product }: ProductCardProps) {
               ★ Featured
             </div>
           )}
+          <div className="absolute top-3 right-3 bg-amber-500 text-white text-xs font-semibold px-2 py-1 rounded-md flex items-center gap-1 z-10">
+            <AlertCircle className="w-3 h-3" />
+            No Refunds
+          </div>
           {!product.inStock && (
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-10">
               <span className="bg-white text-gray-900 font-semibold px-4 py-2 rounded-full text-sm">
@@ -138,7 +151,9 @@ export default function ProductCard({ product }: ProductCardProps) {
               {t.common.currency}{product.price.toFixed(2)}
             </span>
             {product.inStock && (
-              <button
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={(e) => {
                   e.stopPropagation();
                   addToCart(product, 1, product.colors[0]);
@@ -147,11 +162,11 @@ export default function ProductCard({ product }: ProductCardProps) {
               >
                 <ShoppingBag className="w-4 h-4" />
                 <span className="hidden sm:inline">{t.shop.addToCart}</span>
-              </button>
+              </motion.button>
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {showQuickView && (
         <ProductQuickView product={product} onClose={() => setShowQuickView(false)} />

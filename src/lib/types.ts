@@ -187,6 +187,7 @@ export interface Translation {
     hasAccount: string;
     loginLink: string;
     registerLink: string;
+    forgotPassword: string;
     errorEmail: string;
     errorPassword: string;
     errorPasswordMatch: string;

@@ -26,6 +26,24 @@ const sanitize = (str: string): string => {
     .replace(/'/g, '&#x27;');
 };
 
+// Generate tracking URL based on carrier
+const getTrackingUrl = (carrier: string, trackingNumber: string): string => {
+  switch (carrier.toLowerCase()) {
+    case 'dhl':
+      return `https://www.dhl.de/en/privatkunden/pakete-empfangen/verfolgen.html?piececode=${trackingNumber}`;
+    case 'gls':
+      return `https://gls-group.com/DE/en/parcel-tracking?match=${trackingNumber}`;
+    case 'ups':
+      return `https://www.ups.com/track?tracknum=${trackingNumber}`;
+    case 'fedex':
+      return `https://www.fedex.com/fedextrack/?trknbr=${trackingNumber}`;
+    case 'usps':
+      return `https://tools.usps.com/go/TrackConfirmAction?tLabels=${trackingNumber}`;
+    default:
+      return '';
+  }
+};
+
 // Create Stripe Payment Intent
 export const createPaymentIntent = functions.https.onCall(async (data: any, context) => {
   // Auth check: only authenticated users can create payment intents
@@ -276,6 +294,324 @@ export const sendOrderEmail = functions.https.onCall(async (data: any, context) 
   } catch (error) {
     console.error('Email error:', error);
     throw new functions.https.HttpsError('internal', 'Failed to send order email');
+  }
+});
+
+// Send welcome email on new user registration
+export const sendWelcomeEmail = functions.https.onCall(async (data: any, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'You must be logged in.');
+  }
+
+  try {
+    const transporter = createTransporter();
+    const { userEmail, userName } = data;
+
+    if (!userEmail) {
+      throw new functions.https.HttpsError('invalid-argument', 'Missing user email.');
+    }
+
+    const displayName = userName || userEmail.split('@')[0];
+
+    const htmlContent = `
+      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #f43f5e, #ec4899); color: white; padding: 40px 30px; text-align: center; border-radius: 16px 16px 0 0;">
+          <h1 style="margin: 0; font-size: 28px; font-weight: 700;">🌹 Welcome to SatinGlanz!</h1>
+          <p style="margin: 12px 0 0 0; font-size: 16px; opacity: 0.95;">Handcrafted Satin Roses by Anamarija</p>
+        </div>
+        
+        <div style="background: #ffffff; padding: 35px; border-radius: 0 0 16px 16px; border: 1px solid #f3e8f0;">
+          <p style="color: #374151; font-size: 17px; line-height: 1.7;">
+            Dear <strong>${sanitize(displayName)}</strong>,
+          </p>
+          <p style="color: #6b7280; line-height: 1.7; font-size: 15px;">
+            Thank you for joining our community! We're thrilled to have you here. Each satin rose we create is handcrafted with love and attention to detail, making every piece unique and special.
+          </p>
+          
+          <div style="background: #fdf2f8; padding: 20px; border-radius: 12px; margin: 25px 0;">
+            <h3 style="color: #9d174d; margin: 0 0 12px 0; font-size: 16px;">✨ What makes us special:</h3>
+            <ul style="color: #374151; line-height: 1.8; padding-left: 20px; margin: 0;">
+              <li>100% handcrafted satin roses</li>
+              <li>Perfect for weddings, events, and gifts</li>
+              <li>Custom bouquets available</li>
+              <li>Fast and reliable shipping</li>
+            </ul>
+          </div>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="https://satinglanzbyanamarija.com/shop" style="background: #f43f5e; color: white; padding: 16px 40px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 600; font-size: 15px; box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);">
+              Start Shopping 🛍️
+            </a>
+          </div>
+
+          <div style="background: #f0fdf4; border: 1px solid #86efac; padding: 18px; border-radius: 10px; margin: 25px 0;">
+            <p style="margin: 0; color: #166534; font-size: 14px;">
+              <strong>🎁 Special Offer:</strong> Use code <strong>WELCOME10</strong> for 10% off your first order!
+            </p>
+          </div>
+
+          <div style="border-top: 1px solid #f3e8f0; padding-top: 25px; margin-top: 30px; text-align: center;">
+            <p style="color: #6b7280; font-size: 14px; margin: 8px 0;">Need help? We're here for you!</p>
+            <p style="color: #9ca3af; font-size: 13px; margin: 5px 0;">
+              📧 <a href="mailto:satinglanzbyanamarija@gmail.com" style="color: #f43f5e; text-decoration: none;">satinglanzbyanamarija@gmail.com</a><br>
+              🌐 <a href="https://satinglanzbyanamarija.com/" style="color: #f43f5e; text-decoration: none;">satinglanzbyanamarija.com</a>
+            </p>
+            <p style="color: #9ca3af; font-size: 12px; margin: 15px 0 0 0;">Made with ❤️ by Anamarija</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    await transporter.sendMail({
+      from: GMAIL_FROM,
+      to: userEmail,
+      subject: '🌹 Welcome to SatinGlanz by Anamarija!',
+      html: htmlContent
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Welcome email error:', error);
+    throw new functions.https.HttpsError('internal', 'Failed to send welcome email');
+  }
+});
+
+// Send tracking number notification email to customer
+export const sendTrackingEmail = functions.https.onCall(async (data: any, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'You must be logged in.');
+  }
+
+  try {
+    const transporter = createTransporter();
+    const { orderId, trackingNumber, shippingCarrier, customerEmail, customerName } = data;
+
+    if (!orderId || !trackingNumber || !shippingCarrier || !customerEmail) {
+      throw new functions.https.HttpsError('invalid-argument', 'Missing required fields.');
+    }
+
+    const orderNumber = sanitize(orderId.slice(0, 8).toUpperCase());
+    const trackingUrl = getTrackingUrl(shippingCarrier, trackingNumber);
+    const displayName = customerName || customerEmail.split('@')[0];
+
+    const htmlContent = `
+      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #8b5cf6, #a855f7); color: white; padding: 35px 30px; text-align: center; border-radius: 16px 16px 0 0;">
+          <h1 style="margin: 0; font-size: 26px; font-weight: 700;">📦 Your Order Has Shipped!</h1>
+          <p style="margin: 10px 0 0 0; font-size: 15px; opacity: 0.9;">SatinGlanz by Anamarija</p>
+        </div>
+        
+        <div style="background: #ffffff; padding: 30px; border-radius: 0 0 16px 16px; border: 1px solid #f3e8f0;">
+          <p style="color: #374151; font-size: 16px; line-height: 1.6;">
+            Dear <strong>${sanitize(displayName)}</strong>,
+          </p>
+          <p style="color: #6b7280; line-height: 1.6;">
+            Great news! Your order has been shipped and is on its way to you. Your handcrafted satin roses were carefully packaged with love.
+          </p>
+          
+          <div style="background: #fdf2f8; padding: 16px 20px; border-radius: 12px; margin: 20px 0; text-align: center;">
+            <p style="margin: 0; color: #9d174d; font-size: 13px;">Order Number</p>
+            <p style="margin: 5px 0 0 0; color: #1f2937; font-size: 22px; font-weight: 700; letter-spacing: 2px;">#${orderNumber}</p>
+          </div>
+
+          <div style="background: #f0f9ff; border: 2px solid #3b82f6; padding: 20px; border-radius: 12px; margin: 25px 0;">
+            <div style="text-align: center; margin-bottom: 15px;">
+              <p style="margin: 0; color: #1e40af; font-size: 14px; font-weight: 600;">TRACKING INFORMATION</p>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+              <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 13px;">Carrier</p>
+              <p style="margin: 0; color: #1f2937; font-size: 16px; font-weight: 600;">${sanitize(shippingCarrier.toUpperCase())}</p>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 8px;">
+              <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 13px;">Tracking Number</p>
+              <p style="margin: 0; color: #1f2937; font-size: 18px; font-weight: 700; font-family: monospace; letter-spacing: 1px;">${sanitize(trackingNumber)}</p>
+            </div>
+          </div>
+
+          ${trackingUrl ? `
+          <div style="text-align: center; margin: 25px 0;">
+            <a href="${trackingUrl}" style="background: #3b82f6; color: white; padding: 14px 32px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 600; font-size: 14px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">
+              Track Your Package 📍
+            </a>
+          </div>
+          ` : ''}
+
+          <div style="background: #fef3c7; border: 1px solid #fbbf24; padding: 16px; border-radius: 10px; margin: 20px 0;">
+            <p style="margin: 0; color: #92400e; font-size: 13px;">
+              <strong>💡 Delivery Information:</strong><br>
+              Your package is being handled with care. Delivery times may vary depending on your location. You can track your shipment using the tracking number above.
+            </p>
+          </div>
+
+          <div style="border-top: 1px solid #f3e8f0; padding-top: 20px; margin-top: 25px; text-align: center;">
+            <p style="color: #6b7280; font-size: 13px; margin: 5px 0;">Questions about your order?</p>
+            <p style="color: #9ca3af; font-size: 12px; margin: 5px 0;">
+              📧 <a href="mailto:satinglanzbyanamarija@gmail.com" style="color: #f43f5e; text-decoration: none;">satinglanzbyanamarija@gmail.com</a><br>
+              🌐 <a href="https://satinglanzbyanamarija.com/" style="color: #f43f5e; text-decoration: none;">satinglanzbyanamarija.com</a>
+            </p>
+            <p style="color: #9ca3af; font-size: 12px; margin: 15px 0 0 0;">Made with ❤️ by Anamarija</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    await transporter.sendMail({
+      from: GMAIL_FROM,
+      to: customerEmail,
+      subject: `📦 Your Order #${orderNumber} Has Shipped! | SatinGlanz`,
+      html: htmlContent
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Tracking email error:', error);
+    throw new functions.https.HttpsError('internal', 'Failed to send tracking email');
+  }
+});
+
+// Send delivery status update email to customer
+export const sendDeliveryStatusEmail = functions.https.onCall(async (data: any, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'You must be logged in.');
+  }
+
+  try {
+    const transporter = createTransporter();
+    const { orderId, status, trackingNumber, shippingCarrier, customerEmail, customerName, estimatedDelivery } = data;
+
+    if (!orderId || !status || !customerEmail) {
+      throw new functions.https.HttpsError('invalid-argument', 'Missing required fields.');
+    }
+
+    const orderNumber = sanitize(orderId.slice(0, 8).toUpperCase());
+    const displayName = customerName || customerEmail.split('@')[0];
+    const trackingUrl = trackingNumber && shippingCarrier ? getTrackingUrl(shippingCarrier, trackingNumber) : '';
+
+    let statusTitle = '';
+    let statusMessage = '';
+    let statusColor = '';
+    let statusIcon = '';
+
+    switch (status) {
+      case 'processing':
+        statusTitle = 'Order is Being Prepared';
+        statusMessage = 'We\'re carefully handcrafting your satin roses. Your order will be shipped soon!';
+        statusColor = '#3b82f6';
+        statusIcon = '⚙️';
+        break;
+      case 'shipped':
+        statusTitle = 'Order Has Been Shipped';
+        statusMessage = 'Your package is on its way! Track your shipment to see its current location.';
+        statusColor = '#8b5cf6';
+        statusIcon = '📦';
+        break;
+      case 'in_transit':
+        statusTitle = 'Package In Transit';
+        statusMessage = 'Your order is moving through the delivery network and will arrive soon.';
+        statusColor = '#f59e0b';
+        statusIcon = '🚚';
+        break;
+      case 'out_for_delivery':
+        statusTitle = 'Out for Delivery';
+        statusMessage = 'Your package is out for delivery today! Please be available to receive it.';
+        statusColor = '#10b981';
+        statusIcon = '🏃';
+        break;
+      case 'delivered':
+        statusTitle = 'Package Delivered';
+        statusMessage = 'Your order has been delivered! We hope you love your handcrafted satin roses.';
+        statusColor = '#059669';
+        statusIcon = '✅';
+        break;
+      case 'delayed':
+        statusTitle = 'Delivery Delayed';
+        statusMessage = 'There\'s a slight delay with your shipment. We\'re working to get it to you as soon as possible.';
+        statusColor = '#ef4444';
+        statusIcon = '⏰';
+        break;
+      default:
+        statusTitle = 'Order Status Update';
+        statusMessage = 'There\'s an update on your order status.';
+        statusColor = '#6b7280';
+        statusIcon = '📋';
+    }
+
+    const htmlContent = `
+      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, ${statusColor}, ${statusColor}dd); color: white; padding: 35px 30px; text-align: center; border-radius: 16px 16px 0 0;">
+          <div style="font-size: 48px; margin-bottom: 10px;">${statusIcon}</div>
+          <h1 style="margin: 0; font-size: 26px; font-weight: 700;">${statusTitle}</h1>
+          <p style="margin: 10px 0 0 0; font-size: 15px; opacity: 0.9;">Order #${orderNumber}</p>
+        </div>
+        
+        <div style="background: #ffffff; padding: 30px; border-radius: 0 0 16px 16px; border: 1px solid #f3e8f0;">
+          <p style="color: #374151; font-size: 16px; line-height: 1.6;">
+            Dear <strong>${sanitize(displayName)}</strong>,
+          </p>
+          <p style="color: #6b7280; line-height: 1.6; font-size: 15px;">
+            ${statusMessage}
+          </p>
+
+          ${trackingNumber ? `
+          <div style="background: #f9fafb; border: 1px solid #e5e7eb; padding: 18px; border-radius: 10px; margin: 20px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <span style="color: #6b7280; font-size: 13px;">Tracking Number</span>
+              <span style="color: #1f2937; font-size: 14px; font-weight: 600; font-family: monospace;">${sanitize(trackingNumber)}</span>
+            </div>
+            ${shippingCarrier ? `
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: #6b7280; font-size: 13px;">Carrier</span>
+              <span style="color: #1f2937; font-size: 14px; font-weight: 600;">${sanitize(shippingCarrier.toUpperCase())}</span>
+            </div>
+            ` : ''}
+          </div>
+          ` : ''}
+
+          ${estimatedDelivery ? `
+          <div style="background: #f0fdf4; border: 1px solid #86efac; padding: 16px; border-radius: 10px; margin: 20px 0;">
+            <p style="margin: 0; color: #166534; font-size: 14px;">
+              <strong>📅 Estimated Delivery:</strong> ${sanitize(estimatedDelivery)}
+            </p>
+          </div>
+          ` : ''}
+
+          ${trackingUrl ? `
+          <div style="text-align: center; margin: 25px 0;">
+            <a href="${trackingUrl}" style="background: ${statusColor}; color: white; padding: 14px 32px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 600; font-size: 14px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+              Track Your Package 📍
+            </a>
+          </div>
+          ` : ''}
+
+          <div style="text-align: center; margin: 25px 0 10px 0;">
+            <a href="https://satinglanzbyanamarija.com/account" style="color: #f43f5e; text-decoration: none; font-weight: 600; font-size: 14px;">
+              View Order Details →
+            </a>
+          </div>
+
+          <div style="border-top: 1px solid #f3e8f0; padding-top: 20px; margin-top: 25px; text-align: center;">
+            <p style="color: #6b7280; font-size: 13px; margin: 5px 0;">Need assistance?</p>
+            <p style="color: #9ca3af; font-size: 12px; margin: 5px 0;">
+              📧 <a href="mailto:satinglanzbyanamarija@gmail.com" style="color: #f43f5e; text-decoration: none;">satinglanzbyanamarija@gmail.com</a><br>
+              🌐 <a href="https://satinglanzbyanamarija.com/" style="color: #f43f5e; text-decoration: none;">satinglanzbyanamarija.com</a>
+            </p>
+            <p style="color: #9ca3af; font-size: 12px; margin: 15px 0 0 0;">Made with ❤️ by Anamarija</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    await transporter.sendMail({
+      from: GMAIL_FROM,
+      to: customerEmail,
+      subject: `${statusIcon} Order #${orderNumber}: ${statusTitle} | SatinGlanz`,
+      html: htmlContent
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Delivery status email error:', error);
+    throw new functions.https.HttpsError('internal', 'Failed to send delivery status email');
   }
 });
 

@@ -11,7 +11,7 @@ import { db, app } from '@/lib/firebase';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
-import { Lock, MapPin, Check, ShoppingBag, ArrowRight, Truck, CreditCard, Shield } from 'lucide-react';
+import { Lock, MapPin, Check, ShoppingBag, ArrowRight, Truck, CreditCard, Shield, AlertCircle } from 'lucide-react';
 
 const DHL_PRICE = 5.19;
 const GLS_PRICE = 5.59;
@@ -363,6 +363,28 @@ function CheckoutForm() {
                     </button>
                   </div>
                 )}
+              </div>
+
+              {/* Important Notices */}
+              <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-6">
+                <div className="flex items-start gap-3 mb-4">
+                  <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-bold text-amber-900 mb-2">Important: No Refunds for Handmade Products</h3>
+                    <p className="text-sm text-amber-800 leading-relaxed">
+                      All our products are handcrafted to order. Due to the custom nature of handmade items, <strong>we do not accept returns or offer refunds</strong> unless the product is defective or damaged upon arrival. Please review your order carefully before completing your purchase.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 pt-4 border-t border-amber-200">
+                  <Shield className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-bold text-amber-900 mb-2">Fraud Protection</h3>
+                    <p className="text-sm text-amber-800 leading-relaxed">
+                      All orders are verified and monitored for fraudulent activity. Suspicious orders may be cancelled. By placing an order, you agree to our <Link href="/terms" className="underline hover:text-amber-900">Terms & Conditions</Link> and <Link href="/refund-policy" className="underline hover:text-amber-900">Refund Policy</Link>.
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {/* Payment */}
