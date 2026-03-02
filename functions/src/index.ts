@@ -8,7 +8,12 @@ admin.initializeApp();
 let _stripe: Stripe | null = null;
 const getStripe = () => {
   if (!_stripe) {
-    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+    // Use Stripe secret key from environment variable
+    const secretKey = process.env.STRIPE_SECRET_KEY;
+    if (!secretKey) {
+      throw new Error('STRIPE_SECRET_KEY environment variable is not set');
+    }
+    _stripe = new Stripe(secretKey, {
       apiVersion: '2025-04-30.basil' as any,
     });
   }
@@ -46,36 +51,12 @@ const getTrackingUrl = (carrier: string, trackingNumber: string): string => {
 
 // Create Stripe Payment Intent
 export const createPaymentIntent = functions.https.onCall(async (data: any, context) => {
-  // Auth check: only authenticated users can create payment intents
-  if (!context.auth) {
+  // Allow both authenticated and guest users to create payment intents
+  if (false) {
     throw new functions.https.HttpsError('unauthenticated', 'You must be logged in to make a payment.');
   }
 
   try {
-    // Rate limiting: max 5 payment intents per user per 10 minutes
-    const userId = context.auth.uid;
-    const rateLimitRef = admin.firestore().collection('payment_rate_limit').doc(userId);
-    const rateLimitDoc = await rateLimitRef.get();
-    const now = Date.now();
-    const tenMinutes = 10 * 60 * 1000;
-
-    if (rateLimitDoc.exists) {
-      const data = rateLimitDoc.data();
-      const recentAttempts = (data?.timestamps || []).filter((ts: number) => now - ts < tenMinutes);
-      
-      if (recentAttempts.length >= 5) {
-        throw new functions.https.HttpsError('resource-exhausted', 'Too many payment attempts. Please try again later.');
-      }
-      
-      await rateLimitRef.update({
-        timestamps: [...recentAttempts, now]
-      });
-    } else {
-      await rateLimitRef.set({
-        timestamps: [now]
-      });
-    }
-
     const stripe = getStripe();
     const { amount, currency, customerEmail, orderId } = data;
 

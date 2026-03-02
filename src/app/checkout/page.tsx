@@ -14,7 +14,7 @@ import { useCart } from '@/context/CartContext';
 import { Lock, MapPin, Check, ShoppingBag, ArrowRight, Truck, CreditCard, Shield, AlertCircle } from 'lucide-react';
 import { calculateCartShipping, getRecommendedCarrier } from '@/lib/shippingCalculator';
 
-const stripePromise = loadStripe('pk_test_51T6HdeRtazItoQroQhhnCNc9DZv9PpgrnHSZJtvEICpz40czkzfcasdxzuImY5PleiAuRZ3e7EohhtODWWpYXUsN00aB1M1Ew5');
+const stripePromise = loadStripe('pk_live_51T6HdURxZ5rzXIkdgnJUjXTLOJFRQlqRUYspTy0bvMETyqH0RrMdZ04GfuB5twnRaMT9ut4zmfusrz2sXR2J21Cb00eOFacudF');
 
 const cardElementOptions = {
   style: {
@@ -124,8 +124,7 @@ function CheckoutForm() {
     try {
       // 1. Save order to Firestore first
       const orderData = {
-        userId: user!.uid,
-        userEmail: user!.email,
+        ...(user ? { userId: user.uid, userEmail: user.email } : {}),
         status: 'pending_payment',
         createdAt: new Date().toISOString(),
         shippingCarrier: selectedCarrier,
