@@ -35,6 +35,7 @@ const cardElementOptions = {
 };
 
 function CheckoutForm() {
+  const router = useRouter();
   const { locale, t } = useLanguage();
   const { user } = useAuth();
   const { items, totalPrice, clearCart } = useCart();
@@ -205,13 +206,8 @@ function CheckoutForm() {
           stripePaymentIntentId: paymentIntent.id,
         });
 
-        setOrderId(docRef.id);
-        setOrderPlaced(true);
-        
-        // Clear cart after a small delay to ensure state updates first
-        setTimeout(() => {
-          clearCart();
-        }, 100);
+        // Clear cart
+        clearCart();
 
         // 5. Send order confirmation email (non-blocking)
         try {
@@ -220,6 +216,9 @@ function CheckoutForm() {
         } catch (emailErr) {
           console.error('Email send failed (order still placed):', emailErr);
         }
+
+        // 6. Redirect to confirmation page
+        router.push(`/order-confirmation?orderId=${docRef.id}`);
       }
     } catch (err: any) {
       console.error('Order error:', err);
