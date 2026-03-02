@@ -27,12 +27,6 @@ export default function AddressAutocomplete({
   const inputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const isSelectingRef = useRef(false);
-  const onPlaceSelectedRef = useRef(onPlaceSelected);
-
-  // Keep the ref updated with the latest callback
-  useEffect(() => {
-    onPlaceSelectedRef.current = onPlaceSelected;
-  }, [onPlaceSelected]);
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: 'AIzaSyCx3mOepL7-LfPo9Pxyq-ZN4mnXoaNIexQ',
@@ -117,7 +111,7 @@ export default function AddressAutocomplete({
 
       // Update parent component with all data at once FIRST
       // This will trigger React to update all three fields
-      onPlaceSelectedRef.current({
+      onPlaceSelected({
         street: fullStreet,
         city,
         postalCode,
