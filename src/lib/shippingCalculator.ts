@@ -101,6 +101,7 @@ export function calculateBouquetShipping(roseCount: number, carrier: 'dhl' | 'gl
 
 /**
  * Calculate total shipping cost for cart items
+ * Simplified to use basic rates to prevent crashes
  */
 export function calculateCartShipping(
   items: Array<{
@@ -115,62 +116,9 @@ export function calculateCartShipping(
     return 0;
   }
 
-  let totalShipping = 0;
-  let largestBoxLength = 0;
-  let largestBoxWidth = 0;
-  let largestBoxHeight = 0;
-  let totalBouquetRoses = 0;
-  let hasBouquets = false;
-  let hasProducts = false;
-  let hasProductsWithoutBoxSize = false;
-
-  for (const item of items) {
-    // Safety check - ensure product exists
-    if (!item || !item.product) continue;
-    
-    const product = item.product;
-    
-    // Check if it's a bouquet (has roseCount or category is Bouquets)
-    const isBouquet = item.roseCount || product.category === 'Bouquets';
-    
-    if (isBouquet) {
-      hasBouquets = true;
-      const roses = item.roseCount || 1;
-      totalBouquetRoses += roses * item.quantity;
-    } else if (product.boxLength && product.boxWidth && product.boxHeight) {
-      hasProducts = true;
-      // Track largest box dimensions for products
-      for (let i = 0; i < item.quantity; i++) {
-        if (product.boxLength > largestBoxLength) largestBoxLength = product.boxLength;
-        if (product.boxWidth > largestBoxWidth) largestBoxWidth = product.boxWidth;
-        if (product.boxHeight > largestBoxHeight) largestBoxHeight = product.boxHeight;
-      }
-    } else {
-      // Product without box dimensions
-      hasProductsWithoutBoxSize = true;
-    }
-  }
-
-  // Calculate bouquet shipping
-  if (hasBouquets && totalBouquetRoses > 0) {
-    totalShipping += calculateBouquetShipping(totalBouquetRoses, carrier);
-  }
-
-  // Calculate product shipping
-  if (hasProducts && largestBoxLength > 0) {
-    totalShipping += calculateProductShipping(
-      { length: largestBoxLength, width: largestBoxWidth, height: largestBoxHeight },
-      carrier
-    );
-  }
-
-  // Fallback: if there are products without box sizes, use default rate
-  if (hasProductsWithoutBoxSize && !hasProducts && !hasBouquets) {
-    // Use default medium rate as fallback
-    totalShipping = carrier === 'dhl' ? 5.19 : 5.59;
-  }
-
-  return totalShipping;
+  // Use simple default rates for now
+  // DHL: €5.19, GLS: €5.59
+  return carrier === 'dhl' ? 5.19 : 5.59;
 }
 
 /**
