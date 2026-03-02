@@ -58,35 +58,74 @@ export default function RefundPolicyPage() {
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">Ausschluss des Widerrufsrechts</h2>
               <p>
-                Das Widerrufsrecht besteht nicht bei Verträgen zur Lieferung von Waren, die nach Kundenspezifikation angefertigt werden oder eindeutig auf die persönlichen Bedürfnisse zugeschnitten sind (§ 312g Abs. 2 Nr. 1 BGB).
+                <strong>Das Widerrufsrecht besteht NICHT bei folgenden Verträgen:</strong>
               </p>
-              <p className="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-4">
-                <strong className="text-amber-900">Wichtiger Hinweis zu handgefertigten Produkten:</strong><br />
-                <span className="text-amber-800">
-                  Da alle unsere Produkte individuell handgefertigt werden und nach Bestellung speziell für Sie angefertigt werden, können diese Produkte vom Widerrufsrecht ausgeschlossen sein. Bitte kontaktieren Sie uns vor der Bestellung, wenn Sie Fragen hierzu haben.
-                </span>
+              <p className="mt-4">
+                Gemäß § 312g Abs. 2 Nr. 1 BGB besteht das Widerrufsrecht nicht bei Verträgen zur Lieferung von Waren, die <strong>nach Kundenspezifikation angefertigt werden oder eindeutig auf die persönlichen Bedürfnisse zugeschnitten sind</strong>.
               </p>
+              
+              <div className="mt-6 bg-rose-50 border-2 border-rose-300 rounded-lg p-6">
+                <h3 className="text-lg font-bold text-rose-900 mb-3">⚠️ WICHTIG: Handgefertigte Produkte</h3>
+                <p className="text-rose-900 font-semibold mb-3">
+                  Alle unsere Produkte sind handgefertigte Einzelstücke, die nach Ihrer Bestellung speziell für Sie angefertigt werden.
+                </p>
+                <p className="text-rose-800">
+                  <strong>Daher gilt:</strong> Das gesetzliche Widerrufsrecht ist für diese Produkte ausgeschlossen, da sie nach Kundenspezifikation individuell hergestellt werden (§ 312g Abs. 2 Nr. 1 BGB).
+                </p>
+                <p className="text-rose-800 mt-3">
+                  <strong>Das bedeutet:</strong> Sie können handgefertigte Produkte nicht ohne Grund zurückgeben oder umtauschen.
+                </p>
+              </div>
+
+              <div className="mt-6 bg-green-50 border-2 border-green-300 rounded-lg p-6">
+                <h3 className="text-lg font-bold text-green-900 mb-3">✅ Ihre Rechte bei Mängeln</h3>
+                <p className="text-green-800">
+                  <strong>Gewährleistungsrechte bleiben unberührt!</strong> Sie haben weiterhin Anspruch auf:
+                </p>
+                <ul className="list-disc pl-6 mt-3 space-y-2 text-green-800">
+                  <li><strong>Rückgabe bei defekten Produkten</strong> (Herstellungsfehler, Materialfehler)</li>
+                  <li><strong>Umtausch bei beschädigter Lieferung</strong> (Transportschäden)</li>
+                  <li><strong>Ersatz bei falscher Lieferung</strong> (Sie haben etwas anderes erhalten als bestellt)</li>
+                  <li><strong>Gesetzliche Gewährleistung</strong> nach § 437 BGB (2 Jahre)</li>
+                </ul>
+                <p className="text-green-800 mt-4">
+                  Bei berechtigten Reklamationen übernehmen wir selbstverständlich die Kosten für Rücksendung und Ersatz.
+                </p>
+              </div>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">Rückgabebedingungen</h2>
-              <p>
-                Für eine erfolgreiche Rücksendung müssen folgende Bedingungen erfüllt sein:
+              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">Reklamation bei Mängeln</h2>
+              <p className="font-semibold text-gray-900">
+                Wenn Sie ein defektes, beschädigtes oder falsches Produkt erhalten haben:
               </p>
-              <ul className="list-disc pl-6 mt-2 space-y-2">
-                <li>Die Ware muss sich im Originalzustand befinden</li>
-                <li>Die Ware darf nicht beschädigt oder verschmutzt sein</li>
-                <li>Alle Etiketten und Verpackungen müssen noch vorhanden sein</li>
-                <li>Die Rücksendung muss innerhalb von 14 Tagen nach Erhalt erfolgen</li>
-              </ul>
+              <ol className="list-decimal pl-6 mt-4 space-y-3">
+                <li>
+                  <strong>Kontaktieren Sie uns sofort</strong> – am besten innerhalb von 48 Stunden nach Erhalt der Ware per E-Mail an: <a href="mailto:satinglanzbyanamarija@gmail.com" className="text-rose-500 hover:underline">satinglanzbyanamarija@gmail.com</a>
+                </li>
+                <li>
+                  <strong>Beschreiben Sie den Mangel</strong> – Senden Sie uns Fotos des Produkts und beschreiben Sie das Problem
+                </li>
+                <li>
+                  <strong>Wir prüfen Ihre Reklamation</strong> – Bei berechtigten Mängeln bieten wir Ihnen:
+                  <ul className="list-disc pl-6 mt-2 space-y-1">
+                    <li>Kostenlose Reparatur</li>
+                    <li>Ersatzlieferung</li>
+                    <li>Rückerstattung des Kaufpreises</li>
+                  </ul>
+                </li>
+                <li>
+                  <strong>Kostenlose Rücksendung</strong> – Bei berechtigten Reklamationen übernehmen wir alle Rücksendekosten
+                </li>
+              </ol>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">Rücksendeadresse</h2>
-              <p>
-                Bitte senden Sie die Ware an folgende Adresse zurück:
+              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">Rücksendeadresse (nur bei Mängeln)</h2>
+              <p className="text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
+                <strong>Wichtig:</strong> Senden Sie Produkte nur nach vorheriger Absprache mit uns zurück! Unangekündigte Rücksendungen können nicht bearbeitet werden.
               </p>
-              <p className="mt-2">
+              <p>
                 <strong>SatinGlanz by Anamarija</strong><br />
                 Anamarija [Nachname]<br />
                 [Straße und Hausnummer]<br />
@@ -94,17 +133,7 @@ export default function RefundPolicyPage() {
                 Deutschland
               </p>
               <p className="mt-4 text-sm text-gray-600">
-                Bitte fügen Sie Ihrer Rücksendung eine Kopie der Bestellbestätigung oder Ihre Bestellnummer bei.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">Umtausch</h2>
-              <p>
-                Umtausch ist nur bei fehlerhaften oder beschädigten Produkten möglich. Bitte kontaktieren Sie uns innerhalb von 48 Stunden nach Erhalt der Ware, wenn Sie einen Mangel feststellen.
-              </p>
-              <p className="mt-4">
-                Bei berechtigten Reklamationen übernehmen wir die Kosten für die Rücksendung und senden Ihnen kostenlos Ersatz zu.
+                Bitte fügen Sie Ihrer Rücksendung eine Kopie der Bestellbestätigung und eine Beschreibung des Mangels bei.
               </p>
             </section>
 

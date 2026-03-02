@@ -55,9 +55,21 @@ export default function TermsPage() {
 
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 6 Gewährleistung</h2>
-              <p>6.1 Es gelten die gesetzlichen Gewährleistungsrechte.</p>
+              <p>6.1 Es gelten die gesetzlichen Gewährleistungsrechte gemäß §§ 437 ff. BGB.</p>
               
-              <p className="mt-4">6.2 Als Verbraucher werden Sie gebeten, die Ware bei Lieferung umgehend auf Vollständigkeit, offensichtliche Mängel und Transportschäden zu überprüfen und dem Verkäufer sowie dem Spediteur Beanstandungen schnellstmöglich mitzuteilen.</p>
+              <p className="mt-4">6.2 Die Gewährleistungsfrist beträgt 2 Jahre ab Erhalt der Ware.</p>
+              
+              <p className="mt-4">6.3 Bei berechtigten Mängelrügen haben Sie Anspruch auf:</p>
+              <ul className="list-disc pl-6 mt-2 space-y-1">
+                <li>Nacherfüllung (Nachbesserung oder Ersatzlieferung)</li>
+                <li>Minderung des Kaufpreises</li>
+                <li>Rücktritt vom Vertrag</li>
+                <li>Schadensersatz oder Aufwendungsersatz</li>
+              </ul>
+              
+              <p className="mt-4">6.4 Als Verbraucher werden Sie gebeten, die Ware bei Lieferung umgehend auf Vollständigkeit, offensichtliche Mängel und Transportschäden zu überprüfen und dem Verkäufer sowie dem Spediteur Beanstandungen schnellstmöglich mitzuteilen.</p>
+              
+              <p className="mt-4">6.5 Bitte beachten Sie: Handgefertigte Produkte können leichte Abweichungen in Farbe, Größe und Form aufweisen. Diese individuellen Unterschiede sind charakteristisch für handgefertigte Produkte und stellen keinen Mangel dar.</p>
             </section>
 
             <section>
