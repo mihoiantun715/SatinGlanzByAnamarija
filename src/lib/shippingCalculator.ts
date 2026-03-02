@@ -125,6 +125,8 @@ export function calculateCartShipping(
     let hasProducts = false;
     let hasProductsWithoutBoxSize = false;
 
+    console.log('🚚 SHIPPING CALCULATION START', { carrier, itemCount: items.length });
+
     for (const item of items) {
       // Safety check - ensure product exists
       if (!item || !item.product) continue;
@@ -138,8 +140,14 @@ export function calculateCartShipping(
         hasBouquets = true;
         const roses = item.roseCount || 1;
         totalBouquetRoses += roses * (item.quantity || 1);
+        console.log('🌹 Bouquet detected:', { roses, quantity: item.quantity, totalRoses: totalBouquetRoses });
       } else if (product.boxLength && product.boxWidth && product.boxHeight) {
         hasProducts = true;
+        console.log('📦 Product with box size:', {
+          name: product.name?.en || product.name,
+          dimensions: `${product.boxLength}×${product.boxWidth}×${product.boxHeight} cm`,
+          quantity: item.quantity
+        });
         // Track largest box dimensions for products
         const qty = item.quantity || 1;
         for (let i = 0; i < qty; i++) {
@@ -150,32 +158,50 @@ export function calculateCartShipping(
       } else {
         // Product without box dimensions
         hasProductsWithoutBoxSize = true;
+        console.log('⚠️ Product WITHOUT box size:', { name: product.name?.en || product.name });
       }
     }
 
+    console.log('📊 Cart analysis:', {
+      hasBouquets,
+      hasProducts,
+      hasProductsWithoutBoxSize,
+      largestBox: hasProducts ? `${largestBoxLength}×${largestBoxWidth}×${largestBoxHeight} cm` : 'none'
+    });
+
     // Calculate bouquet shipping
     if (hasBouquets && totalBouquetRoses > 0) {
-      totalShipping += calculateBouquetShipping(totalBouquetRoses, carrier);
+      const bouquetShipping = calculateBouquetShipping(totalBouquetRoses, carrier);
+      totalShipping += bouquetShipping;
+      console.log('🌹 Bouquet shipping:', { roses: totalBouquetRoses, cost: `€${bouquetShipping.toFixed(2)}` });
     }
 
     // Calculate product shipping based on box dimensions
     if (hasProducts && largestBoxLength > 0) {
-      totalShipping += calculateProductShipping(
+      const productShipping = calculateProductShipping(
         { length: largestBoxLength, width: largestBoxWidth, height: largestBoxHeight },
         carrier
       );
+      totalShipping += productShipping;
+      console.log('📦 Product shipping:', { 
+        box: `${largestBoxLength}×${largestBoxWidth}×${largestBoxHeight} cm`,
+        cost: `€${productShipping.toFixed(2)}` 
+      });
     }
 
     // Fallback: if there are products without box sizes, use default rate
     if (hasProductsWithoutBoxSize && !hasProducts && !hasBouquets) {
       totalShipping = carrier === 'dhl' ? 5.19 : 5.59;
+      console.log('⚠️ Using default rate (no box sizes):', `€${totalShipping.toFixed(2)}`);
     }
 
     // If no shipping calculated, use default
     if (totalShipping === 0) {
       totalShipping = carrier === 'dhl' ? 5.19 : 5.59;
+      console.log('⚠️ Using default rate (fallback):', `€${totalShipping.toFixed(2)}`);
     }
 
+    console.log('✅ TOTAL SHIPPING:', `€${totalShipping.toFixed(2)}`, `(${carrier.toUpperCase()})`);
     return totalShipping;
   } catch (error) {
     console.error('Shipping calculation error:', error);

@@ -22,6 +22,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [initialized, setInitialized] = useState(false);
   const { user } = useAuth();
 
   // Load cart from localStorage on mount (for guest users)
@@ -34,25 +35,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setItems([]);
       }
     }
+    setInitialized(true);
   }, []);
 
-  // Sync with Firestore when user logs in/out
+  // Save to localStorage whenever cart changes (but only after initialization)
   useEffect(() => {
-    if (user) {
-      // User logged in - merge localStorage cart with Firestore cart
-      syncCartWithFirestore();
+    if (initialized) {
+      localStorage.setItem('cart', JSON.stringify(items));
     }
-  }, [user]);
-
-  // Save to localStorage whenever cart changes
-  useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(items));
-    
-    // Also save to Firestore if user is logged in
-    if (user && items.length > 0) {
-      saveCartToFirestore(items);
-    }
-  }, [items, user]);
+  }, [items, initialized]);
 
   // Sync cart with Firestore when user logs in
   const syncCartWithFirestore = async () => {
