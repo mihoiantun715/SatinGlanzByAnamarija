@@ -376,6 +376,173 @@ export const sendWelcomeEmail = functions.https.onCall(async (data: any, context
   }
 });
 
+// Send order confirmation email to customer (German)
+export const sendOrderConfirmationEmail = functions.https.onCall(async (data: any, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'You must be logged in.');
+  }
+
+  try {
+    const transporter = createTransporter();
+    const { orderId, customerEmail, customerName } = data;
+
+    if (!orderId || !customerEmail) {
+      throw new functions.https.HttpsError('invalid-argument', 'Missing required fields.');
+    }
+
+    const orderNumber = sanitize(orderId.slice(0, 8).toUpperCase());
+    const displayName = customerName || customerEmail.split('@')[0];
+
+    const htmlContent = `
+      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #f43f5e, #fb7185); color: white; padding: 35px 30px; text-align: center; border-radius: 16px 16px 0 0;">
+          <h1 style="margin: 0; font-size: 26px; font-weight: 700;">✅ Bestellung bestätigt!</h1>
+          <p style="margin: 10px 0 0 0; font-size: 15px; opacity: 0.9;">SatinGlanz by Anamarija</p>
+        </div>
+        
+        <div style="background: #ffffff; padding: 30px; border-radius: 0 0 16px 16px; border: 1px solid #fecdd3;">
+          <p style="color: #374151; font-size: 16px; line-height: 1.6;">
+            Liebe/r <strong>${sanitize(displayName)}</strong>,
+          </p>
+          <p style="color: #6b7280; line-height: 1.6;">
+            Vielen Dank für Ihre Bestellung! Wir haben Ihre Bestellung erhalten und bestätigt.
+          </p>
+          
+          <div style="background: #fef2f2; border-left: 4px solid #f43f5e; padding: 20px; margin: 25px 0; border-radius: 8px;">
+            <p style="margin: 0; color: #374151; font-weight: 600;">Bestellnummer: #${orderNumber}</p>
+          </div>
+
+          <p style="color: #6b7280; line-height: 1.6;">
+            <strong>Ihre Bestellung wird gerade vorbereitet!</strong>
+          </p>
+          <p style="color: #6b7280; line-height: 1.6;">
+            Wir fertigen Ihre handgefertigten Satinrosen mit viel Liebe und Sorgfalt an. Da jedes Stück ein Unikat ist, kann die Herstellung einige Tage dauern.
+          </p>
+          <p style="color: #6b7280; line-height: 1.6;">
+            <strong>In der nächsten E-Mail erhalten Sie:</strong>
+          </p>
+          <ul style="color: #6b7280; line-height: 1.8;">
+            <li>📸 Fotos Ihrer fertigen Bestellung</li>
+            <li>📦 Bilder der Verpackung</li>
+            <li>✨ Vorschau, wie Ihre Rosen bei Ihnen ankommen werden</li>
+          </ul>
+
+          <p style="color: #6b7280; line-height: 1.6; margin-top: 25px;">
+            Wir freuen uns, Ihnen Ihre wunderschönen Satinrosen zu liefern!
+          </p>
+
+          <div style="text-align: center; margin-top: 30px;">
+            <p style="color: #9ca3af; font-size: 14px; margin: 0;">
+              Mit freundlichen Grüßen,<br>
+              <strong style="color: #f43f5e;">Anamarija</strong><br>
+              SatinGlanz by Anamarija
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    await transporter.sendMail({
+      from: GMAIL_FROM,
+      to: customerEmail,
+      subject: '✅ Ihre Bestellung wurde bestätigt - SatinGlanz',
+      html: htmlContent
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Order confirmation email error:', error);
+    throw new functions.https.HttpsError('internal', 'Failed to send order confirmation email');
+  }
+});
+
+// Send order completion email with images (German)
+export const sendOrderCompletionEmail = functions.https.onCall(async (data: any, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'You must be logged in.');
+  }
+
+  try {
+    const transporter = createTransporter();
+    const { orderId, customerEmail, customerName, imageUrls } = data;
+
+    if (!orderId || !customerEmail || !imageUrls || !Array.isArray(imageUrls)) {
+      throw new functions.https.HttpsError('invalid-argument', 'Missing required fields.');
+    }
+
+    const orderNumber = sanitize(orderId.slice(0, 8).toUpperCase());
+    const displayName = customerName || customerEmail.split('@')[0];
+
+    const imageGallery = imageUrls.map((url: string, index: number) => `
+      <div style="margin-bottom: 15px;">
+        <img src="${sanitize(url)}" alt="Bestellung Foto ${index + 1}" style="width: 100%; max-width: 550px; border-radius: 12px; border: 2px solid #fecdd3;" />
+      </div>
+    `).join('');
+
+    const htmlContent = `
+      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #f43f5e, #fb7185); color: white; padding: 35px 30px; text-align: center; border-radius: 16px 16px 0 0;">
+          <h1 style="margin: 0; font-size: 26px; font-weight: 700;">📸 Ihre Bestellung ist fertig!</h1>
+          <p style="margin: 10px 0 0 0; font-size: 15px; opacity: 0.9;">SatinGlanz by Anamarija</p>
+        </div>
+        
+        <div style="background: #ffffff; padding: 30px; border-radius: 0 0 16px 16px; border: 1px solid #fecdd3;">
+          <p style="color: #374151; font-size: 16px; line-height: 1.6;">
+            Liebe/r <strong>${sanitize(displayName)}</strong>,
+          </p>
+          <p style="color: #6b7280; line-height: 1.6;">
+            Ihre handgefertigten Satinrosen sind fertig! 🌹
+          </p>
+          
+          <div style="background: #fef2f2; border-left: 4px solid #f43f5e; padding: 20px; margin: 25px 0; border-radius: 8px;">
+            <p style="margin: 0; color: #374151; font-weight: 600;">Bestellnummer: #${orderNumber}</p>
+          </div>
+
+          <p style="color: #6b7280; line-height: 1.6;">
+            <strong>Hier sind Fotos Ihrer Bestellung:</strong>
+          </p>
+
+          <div style="margin: 25px 0;">
+            ${imageGallery}
+          </div>
+
+          <p style="color: #6b7280; line-height: 1.6;">
+            Ihre Rosen wurden sorgfältig verpackt und sind bereit für den Versand. Jede Rose wurde mit viel Liebe und Aufmerksamkeit für Sie handgefertigt.
+          </p>
+
+          <p style="color: #6b7280; line-height: 1.6;">
+            <strong>So werden Ihre Rosen bei Ihnen ankommen!</strong> Wir hoffen, sie gefallen Ihnen genauso gut wie uns. ✨
+          </p>
+
+          <p style="color: #6b7280; line-height: 1.6; margin-top: 25px;">
+            <strong>Nächster Schritt:</strong> Sobald Ihre Bestellung versendet wurde, erhalten Sie eine weitere E-Mail mit der Tracking-Nummer, damit Sie die Lieferung verfolgen können.
+          </p>
+
+          <div style="text-align: center; margin-top: 30px;">
+            <p style="color: #9ca3af; font-size: 14px; margin: 0;">
+              Vielen Dank für Ihr Vertrauen!<br>
+              <strong style="color: #f43f5e;">Anamarija</strong><br>
+              SatinGlanz by Anamarija
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    await transporter.sendMail({
+      from: GMAIL_FROM,
+      to: customerEmail,
+      subject: '📸 Ihre Bestellung ist fertig - Fotos anbei!',
+      html: htmlContent
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Order completion email error:', error);
+    throw new functions.https.HttpsError('internal', 'Failed to send order completion email');
+  }
+});
+
 // Send tracking number notification email to customer
 export const sendTrackingEmail = functions.https.onCall(async (data: any, context) => {
   if (!context.auth) {
@@ -397,16 +564,16 @@ export const sendTrackingEmail = functions.https.onCall(async (data: any, contex
     const htmlContent = `
       <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="background: linear-gradient(135deg, #8b5cf6, #a855f7); color: white; padding: 35px 30px; text-align: center; border-radius: 16px 16px 0 0;">
-          <h1 style="margin: 0; font-size: 26px; font-weight: 700;">📦 Your Order Has Shipped!</h1>
+          <h1 style="margin: 0; font-size: 26px; font-weight: 700;">📦 Ihre Bestellung wurde versendet!</h1>
           <p style="margin: 10px 0 0 0; font-size: 15px; opacity: 0.9;">SatinGlanz by Anamarija</p>
         </div>
         
         <div style="background: #ffffff; padding: 30px; border-radius: 0 0 16px 16px; border: 1px solid #f3e8f0;">
           <p style="color: #374151; font-size: 16px; line-height: 1.6;">
-            Dear <strong>${sanitize(displayName)}</strong>,
+            Liebe/r <strong>${sanitize(displayName)}</strong>,
           </p>
           <p style="color: #6b7280; line-height: 1.6;">
-            Great news! Your order has been shipped and is on its way to you. Your handcrafted satin roses were carefully packaged with love.
+            Gute Nachrichten! Ihre Bestellung wurde versendet und ist auf dem Weg zu Ihnen. Ihre handgefertigten Satinrosen wurden sorgfältig mit viel Liebe verpackt.
           </p>
           
           <div style="background: #fdf2f8; padding: 16px 20px; border-radius: 12px; margin: 20px 0; text-align: center;">
@@ -416,14 +583,14 @@ export const sendTrackingEmail = functions.https.onCall(async (data: any, contex
 
           <div style="background: #f0f9ff; border: 2px solid #3b82f6; padding: 20px; border-radius: 12px; margin: 25px 0;">
             <div style="text-align: center; margin-bottom: 15px;">
-              <p style="margin: 0; color: #1e40af; font-size: 14px; font-weight: 600;">TRACKING INFORMATION</p>
+              <p style="margin: 0; color: #1e40af; font-size: 14px; font-weight: 600;">TRACKING INFORMATIONEN</p>
             </div>
             <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-              <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 13px;">Carrier</p>
+              <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 13px;">Versanddienstleister</p>
               <p style="margin: 0; color: #1f2937; font-size: 16px; font-weight: 600;">${sanitize(shippingCarrier.toUpperCase())}</p>
             </div>
             <div style="background: white; padding: 15px; border-radius: 8px;">
-              <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 13px;">Tracking Number</p>
+              <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 13px;">Sendungsnummer</p>
               <p style="margin: 0; color: #1f2937; font-size: 18px; font-weight: 700; font-family: monospace; letter-spacing: 1px;">${sanitize(trackingNumber)}</p>
             </div>
           </div>
@@ -431,25 +598,24 @@ export const sendTrackingEmail = functions.https.onCall(async (data: any, contex
           ${trackingUrl ? `
           <div style="text-align: center; margin: 25px 0;">
             <a href="${trackingUrl}" style="background: #3b82f6; color: white; padding: 14px 32px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 600; font-size: 14px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">
-              Track Your Package 📍
+              Sendung verfolgen 📍
             </a>
           </div>
           ` : ''}
 
           <div style="background: #fef3c7; border: 1px solid #fbbf24; padding: 16px; border-radius: 10px; margin: 20px 0;">
             <p style="margin: 0; color: #92400e; font-size: 13px;">
-              <strong>💡 Delivery Information:</strong><br>
-              Your package is being handled with care. Delivery times may vary depending on your location. You can track your shipment using the tracking number above.
+              <strong>💡 Lieferinformationen:</strong><br>
+              Ihr Paket wird mit Sorgfalt behandelt. Die Lieferzeiten können je nach Standort variieren. Sie können Ihre Sendung mit der obigen Sendungsnummer verfolgen.
             </p>
           </div>
 
           <div style="border-top: 1px solid #f3e8f0; padding-top: 20px; margin-top: 25px; text-align: center;">
-            <p style="color: #6b7280; font-size: 13px; margin: 5px 0;">Questions about your order?</p>
+            <p style="color: #6b7280; font-size: 13px; margin: 5px 0;">Fragen zu Ihrer Bestellung?</p>
             <p style="color: #9ca3af; font-size: 12px; margin: 5px 0;">
-              📧 <a href="mailto:satinglanzbyanamarija@gmail.com" style="color: #f43f5e; text-decoration: none;">satinglanzbyanamarija@gmail.com</a><br>
-              🌐 <a href="https://satinglanzbyanamarija.com/" style="color: #f43f5e; text-decoration: none;">satinglanzbyanamarija.com</a>
+              📧 <a href="mailto:satinglanzbyanamarija@gmail.com" style="color: #f43f5e; text-decoration: none;">satinglanzbyanamarija@gmail.com</a>
             </p>
-            <p style="color: #9ca3af; font-size: 12px; margin: 15px 0 0 0;">Made with ❤️ by Anamarija</p>
+            <p style="color: #9ca3af; font-size: 12px; margin: 15px 0 0 0;">Mit ❤️ von Anamarija</p>
           </div>
         </div>
       </div>
@@ -458,7 +624,7 @@ export const sendTrackingEmail = functions.https.onCall(async (data: any, contex
     await transporter.sendMail({
       from: GMAIL_FROM,
       to: customerEmail,
-      subject: `📦 Your Order #${orderNumber} Has Shipped! | SatinGlanz`,
+      subject: `📦 Ihre Bestellung #${orderNumber} wurde versendet! | SatinGlanz`,
       html: htmlContent
     });
 

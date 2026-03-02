@@ -108,6 +108,11 @@ export default function AdminPage() {
     shippingCarrier: 'dhl', shippingCost: 0, status: '', trackingNumber: '',
   });
   const [savingOrder, setSavingOrder] = useState(false);
+  const [confirmingOrder, setConfirmingOrder] = useState<string | null>(null);
+  const [completingOrder, setCompletingOrder] = useState<AdminOrder | null>(null);
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const imageUploadRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!authLoading && user && isAdmin) {
@@ -161,6 +166,90 @@ export default function AdminPage() {
       setDeleteOrderConfirm(null);
     } catch (err) {
       console.error('Failed to delete order:', err);
+    }
+  };
+
+  const confirmOrder = async (order: AdminOrder) => {
+    setConfirmingOrder(order.id);
+    try {
+      const { getFunctions, httpsCallable } = await import('firebase/functions');
+      const { app } = await import('@/lib/firebase');
+      const functions = getFunctions(app, 'us-central1');
+      const sendConfirmation = httpsCallable(functions, 'sendOrderConfirmationEmail');
+      
+      await sendConfirmation({
+        orderId: order.id,
+        customerEmail: order.userEmail,
+        customerName: `${order.shippingAddress.firstName} ${order.shippingAddress.lastName}`
+      });
+
+      await updateDoc(doc(db, 'orders', order.id), { status: 'processing' });
+      setAdminOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'processing' } : o));
+      alert('Order confirmed! Confirmation email sent to customer.');
+    } catch (err) {
+      console.error('Failed to confirm order:', err);
+      alert('Failed to send confirmation email.');
+    } finally {
+      setConfirmingOrder(null);
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploadingImages(true);
+    try {
+      const uploadPromises = Array.from(files).map(async (file) => {
+        const storageRef = ref(storage, `order-images/${Date.now()}-${file.name}`);
+        await uploadBytes(storageRef, file);
+        return await getDownloadURL(storageRef);
+      });
+
+      const urls = await Promise.all(uploadPromises);
+      setUploadedImages(prev => [...prev, ...urls]);
+    } catch (err) {
+      console.error('Failed to upload images:', err);
+      alert('Failed to upload images.');
+    } finally {
+      setUploadingImages(false);
+    }
+  };
+
+  const completeOrder = async () => {
+    if (!completingOrder || uploadedImages.length === 0) {
+      alert('Please upload at least one image before completing the order.');
+      return;
+    }
+
+    try {
+      const { getFunctions, httpsCallable } = await import('firebase/functions');
+      const { app } = await import('@/lib/firebase');
+      const functions = getFunctions(app, 'us-central1');
+      const sendCompletion = httpsCallable(functions, 'sendOrderCompletionEmail');
+      
+      await sendCompletion({
+        orderId: completingOrder.id,
+        customerEmail: completingOrder.userEmail,
+        customerName: `${completingOrder.shippingAddress.firstName} ${completingOrder.shippingAddress.lastName}`,
+        imageUrls: uploadedImages
+      });
+
+      await updateDoc(doc(db, 'orders', completingOrder.id), { 
+        status: 'ready_to_ship',
+        orderImages: uploadedImages
+      });
+      
+      setAdminOrders(prev => prev.map(o => 
+        o.id === completingOrder.id ? { ...o, status: 'ready_to_ship' } : o
+      ));
+      
+      setCompletingOrder(null);
+      setUploadedImages([]);
+      alert('Order completed! Email with images sent to customer.');
+    } catch (err) {
+      console.error('Failed to complete order:', err);
+      alert('Failed to send completion email.');
     }
   };
 
@@ -794,6 +883,29 @@ export default function AdminPage() {
                         <span className="text-[10px] font-mono text-gray-400">Stripe: {order.stripePaymentIntentId.slice(0, 20)}...</span>
                       )}
 
+                      {/* Confirm Order Button */}
+                      {order.status === 'paid' && (
+                        <button
+                          onClick={() => confirmOrder(order)}
+                          disabled={confirmingOrder === order.id}
+                          className="flex items-center gap-1 px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          <ShieldCheck className="w-3.5 h-3.5" />
+                          {confirmingOrder === order.id ? 'Confirming...' : 'Confirm Order'}
+                        </button>
+                      )}
+
+                      {/* Complete Order Button */}
+                      {order.status === 'processing' && (
+                        <button
+                          onClick={() => setCompletingOrder(order)}
+                          className="flex items-center gap-1 px-3 py-1.5 bg-purple-500 hover:bg-purple-600 text-white text-xs font-semibold rounded-lg transition-colors"
+                        >
+                          <ImageIcon className="w-3.5 h-3.5" />
+                          Complete Order
+                        </button>
+                      )}
+
                       {/* Spacer */}
                       <div className="flex-1" />
 
@@ -1075,6 +1187,109 @@ export default function AdminPage() {
           )}
         </div>}
       </div>
+
+      {/* Image Upload Modal for Completing Order */}
+      {completingOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-t-2xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold">Complete Order</h2>
+                  <p className="text-sm opacity-90 mt-1">Upload photos of the finished order</p>
+                </div>
+                <button
+                  onClick={() => {
+                    setCompletingOrder(null);
+                    setUploadedImages([]);
+                  }}
+                  className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6">
+              <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                <p className="text-sm text-gray-700">
+                  <strong>Order #{completingOrder.id.slice(0, 8).toUpperCase()}</strong>
+                </p>
+                <p className="text-sm text-gray-600">
+                  {completingOrder.shippingAddress.firstName} {completingOrder.shippingAddress.lastName} · {completingOrder.userEmail}
+                </p>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  Upload Order Photos
+                </label>
+                <input
+                  ref={imageUploadRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+                <button
+                  onClick={() => imageUploadRef.current?.click()}
+                  disabled={uploadingImages}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 hover:border-purple-400 rounded-xl text-gray-600 hover:text-purple-600 transition-colors disabled:opacity-50"
+                >
+                  <Upload className="w-5 h-5" />
+                  {uploadingImages ? 'Uploading...' : 'Click to upload images'}
+                </button>
+              </div>
+
+              {uploadedImages.length > 0 && (
+                <div className="mb-6">
+                  <p className="text-sm font-semibold text-gray-700 mb-3">
+                    Uploaded Images ({uploadedImages.length})
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    {uploadedImages.map((url, idx) => (
+                      <div key={idx} className="relative group">
+                        <img
+                          src={url}
+                          alt={`Order image ${idx + 1}`}
+                          className="w-full h-32 object-cover rounded-lg border-2 border-gray-200"
+                        />
+                        <button
+                          onClick={() => setUploadedImages(prev => prev.filter((_, i) => i !== idx))}
+                          className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-3">
+                <button
+                  onClick={completeOrder}
+                  disabled={uploadedImages.length === 0}
+                  className="flex-1 flex items-center justify-center gap-2 bg-purple-500 hover:bg-purple-600 disabled:bg-gray-300 text-white py-3 rounded-xl font-semibold transition-all"
+                >
+                  <ImageIcon className="w-5 h-5" />
+                  Complete & Send Email
+                </button>
+                <button
+                  onClick={() => {
+                    setCompletingOrder(null);
+                    setUploadedImages([]);
+                  }}
+                  className="px-6 py-3 border-2 border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl font-semibold transition-all"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
