@@ -9,10 +9,29 @@ import { calculateCartShipping, getRecommendedCarrier } from '@/lib/shippingCalc
 
 export default function CartPage() {
   const { locale, t } = useLanguage();
-  const { items, removeFromCart, updateQuantity, totalPrice } = useCart();
+  const { items, removeFromCart, updateQuantity, totalPrice, loading } = useCart();
   
-  const recommendedCarrier = useMemo(() => getRecommendedCarrier(items), [items]);
+  const recommendedCarrier = useMemo(() => {
+    try {
+      return getRecommendedCarrier(items);
+    } catch {
+      return 'dhl';
+    }
+  }, [items]);
+  
   const [selectedCarrier, setSelectedCarrier] = useState<'dhl' | 'gls'>(recommendedCarrier);
+
+  // Show loading state while cart is being fetched from Firestore
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading cart...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (
