@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { CartItem, Product } from '@/lib/types';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 interface CartContextType {
   items: CartItem[];
@@ -17,21 +19,64 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
+  // Load cart from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem('cart');
     if (saved) {
       try {
-        setItems(JSON.parse(saved));
+        const parsedItems = JSON.parse(saved);
+        setItems(parsedItems);
+        // Refresh product data from Firestore
+        refreshProductData(parsedItems);
       } catch {
         setItems([]);
       }
     }
   }, []);
 
+  // Save cart to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(items));
-  }, [items]);
+    if (!isRefreshing) {
+      localStorage.setItem('cart', JSON.stringify(items));
+    }
+  }, [items, isRefreshing]);
+
+  // Refresh product data from Firestore to get latest box dimensions
+  const refreshProductData = async (cartItems: CartItem[]) => {
+    if (cartItems.length === 0) return;
+    
+    setIsRefreshing(true);
+    try {
+      const productsSnap = await getDocs(collection(db, 'products'));
+      const productsMap = new Map();
+      productsSnap.docs.forEach(doc => {
+        productsMap.set(doc.id, { id: doc.id, ...doc.data() });
+      });
+
+      // Update cart items with fresh product data
+      const updatedItems = cartItems.map(item => {
+        const freshProduct = productsMap.get(item.product.id);
+        if (freshProduct) {
+          return {
+            ...item,
+            product: {
+              ...item.product,
+              ...freshProduct,
+            }
+          };
+        }
+        return item;
+      });
+
+      setItems(updatedItems);
+    } catch (error) {
+      console.error('Failed to refresh product data:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const addToCart = (product: Product, quantity: number = 1, color?: string) => {
     setItems(prev => {
