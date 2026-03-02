@@ -98,6 +98,7 @@ export interface Translation {
     from: string;
     orderSummary: string;
     freeShippingNote: string;
+    recommended: string;
   };
   about: {
     title: string;

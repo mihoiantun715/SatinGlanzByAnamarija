@@ -77,6 +77,7 @@ export const bg: Translation = {
     from: 'от',
     orderSummary: 'Обобщение на поръчката',
     freeShippingNote: 'Безплатна доставка за поръчки над',
+    recommended: 'Препоръчано',
   },
   about: {
     title: 'За SatinGlanz by Anamarija',

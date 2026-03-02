@@ -75,8 +75,9 @@ export const hr: Translation = {
     topSeller: 'NAJPRODAVANIJE',
     inclVat: 'uklj. PDV',
     from: 'od',
-    orderSummary: 'Pregled narudžbe',
+    orderSummary: 'Sažetak narudžbe',
     freeShippingNote: 'Besplatna dostava za narudžbe iznad',
+    recommended: 'Preporučeno',
   },
   about: {
     title: 'O SatinGlanz by Anamarija',

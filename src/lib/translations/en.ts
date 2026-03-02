@@ -77,6 +77,7 @@ export const en: Translation = {
     from: 'from',
     orderSummary: 'Order Summary',
     freeShippingNote: 'Free shipping on orders over',
+    recommended: 'Recommended',
   },
   about: {
     title: 'About SatinGlanz by Anamarija',

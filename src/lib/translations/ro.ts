@@ -76,7 +76,8 @@ export const ro: Translation = {
     inclVat: 'incl. TVA',
     from: 'de la',
     orderSummary: 'Rezumatul comenzii',
-    freeShippingNote: 'Livrare gratuită pentru comenzi peste',
+    freeShippingNote: 'Transport gratuit pentru comenzi peste',
+    recommended: 'Recomandat',
   },
   about: {
     title: 'Despre SatinGlanz by Anamarija',

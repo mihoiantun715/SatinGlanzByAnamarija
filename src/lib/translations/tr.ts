@@ -76,7 +76,8 @@ export const tr: Translation = {
     inclVat: 'KDV dahil',
     from: '',
     orderSummary: 'Sipariş Özeti',
-    freeShippingNote: 'Ücretsiz kargo, şu tutardan itibaren:',
+    freeShippingNote: 'Ücretsiz kargo için minimum',
+    recommended: 'Önerilen',
   },
   about: {
     title: 'SatinGlanz by Anamarija Hakkında',

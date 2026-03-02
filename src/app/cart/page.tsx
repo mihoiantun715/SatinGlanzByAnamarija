@@ -11,6 +11,14 @@ export default function CartPage() {
   const { locale, t } = useLanguage();
   const { items, removeFromCart, updateQuantity, totalPrice, loading } = useCart();
   const [selectedCarrier, setSelectedCarrier] = useState<'dhl' | 'gls'>('dhl');
+  
+  // Get recommended carrier (cheaper option)
+  const recommendedCarrier = useMemo(() => {
+    if (items.length === 0) return 'dhl';
+    const dhlCost = calculateCartShipping(items, 'dhl');
+    const glsCost = calculateCartShipping(items, 'gls');
+    return dhlCost <= glsCost ? 'dhl' : 'gls';
+  }, [items]);
 
   // Calculate shipping cost - must be called unconditionally (React hooks rule)
   const shippingCost = useMemo(() => {
@@ -150,6 +158,9 @@ export default function CartPage() {
                         <p className="text-xs text-gray-500">✓ {t.cart.liability}</p>
                         <p className="text-xs text-gray-500">✓ {t.cart.tracking}</p>
                       </div>
+                      {recommendedCarrier === 'dhl' && (
+                        <p className="text-xs text-yellow-600 font-semibold mt-2">⭐ {t.cart.recommended}</p>
+                      )}
                     </button>
 
                     {/* GLS */}
@@ -178,6 +189,9 @@ export default function CartPage() {
                         <p className="text-xs text-gray-500">✓ {t.cart.liability}</p>
                         <p className="text-xs text-gray-500">✓ {t.cart.tracking}</p>
                       </div>
+                      {recommendedCarrier === 'gls' && (
+                        <p className="text-xs text-blue-600 font-semibold mt-2">⭐ {t.cart.recommended}</p>
+                      )}
                     </button>
                   </div>
             </div>
