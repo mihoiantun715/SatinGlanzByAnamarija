@@ -133,20 +133,14 @@ export function calculateCartShipping(
       
       const product = item.product;
       
-      // Check if it's a bouquet (has roseCount or category is Bouquets)
-      const isBouquet = item.roseCount || product.category === 'Bouquets';
-      
-      if (isBouquet) {
-        hasBouquets = true;
-        const roses = item.roseCount || 1;
-        totalBouquetRoses += roses * (item.quantity || 1);
-        console.log('🌹 Bouquet detected:', { roses, quantity: item.quantity, totalRoses: totalBouquetRoses });
-      } else if (product.boxLength && product.boxWidth && product.boxHeight) {
+      // PRIORITY 1: If product has box dimensions, use those (even for bouquets)
+      if (product.boxLength && product.boxWidth && product.boxHeight) {
         hasProducts = true;
         console.log('📦 Product with box size:', {
           name: product.name?.en || product.name,
           dimensions: `${product.boxLength}×${product.boxWidth}×${product.boxHeight} cm`,
-          quantity: item.quantity
+          quantity: item.quantity,
+          category: product.category
         });
         // Track largest box dimensions for products
         const qty = item.quantity || 1;
@@ -155,8 +149,16 @@ export function calculateCartShipping(
           if (product.boxWidth > largestBoxWidth) largestBoxWidth = product.boxWidth;
           if (product.boxHeight > largestBoxHeight) largestBoxHeight = product.boxHeight;
         }
-      } else {
-        // Product without box dimensions
+      }
+      // PRIORITY 2: If it's a bouquet without box dimensions, use rose count
+      else if (item.roseCount || product.category === 'Bouquets') {
+        hasBouquets = true;
+        const roses = item.roseCount || 1;
+        totalBouquetRoses += roses * (item.quantity || 1);
+        console.log('🌹 Bouquet (no box size):', { roses, quantity: item.quantity, totalRoses: totalBouquetRoses });
+      } 
+      // PRIORITY 3: Product without any dimensions
+      else {
         hasProductsWithoutBoxSize = true;
         console.log('⚠️ Product WITHOUT box size:', { name: product.name?.en || product.name });
       }
