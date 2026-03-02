@@ -1,13 +1,27 @@
 'use client';
 
 import React from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function TermsPage() {
+  const { locale } = useLanguage();
+
+  const content = {
+    de: { title: 'Allgemeine Geschäftsbedingungen (AGB)', text: 'Für fertige Produkte gilt das 14-tägige Widerrufsrecht. Für individuell konfigurierte Produkte (Build Your Bouquet) besteht kein Widerrufsrecht gemäß § 312g Abs. 2 Nr. 1 BGB. Es gelten die gesetzlichen Gewährleistungsrechte (§§ 437 ff. BGB).' },
+    en: { title: 'Terms & Conditions', text: 'Ready-made products have a 14-day right of withdrawal. Custom configured products (Build Your Bouquet) have no right of withdrawal according to § 312g Para. 2 No. 1 BGB. Statutory warranty rights apply (§§ 437 ff. BGB).' },
+    hr: { title: 'Opći uvjeti poslovanja', text: 'Gotovi proizvodi imaju 14-dnevno pravo na odustajanje. Prilagođeni konfigurirani proizvodi (Build Your Bouquet) nemaju pravo na odustajanje prema § 312g stavak 2 br. 1 BGB. Primjenjuju se zakonska jamstvena prava (§§ 437 ff. BGB).' },
+    ro: { title: 'Termeni și Condiții', text: 'Produsele gata făcute au un drept de retragere de 14 zile. Produsele configurate personalizat (Build Your Bouquet) nu au drept de retragere conform § 312g Para. 2 Nr. 1 BGB. Se aplică drepturile legale de garanție (§§ 437 ff. BGB).' },
+    bg: { title: 'Общи условия', text: 'Готовите продукти имат 14-дневно право на отказ. Персонализираните конфигурирани продукти (Build Your Bouquet) нямат право на отказ съгласно § 312g Пар. 2 № 1 BGB. Прилагат се законовите гаранционни права (§§ 437 ff. BGB).' },
+    tr: { title: 'Şartlar ve Koşullar', text: 'Hazır ürünlerin 14 günlük cayma hakkı vardır. Özel yapılandırılmış ürünlerin (Build Your Bouquet) § 312g Para. 2 No. 1 BGB\'ye göre cayma hakkı yoktur. Yasal garanti hakları geçerlidir (§§ 437 ff. BGB).' }
+  };
+
+  const currentContent = content[locale as keyof typeof content] || content.en;
+
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 sm:p-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Allgemeine Geschäftsbedingungen (AGB)</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-8">{currentContent.title}</h1>
           
           <div className="prose prose-gray max-w-none space-y-6 text-gray-700">
             <section>
