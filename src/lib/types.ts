@@ -231,5 +231,44 @@ export interface Translation {
   common: {
     currency: string;
     loading: string;
+    featured: string;
+    added: string;
+    noFeaturedProducts: string;
+    handcraftedWithLove: string;
+  };
+  specialRequest: {
+    title: string;
+    subtitle: string;
+    yourEmail: string;
+    yourPhone: string;
+    numberOfRoses: string;
+    additionalMessage: string;
+    messagePlaceholder: string;
+    minimumRoses: string;
+    whatHappensNext: string;
+    step1: string;
+    step2: string;
+    step3: string;
+    step4: string;
+    sendRequest: string;
+    sendingRequest: string;
+    backToBouquetBuilder: string;
+    requestSentTitle: string;
+    requestSentMessage: string;
+    errorAllFields: string;
+    errorMinimumRoses: string;
+    errorSendFailed: string;
+  };
+  forgotPassword: {
+    title: string;
+    subtitle: string;
+    sendResetLink: string;
+    emailSent: string;
+    checkInbox: string;
+    backToLogin: string;
+    errorSendFailed: string;
+  };
+  account: {
+    claimSuccess: string;
   };
 }

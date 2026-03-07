@@ -111,7 +111,7 @@ export default function ProductQuickView({ product, onClose }: Props) {
               )}
               {product.featured && (
                 <div className="absolute top-3 left-3 bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                  ★ Featured
+                  ★ {t.common.featured}
                 </div>
               )}
             </div>

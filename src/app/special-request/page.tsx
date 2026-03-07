@@ -20,13 +20,13 @@ export default function SpecialRequestPage() {
     e.preventDefault();
     
     if (!email || !phone || !roseCount) {
-      setError('Please fill in all required fields.');
+      setError(t.specialRequest.errorAllFields);
       return;
     }
 
     const roses = parseInt(roseCount);
     if (roses <= 101) {
-      setError('For orders up to 101 roses, please use the regular Build Your Bouquet page.');
+      setError(t.specialRequest.errorMinimumRoses);
       return;
     }
 
@@ -51,7 +51,7 @@ export default function SpecialRequestPage() {
       setMessage('');
     } catch (err) {
       console.error('Failed to send special request:', err);
-      setError('Failed to send request. Please try again or contact us directly at satinglanzbyanamarija@gmail.com');
+      setError(t.specialRequest.errorSendFailed);
     } finally {
       setSending(false);
     }
@@ -65,16 +65,16 @@ export default function SpecialRequestPage() {
             <CheckCircle className="w-10 h-10 text-green-600" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-3">
-            Request Sent Successfully!
+            {t.specialRequest.requestSentTitle}
           </h2>
           <p className="text-gray-600 mb-6">
-            Thank you for your special order request! Anamarija will contact you soon via email or phone to discuss your custom bouquet.
+            {t.specialRequest.requestSentMessage}
           </p>
           <button
             onClick={() => window.location.href = '/build-bouquet'}
             className="w-full bg-rose-500 hover:bg-rose-600 text-white font-semibold py-3 px-6 rounded-xl transition-colors"
           >
-            Back to Bouquet Builder
+            {t.specialRequest.backToBouquetBuilder}
           </button>
         </div>
       </div>
@@ -87,8 +87,8 @@ export default function SpecialRequestPage() {
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-rose-500 to-pink-500 p-8 text-white">
-            <h1 className="text-3xl font-bold mb-2">Special Bouquet Request</h1>
-            <p className="text-rose-100">For orders with more than 101 roses</p>
+            <h1 className="text-3xl font-bold mb-2">{t.specialRequest.title}</h1>
+            <p className="text-rose-100">{t.specialRequest.subtitle}</p>
           </div>
 
           {/* Form */}
@@ -101,7 +101,7 @@ export default function SpecialRequestPage() {
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                <Mail className="w-4 h-4 inline mr-1" /> Your Email <span className="text-red-500">*</span>
+                <Mail className="w-4 h-4 inline mr-1" /> {t.specialRequest.yourEmail} <span className="text-red-500">*</span>
               </label>
               <input
                 type="email"
@@ -115,7 +115,7 @@ export default function SpecialRequestPage() {
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                <Phone className="w-4 h-4 inline mr-1" /> Your Phone Number <span className="text-red-500">*</span>
+                <Phone className="w-4 h-4 inline mr-1" /> {t.specialRequest.yourPhone} <span className="text-red-500">*</span>
               </label>
               <input
                 type="tel"
@@ -129,7 +129,7 @@ export default function SpecialRequestPage() {
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                🌹 Number of Roses <span className="text-red-500">*</span>
+                🌹 {t.specialRequest.numberOfRoses} <span className="text-red-500">*</span>
               </label>
               <input
                 type="number"
@@ -140,29 +140,29 @@ export default function SpecialRequestPage() {
                 required
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-300"
               />
-              <p className="text-xs text-gray-500 mt-1">Minimum 102 roses for special orders</p>
+              <p className="text-xs text-gray-500 mt-1">{t.specialRequest.minimumRoses}</p>
             </div>
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Additional Message (Optional)
+                {t.specialRequest.additionalMessage}
               </label>
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Tell us about your special occasion, preferred colors, delivery date, or any other details..."
+                placeholder={t.specialRequest.messagePlaceholder}
                 rows={4}
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-300 resize-none"
               />
             </div>
 
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-              <p className="text-sm text-blue-900 font-semibold mb-1">What happens next?</p>
+              <p className="text-sm text-blue-900 font-semibold mb-1">{t.specialRequest.whatHappensNext}</p>
               <ul className="text-xs text-blue-700 space-y-1">
-                <li>✓ Anamarija will receive your request immediately</li>
-                <li>✓ You'll get a confirmation email</li>
-                <li>✓ Anamarija will contact you within 24 hours to discuss your custom bouquet</li>
-                <li>✓ We'll create a personalized quote for your special order</li>
+                <li>✓ {t.specialRequest.step1}</li>
+                <li>✓ {t.specialRequest.step2}</li>
+                <li>✓ {t.specialRequest.step3}</li>
+                <li>✓ {t.specialRequest.step4}</li>
               </ul>
             </div>
 
@@ -172,11 +172,11 @@ export default function SpecialRequestPage() {
               className="w-full bg-rose-500 hover:bg-rose-600 disabled:bg-gray-300 text-white font-bold py-4 px-6 rounded-xl transition-all flex items-center justify-center gap-2"
             >
               {sending ? (
-                <>Sending Request...</>
+                <>{t.specialRequest.sendingRequest}</>
               ) : (
                 <>
                   <Send className="w-5 h-5" />
-                  Send Special Request
+                  {t.specialRequest.sendRequest}
                 </>
               )}
             </button>
@@ -186,7 +186,7 @@ export default function SpecialRequestPage() {
               onClick={() => window.location.href = '/build-bouquet'}
               className="w-full border-2 border-gray-200 hover:border-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-xl transition-all"
             >
-              Back to Bouquet Builder
+              {t.specialRequest.backToBouquetBuilder}
             </button>
           </form>
         </div>

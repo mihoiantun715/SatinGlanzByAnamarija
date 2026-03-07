@@ -59,7 +59,7 @@ export default function ForgotPasswordPage() {
       } else if (code === 'auth/invalid-email') {
         setError(t.auth.errorEmail);
       } else {
-        setError('Failed to send reset email. Please try again.');
+        setError(t.forgotPassword.errorSendFailed);
       }
     } finally {
       setLoading(false);
@@ -72,9 +72,9 @@ export default function ForgotPasswordPage() {
         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 sm:p-10">
           <div className="text-center mb-8">
             <Image src="/logo.png" alt="SatinGlanz" width={48} height={48} className="rounded-full mx-auto mb-3" />
-            <h1 className="text-2xl font-bold text-gray-900">Reset Password</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t.forgotPassword.title}</h1>
             <p className="text-sm text-gray-500 mt-2">
-              Enter your email address and we'll send you a link to reset your password.
+              {t.forgotPassword.subtitle}
             </p>
           </div>
 
@@ -88,8 +88,8 @@ export default function ForgotPasswordPage() {
             <div className="bg-green-50 border border-green-200 text-green-700 text-sm rounded-xl px-4 py-3 mb-6 flex items-start gap-2">
               <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-semibold">Email sent!</p>
-                <p className="mt-1">Check your inbox for password reset instructions.</p>
+                <p className="font-semibold">{t.forgotPassword.emailSent}</p>
+                <p className="mt-1">{t.forgotPassword.checkInbox}</p>
               </div>
             </div>
           )}
@@ -116,14 +116,14 @@ export default function ForgotPasswordPage() {
               disabled={loading}
               className="w-full bg-rose-500 hover:bg-rose-600 disabled:bg-rose-300 text-white py-3.5 rounded-xl font-semibold text-sm transition-all hover:shadow-lg hover:shadow-rose-200"
             >
-              {loading ? t.common.loading : 'Send Reset Link'}
+              {loading ? t.common.loading : t.forgotPassword.sendResetLink}
             </button>
           </form>
 
           <div className="text-center mt-6">
             <Link href="/login" className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-rose-500 transition-colors">
               <ArrowLeft className="w-4 h-4" />
-              Back to login
+              {t.forgotPassword.backToLogin}
             </Link>
           </div>
         </div>

@@ -140,7 +140,7 @@ export default function AccountPage() {
       data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       setOrders(data);
 
-      setClaimMessage({ type: 'success', text: 'Order successfully added to your account!' });
+      setClaimMessage({ type: 'success', text: t.account.claimSuccess });
       setClaimOrderNumber('');
     } catch (error) {
       console.error('Failed to claim order:', error);
