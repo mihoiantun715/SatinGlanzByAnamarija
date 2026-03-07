@@ -4,35 +4,30 @@ import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function TermsPage() {
-  const { locale } = useLanguage();
-
-  const content = {
-    de: { title: 'Allgemeine Geschäftsbedingungen (AGB)', text: 'Für fertige Produkte gilt das 14-tägige Widerrufsrecht. Für individuell konfigurierte Produkte (Build Your Bouquet) besteht kein Widerrufsrecht gemäß § 312g Abs. 2 Nr. 1 BGB. Es gelten die gesetzlichen Gewährleistungsrechte (§§ 437 ff. BGB).' },
-    en: { title: 'Terms & Conditions', text: 'Ready-made products have a 14-day right of withdrawal. Custom configured products (Build Your Bouquet) have no right of withdrawal according to § 312g Para. 2 No. 1 BGB. Statutory warranty rights apply (§§ 437 ff. BGB).' },
-    hr: { title: 'Opći uvjeti poslovanja', text: 'Gotovi proizvodi imaju 14-dnevno pravo na odustajanje. Prilagođeni konfigurirani proizvodi (Build Your Bouquet) nemaju pravo na odustajanje prema § 312g stavak 2 br. 1 BGB. Primjenjuju se zakonska jamstvena prava (§§ 437 ff. BGB).' },
-    ro: { title: 'Termeni și Condiții', text: 'Produsele gata făcute au un drept de retragere de 14 zile. Produsele configurate personalizat (Build Your Bouquet) nu au drept de retragere conform § 312g Para. 2 Nr. 1 BGB. Se aplică drepturile legale de garanție (§§ 437 ff. BGB).' },
-    bg: { title: 'Общи условия', text: 'Готовите продукти имат 14-дневно право на отказ. Персонализираните конфигурирани продукти (Build Your Bouquet) нямат право на отказ съгласно § 312g Пар. 2 № 1 BGB. Прилагат се законовите гаранционни права (§§ 437 ff. BGB).' },
-    tr: { title: 'Şartlar ve Koşullar', text: 'Hazır ürünlerin 14 günlük cayma hakkı vardır. Özel yapılandırılmış ürünlerin (Build Your Bouquet) § 312g Para. 2 No. 1 BGB\'ye göre cayma hakkı yoktur. Yasal garanti hakları geçerlidir (§§ 437 ff. BGB).' }
-  };
-
-  const currentContent = content[locale as keyof typeof content] || content.en;
+  const { t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 sm:p-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">{currentContent.title}</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-8">{t.terms.title}</h1>
+          
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <p className="text-sm text-blue-900">
+              <strong>{t.terms.summary}</strong> {t.terms.summaryText}
+            </p>
+          </div>
           
           <div className="prose prose-gray max-w-none space-y-6 text-gray-700">
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 1 Geltungsbereich</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 1 {t.terms.section1Title}</h2>
               <p>1.1 Diese Allgemeinen Geschäftsbedingungen (nachfolgend "AGB") der SatinGlanz by Anamarija (nachfolgend "Verkäufer") gelten für alle Verträge über die Lieferung von Waren, die ein Verbraucher oder Unternehmer (nachfolgend "Kunde") mit dem Verkäufer hinsichtlich der vom Verkäufer in seinem Online-Shop dargestellten Waren abschließt.</p>
               
               <p className="mt-4">1.2 Verbraucher im Sinne dieser AGB ist jede natürliche Person, die ein Rechtsgeschäft zu Zwecken abschließt, die überwiegend weder ihrer gewerblichen noch ihrer selbständigen beruflichen Tätigkeit zugerechnet werden können.</p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 2 Vertragsschluss</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 2 {t.terms.section2Title}</h2>
               <p>2.1 Die im Online-Shop des Verkäufers enthaltenen Produktbeschreibungen stellen keine verbindlichen Angebote seitens des Verkäufers dar, sondern dienen zur Abgabe eines verbindlichen Angebots durch den Kunden.</p>
               
               <p className="mt-4">2.2 Der Kunde kann das Angebot über das in den Online-Shop des Verkäufers integrierte Online-Bestellformular abgeben. Dabei gibt der Kunde, nachdem er die ausgewählten Waren in den virtuellen Warenkorb gelegt und den elektronischen Bestellprozess durchlaufen hat, durch Klicken des den Bestellvorgang abschließenden Buttons ein rechtlich verbindliches Vertragsangebot in Bezug auf die im Warenkorb enthaltenen Waren ab.</p>
@@ -41,7 +36,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 3 Preise und Zahlungsbedingungen</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 3 {t.terms.section3Title}</h2>
               <p>3.1 Alle Preise, die auf der Website des Verkäufers angegeben sind, verstehen sich einschließlich der jeweils gültigen gesetzlichen Umsatzsteuer.</p>
               
               <p className="mt-4">3.2 Zusätzlich zu den angegebenen Preisen berechnet der Verkäufer für die Lieferung Versandkosten. Die Versandkosten werden dem Käufer auf einer gesonderten Informationsseite und im Rahmen des Bestellvorgangs deutlich mitgeteilt.</p>
@@ -52,7 +47,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 4 Lieferung und Versand</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 4 {t.terms.section4Title}</h2>
               <p>4.1 Die Lieferung von Waren erfolgt auf dem Versandweg an die vom Kunden angegebene Lieferanschrift, sofern nichts anderes vereinbart ist.</p>
               
               <p className="mt-4">4.2 Sofern die Zustellung der Ware scheitert, obwohl der Verkäufer ordnungsgemäß geliefert hat, trägt der Kunde die Kosten für die erfolglose Zustellung.</p>
@@ -63,12 +58,12 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 5 Eigentumsvorbehalt</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 5 {t.terms.section5Title}</h2>
               <p>Bis zur vollständigen Bezahlung verbleiben die gelieferten Waren im Eigentum des Verkäufers.</p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 6 Gewährleistung</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 6 {t.terms.section6Title}</h2>
               <p>6.1 Es gelten die gesetzlichen Gewährleistungsrechte gemäß §§ 437 ff. BGB.</p>
               
               <p className="mt-4">6.2 Die Gewährleistungsfrist beträgt 2 Jahre ab Erhalt der Ware.</p>
@@ -87,14 +82,14 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 7 Haftung</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 7 {t.terms.section7Title}</h2>
               <p>7.1 Der Verkäufer haftet unbeschränkt für Vorsatz und grobe Fahrlässigkeit sowie nach Maßgabe des Produkthaftungsgesetzes.</p>
               
               <p className="mt-4">7.2 Bei leichter Fahrlässigkeit haftet der Verkäufer nur bei Verletzung einer wesentlichen Vertragspflicht, deren Erfüllung die ordnungsgemäße Durchführung des Vertrages überhaupt erst ermöglicht und auf deren Einhaltung der Kunde regelmäßig vertrauen darf (Kardinalpflicht). Die Haftung ist in diesem Fall auf den vertragstypischen, vorhersehbaren Schaden begrenzt.</p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 8 Besondere Hinweise zu handgefertigten Produkten</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 8 {t.terms.section8Title}</h2>
               <p>8.1 Alle Produkte von SatinGlanz sind handgefertigt. Jedes Stück ist ein Unikat und kann leichte Abweichungen in Farbe, Größe und Form aufweisen.</p>
               
               <p className="mt-4">8.2 Produktfotos dienen als Beispielbilder. Das gelieferte Produkt kann aufgrund der handwerklichen Fertigung leicht vom Foto abweichen.</p>
@@ -103,20 +98,20 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 9 Streitbeilegung</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 9 {t.terms.section9Title}</h2>
               <p>9.1 Die EU-Kommission stellt im Internet unter folgendem Link eine Plattform zur Online-Streitbeilegung bereit: <a href="https://ec.europa.eu/consumers/odr" className="text-rose-500 hover:underline" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr</a></p>
               
               <p className="mt-4">9.2 Der Verkäufer ist nicht bereit und nicht verpflichtet, an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 10 Schlussbestimmungen</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">§ 10 {t.terms.section10Title}</h2>
               <p>10.1 Es gilt das Recht der Bundesrepublik Deutschland unter Ausschluss des UN-Kaufrechts.</p>
               
               <p className="mt-4">10.2 Sollten einzelne Bestimmungen dieser AGB unwirksam sein oder werden, bleibt die Wirksamkeit der übrigen Bestimmungen hiervon unberührt.</p>
             </section>
 
-            <p className="text-sm text-gray-500 mt-12">Stand: März 2026</p>
+            <p className="text-sm text-gray-500 mt-12">{t.terms.lastUpdated}</p>
           </div>
         </div>
       </div>

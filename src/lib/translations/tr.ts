@@ -250,4 +250,28 @@ export const tr: Translation = {
   account: {
     claimSuccess: 'Sipariş hesabınıza başarıyla eklendi!',
   },
+  terms: {
+    title: 'Şartlar ve Koşullar',
+    summary: 'Özet:',
+    summaryText: 'Hazır ürünlerin 14 günlük cayma hakkı vardır. Özel yapılandırılmış ürünlerin (Build Your Bouquet) § 312g Para. 2 No. 1 BGB\'ye göre cayma hakkı yoktur. Yasal garanti hakları geçerlidir (§§ 437 ff. BGB).',
+    section1Title: 'Uygulama Kapsamı',
+    section2Title: 'Sözleşmenin Yapılması',
+    section3Title: 'Fiyatlar ve Ödeme Koşulları',
+    section4Title: 'Teslimat ve Kargo',
+    section5Title: 'Mülkiyetin Saklanması',
+    section6Title: 'Garanti',
+    section7Title: 'Sorumluluk',
+    section8Title: 'El Yapımı Ürünler Hakkında Özel Notlar',
+    section9Title: 'Uyuşmazlık Çözümü',
+    section10Title: 'Son Hükümler',
+    lastUpdated: 'Son güncelleme: Mart 2026',
+  },
+  imprint: {
+    title: 'Künye',
+    contact: 'İletişim',
+    email: 'E-posta',
+  },
+  refundPolicy: {
+    title: 'İade Politikası & Cayma Hakkı',
+  },
 };

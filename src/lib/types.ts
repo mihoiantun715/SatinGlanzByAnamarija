@@ -271,4 +271,28 @@ export interface Translation {
   account: {
     claimSuccess: string;
   };
+  terms: {
+    title: string;
+    summary: string;
+    summaryText: string;
+    section1Title: string;
+    section2Title: string;
+    section3Title: string;
+    section4Title: string;
+    section5Title: string;
+    section6Title: string;
+    section7Title: string;
+    section8Title: string;
+    section9Title: string;
+    section10Title: string;
+    lastUpdated: string;
+  };
+  imprint: {
+    title: string;
+    contact: string;
+    email: string;
+  };
+  refundPolicy: {
+    title: string;
+  };
 }

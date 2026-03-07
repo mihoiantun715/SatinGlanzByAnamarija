@@ -250,4 +250,28 @@ export const hr: Translation = {
   account: {
     claimSuccess: 'Narudžba uspješno dodana na vaš račun!',
   },
+  terms: {
+    title: 'Opći uvjeti poslovanja',
+    summary: 'Sažetak:',
+    summaryText: 'Gotovi proizvodi imaju 14-dnevno pravo na odustajanje. Prilagođeni konfigurirani proizvodi (Build Your Bouquet) nemaju pravo na odustajanje prema § 312g stavak 2 br. 1 BGB. Primjenjuju se zakonska jamstvena prava (§§ 437 ff. BGB).',
+    section1Title: 'Područje primjene',
+    section2Title: 'Zaključivanje ugovora',
+    section3Title: 'Cijene i uvjeti plaćanja',
+    section4Title: 'Dostava i poštarina',
+    section5Title: 'Zadržavanje vlasništva',
+    section6Title: 'Jamstvo',
+    section7Title: 'Odgovornost',
+    section8Title: 'Posebne napomene o ručno izrađenim proizvodima',
+    section9Title: 'Rješavanje sporova',
+    section10Title: 'Završne odredbe',
+    lastUpdated: 'Zadnje ažuriranje: ožujak 2026',
+  },
+  imprint: {
+    title: 'Impresum',
+    contact: 'Kontakt',
+    email: 'E-mail',
+  },
+  refundPolicy: {
+    title: 'Politika povrata & Pravo na odustajanje',
+  },
 };

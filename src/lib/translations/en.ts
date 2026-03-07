@@ -250,4 +250,28 @@ export const en: Translation = {
   account: {
     claimSuccess: 'Order successfully added to your account!',
   },
+  terms: {
+    title: 'Terms & Conditions',
+    summary: 'Summary:',
+    summaryText: 'Ready-made products have a 14-day right of withdrawal. Custom configured products (Build Your Bouquet) have no right of withdrawal according to § 312g Para. 2 No. 1 BGB. Statutory warranty rights apply (§§ 437 ff. BGB).',
+    section1Title: 'Scope of Application',
+    section2Title: 'Conclusion of Contract',
+    section3Title: 'Prices and Payment Terms',
+    section4Title: 'Delivery and Shipping',
+    section5Title: 'Retention of Title',
+    section6Title: 'Warranty',
+    section7Title: 'Liability',
+    section8Title: 'Special Notes on Handcrafted Products',
+    section9Title: 'Dispute Resolution',
+    section10Title: 'Final Provisions',
+    lastUpdated: 'Last updated: March 2026',
+  },
+  imprint: {
+    title: 'Imprint',
+    contact: 'Contact',
+    email: 'Email',
+  },
+  refundPolicy: {
+    title: 'Refund Policy & Right of Withdrawal',
+  },
 };

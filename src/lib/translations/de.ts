@@ -250,4 +250,28 @@ export const de: Translation = {
   account: {
     claimSuccess: 'Bestellung erfolgreich zu Ihrem Konto hinzugefügt!',
   },
+  terms: {
+    title: 'Allgemeine Geschäftsbedingungen (AGB)',
+    summary: 'Zusammenfassung:',
+    summaryText: 'Für fertige Produkte gilt das 14-tägige Widerrufsrecht. Für individuell konfigurierte Produkte (Build Your Bouquet) besteht kein Widerrufsrecht gemäß § 312g Abs. 2 Nr. 1 BGB. Es gelten die gesetzlichen Gewährleistungsrechte (§§ 437 ff. BGB).',
+    section1Title: 'Geltungsbereich',
+    section2Title: 'Vertragsschluss',
+    section3Title: 'Preise und Zahlungsbedingungen',
+    section4Title: 'Lieferung und Versand',
+    section5Title: 'Eigentumsvorbehalt',
+    section6Title: 'Gewährleistung',
+    section7Title: 'Haftung',
+    section8Title: 'Besondere Hinweise zu handgefertigten Produkten',
+    section9Title: 'Streitbeilegung',
+    section10Title: 'Schlussbestimmungen',
+    lastUpdated: 'Stand: März 2026',
+  },
+  imprint: {
+    title: 'Impressum',
+    contact: 'Kontakt',
+    email: 'E-Mail',
+  },
+  refundPolicy: {
+    title: 'Widerrufsbelehrung & Rückgaberecht',
+  },
 };

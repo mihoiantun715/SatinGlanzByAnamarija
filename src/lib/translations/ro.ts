@@ -250,4 +250,28 @@ export const ro: Translation = {
   account: {
     claimSuccess: 'Comandă adăugată cu succes la contul dvs.!',
   },
+  terms: {
+    title: 'Termeni și Condiții',
+    summary: 'Rezumat:',
+    summaryText: 'Produsele gata făcute au un drept de retragere de 14 zile. Produsele configurate personalizat (Build Your Bouquet) nu au drept de retragere conform § 312g Para. 2 Nr. 1 BGB. Se aplică drepturile legale de garanție (§§ 437 ff. BGB).',
+    section1Title: 'Domeniul de aplicare',
+    section2Title: 'Încheierea contractului',
+    section3Title: 'Prețuri și condiții de plată',
+    section4Title: 'Livrare și transport',
+    section5Title: 'Rezerva de proprietate',
+    section6Title: 'Garanție',
+    section7Title: 'Răspundere',
+    section8Title: 'Note speciale despre produsele lucrate manual',
+    section9Title: 'Soluționarea litigiilor',
+    section10Title: 'Dispoziții finale',
+    lastUpdated: 'Ultima actualizare: martie 2026',
+  },
+  imprint: {
+    title: 'Impresum',
+    contact: 'Contact',
+    email: 'Email',
+  },
+  refundPolicy: {
+    title: 'Politica de rambursare & Dreptul de retragere',
+  },
 };
