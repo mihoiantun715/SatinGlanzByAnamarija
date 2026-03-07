@@ -383,24 +383,46 @@ export default function BuildBouquetPage() {
                             if (count > 0) {
                               newMix[color.key] = count - 1;
                               if (newMix[color.key] === 0) delete newMix[color.key];
-                              setColorMix(newMix);
                               const total = Object.values(newMix).reduce((a, b) => a + b, 0);
-                              setRoseCount(total);
-                              setCustomCount('');
+                              if (total <= 101) {
+                                setColorMix(newMix);
+                                setRoseCount(total);
+                              }
                             }
                           }}
                           className="w-8 h-8 rounded-lg border-2 border-gray-200 hover:border-gray-400 flex items-center justify-center text-gray-600 font-bold transition-all"
                         >
                           -
                         </button>
-                        <span className="w-12 text-center font-semibold text-gray-900">{count}</span>
+                        <input
+                          type="number"
+                          min="0"
+                          max="101"
+                          value={count}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value) || 0;
+                            const newMix = { ...colorMix };
+                            if (val === 0) {
+                              delete newMix[color.key];
+                            } else {
+                              newMix[color.key] = val;
+                            }
+                            const total = Object.values(newMix).reduce((a, b) => a + b, 0);
+                            if (total <= 101) {
+                              setColorMix(newMix);
+                              setRoseCount(total);
+                            }
+                          }}
+                          className="w-16 text-center font-semibold text-gray-900 border-2 border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:border-gray-900"
+                        />
                         <button
                           onClick={() => {
                             const newMix = { ...colorMix, [color.key]: count + 1 };
-                            setColorMix(newMix);
                             const total = Object.values(newMix).reduce((a, b) => a + b, 0);
-                            setRoseCount(total);
-                            setCustomCount('');
+                            if (total <= 101) {
+                              setColorMix(newMix);
+                              setRoseCount(total);
+                            }
                           }}
                           className="w-8 h-8 rounded-lg border-2 border-gray-200 hover:border-gray-400 flex items-center justify-center text-gray-600 font-bold transition-all"
                         >
@@ -413,75 +435,25 @@ export default function BuildBouquetPage() {
               </div>
             </div>
 
-            {/* Rose Count */}
+            {/* Total Rose Count Display & Special Request */}
             <div className="mb-8">
-              <p className="text-sm font-bold text-gray-900 mb-1">
-                {t.bouquetBuilder.roseCount} <span className="font-normal text-gray-500">{roseCount}</span>
-              </p>
-              <p className="text-xs text-gray-400 mb-3">{t.bouquetBuilder.roseCountNote}</p>
-              <div className="flex flex-wrap gap-2">
-                {presetCounts.map((count) => (
-                  <button
-                    key={count}
-                    onClick={() => {
-                      setRoseCount(count);
-                      setCustomCount('');
-                      // Distribute evenly across selected colors or set first color
-                      const colors = Object.keys(colorMix).filter(k => colorMix[k] > 0);
-                      if (colors.length === 0) {
-                        setColorMix({ 'Red': count });
-                      } else if (colors.length === 1) {
-                        setColorMix({ [colors[0]]: count });
-                      } else {
-                        const perColor = Math.floor(count / colors.length);
-                        const remainder = count % colors.length;
-                        const newMix: Record<string, number> = {};
-                        colors.forEach((c, i) => {
-                          newMix[c] = perColor + (i < remainder ? 1 : 0);
-                        });
-                        setColorMix(newMix);
-                      }
-                    }}
-                    className={`min-w-[44px] px-3 py-2.5 rounded-lg border-2 text-sm font-semibold transition-all ${
-                      roseCount === count && customCount === ''
-                        ? 'border-gray-900 bg-gray-900 text-white'
-                        : 'border-gray-200 text-gray-700 hover:border-gray-400'
-                    }`}
-                  >
-                    {count}
-                  </button>
-                ))}
-              </div>
-              <div className="flex items-center gap-3 mt-3">
-                <span className="text-sm font-medium text-gray-600">Custom:</span>
-                <input
-                  type="number"
-                  min={1}
-                  max={101}
-                  value={customCount}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setCustomCount(val);
-                    const num = parseInt(val);
-                    if (num >= 1 && num <= 101) {
-                      setRoseCount(num);
-                      const colors = Object.keys(colorMix).filter(k => colorMix[k] > 0);
-                      if (colors.length === 0) {
-                        setColorMix({ 'Red': num });
-                      } else if (colors.length === 1) {
-                        setColorMix({ [colors[0]]: num });
-                      }
-                    }
-                  }}
-                  placeholder="1-101"
-                  className={`w-24 px-3 py-2.5 rounded-lg border-2 text-sm font-semibold text-center transition-all focus:outline-none focus:border-gray-900 ${
-                    customCount !== '' ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-200 text-gray-700'
-                  }`}
-                />
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-sm font-bold text-gray-900">
+                  {t.bouquetBuilder.roseCount}
+                </p>
+                <span className="text-lg font-bold text-gray-900">{roseCount} / 101</span>
               </div>
               
+              {roseCount > 101 && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl">
+                  <p className="text-sm text-red-700">
+                    ⚠️ Maximum 101 roses allowed. Please reduce your selection.
+                  </p>
+                </div>
+              )}
+              
               {/* Special Request for 101+ Roses */}
-              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
                 <p className="text-sm font-semibold text-blue-900 mb-2">
                   🌹 Need more than 101 roses?
                 </p>
