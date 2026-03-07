@@ -59,7 +59,7 @@ export default function BuildBouquetPage() {
   const { locale, t } = useLanguage();
   const { addToCart } = useCart();
 
-  const [selectedColor, setSelectedColor] = useState('Red');
+  const [colorMix, setColorMix] = useState<Record<string, number>>({ 'Red': 50 });
   const [roseCount, setRoseCount] = useState(50);
   const [selectedRibbon, setSelectedRibbon] = useState('none');
   const [wrapping, setWrapping] = useState('blush-pink');
@@ -92,9 +92,15 @@ export default function BuildBouquetPage() {
   }, [roseCount, selectedRibbon, selectedDecorations]);
 
   const handleAddToCart = () => {
-    const colorName = colorTranslations[selectedColor]?.[locale] || selectedColor;
     const wrapName = wrappingOptions.find(w => w.key === wrapping)?.label || wrapping;
     const ribbonName = ribbonOptions.find(r => r.key === selectedRibbon)?.label || '';
+    
+    // Build color description
+    const colorParts = Object.entries(colorMix)
+      .filter(([_, count]) => count > 0)
+      .map(([color, count]) => `${count}x ${colorTranslations[color]?.[locale] || color}`);
+    const colorDesc = colorParts.join(', ');
+    const colorList = Object.keys(colorMix).filter(k => colorMix[k] > 0);
 
     const customProduct = {
       id: `custom-bouquet-${Date.now()}`,
@@ -102,11 +108,11 @@ export default function BuildBouquetPage() {
       price: totalPrice,
       images: [],
       category: 'Custom Bouquet',
-      colors: [selectedColor],
+      colors: colorList,
       inStock: true,
       featured: false,
       name: {
-        en: `Custom Bouquet (${roseCount} ${selectedColor} roses)`,
+        en: `Custom Bouquet (${roseCount} roses)`,
         de: `Individueller Strauß (${roseCount} Rosen)`,
         hr: `Prilagođeni buket (${roseCount} ruža)`,
         ro: `Buchet personalizat (${roseCount} trandafiri)`,
@@ -114,12 +120,12 @@ export default function BuildBouquetPage() {
         tr: `Özel Buket (${roseCount} gül)`,
       },
       description: {
-        en: `${roseCount}x ${colorName} roses, ${wrapName} wrap${ribbonName ? `, ${ribbonName} ribbon` : ''}`,
-        de: `${roseCount}x ${colorName} Rosen, ${wrapName} Verpackung${ribbonName ? `, ${ribbonName} Band` : ''}`,
-        hr: `${roseCount}x ${colorName} ruža, ${wrapName} omot${ribbonName ? `, ${ribbonName} vrpca` : ''}`,
-        ro: `${roseCount}x ${colorName} trandafiri, ${wrapName} ambalaj${ribbonName ? `, ${ribbonName} panglică` : ''}`,
-        bg: `${roseCount}x ${colorName} рози, ${wrapName} опаковка${ribbonName ? `, ${ribbonName} лента` : ''}`,
-        tr: `${roseCount}x ${colorName} gül, ${wrapName} ambalaj${ribbonName ? `, ${ribbonName} kurdele` : ''}`,
+        en: `${colorDesc}, ${wrapName} wrap${ribbonName ? `, ${ribbonName} ribbon` : ''}`,
+        de: `${colorDesc}, ${wrapName} Verpackung${ribbonName ? `, ${ribbonName} Band` : ''}`,
+        hr: `${colorDesc}, ${wrapName} omot${ribbonName ? `, ${ribbonName} vrpca` : ''}`,
+        ro: `${colorDesc}, ${wrapName} ambalaj${ribbonName ? `, ${ribbonName} panglică` : ''}`,
+        bg: `${colorDesc}, ${wrapName} опаковка${ribbonName ? `, ${ribbonName} лента` : ''}`,
+        tr: `${colorDesc}, ${wrapName} ambalaj${ribbonName ? `, ${ribbonName} kurdele` : ''}`,
       },
       shortDescription: {
         en: `Custom ${roseCount}-rose bouquet`,
@@ -131,14 +137,16 @@ export default function BuildBouquetPage() {
       },
     };
 
-    addToCart(customProduct, 1, `${colorName}, ${wrapName}`);
+    addToCart(customProduct, 1, `${colorDesc}, ${wrapName}`);
     setAdded(true);
     setTimeout(() => setAdded(false), 3000);
   };
 
-  // Generate thumbnail previews based on selected color
-  const thumbColors = [selectedColor, ...roseColors.filter(c => c.key !== selectedColor).slice(0, 4).map(c => c.key)];
-  const currentColorObj = roseColors.find(c => c.key === selectedColor);
+  // Generate thumbnail previews based on selected colors
+  const selectedColors = Object.keys(colorMix).filter(k => colorMix[k] > 0);
+  const primaryColor = selectedColors[0] || 'Red';
+  const thumbColors = [primaryColor, ...roseColors.filter(c => !selectedColors.includes(c.key)).slice(0, 4).map(c => c.key)];
+  const currentColorObj = roseColors.find(c => c.key === thumbColors[activeThumb]) || roseColors[0];
 
   return (
     <div className="min-h-screen bg-white">
@@ -163,7 +171,7 @@ export default function BuildBouquetPage() {
                 return (
                   <button
                     key={i}
-                    onClick={() => { setActiveThumb(i); if (i === 0) setSelectedColor(color); }}
+                    onClick={() => setActiveThumb(i)}
                     className={`w-16 h-16 rounded-lg border-2 flex items-center justify-center transition-all overflow-hidden ${
                       activeThumb === i ? 'border-gray-900' : 'border-gray-200 hover:border-gray-400'
                     }`}
@@ -323,36 +331,67 @@ export default function BuildBouquetPage() {
               {t.common.currency}{totalPrice.toFixed(2)}
             </div>
 
-            <p className="text-sm text-rose-600 font-medium mb-6">
-              {t.bouquetBuilder.handmadeNote}
-            </p>
 
-            {/* Color Selection */}
+            {/* Color Mix Selection */}
             <div className="mb-8">
               <p className="text-sm font-bold text-gray-900 mb-3">
-                {t.bouquetBuilder.color} <span className="font-normal text-gray-500">{colorTranslations[selectedColor]?.[locale] || selectedColor}</span>
+                {t.bouquetBuilder.color} <span className="font-normal text-gray-500">Mix colors</span>
               </p>
-              <div className="flex flex-wrap gap-2">
-                {roseColors.map((color) => (
-                  <button
-                    key={color.key}
-                    onClick={() => setSelectedColor(color.key)}
-                    className={`w-12 h-12 rounded-lg border-2 flex items-center justify-center transition-all overflow-hidden ${
-                      selectedColor === color.key ? 'border-gray-900 ring-1 ring-gray-900' : 'border-gray-200 hover:border-gray-400'
-                    }`}
-                    style={{
-                      background: color.hex.startsWith('linear') ? color.hex : `${color.hex}22`,
-                    }}
-                    title={colorTranslations[color.key]?.[locale] || color.key}
-                  >
-                    <img
-                      src={color.image}
-                      alt={color.key}
-                      className="w-8 h-8 object-contain"
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                    />
-                  </button>
-                ))}
+              <div className="space-y-3">
+                {roseColors.map((color) => {
+                  const count = colorMix[color.key] || 0;
+                  return (
+                    <div key={color.key} className="flex items-center gap-3">
+                      <div
+                        className="w-10 h-10 rounded-lg border-2 border-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0"
+                        style={{
+                          background: color.hex.startsWith('linear') ? color.hex : `${color.hex}22`,
+                        }}
+                      >
+                        <img
+                          src={color.image}
+                          alt={color.key}
+                          className="w-7 h-7 object-contain"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-700">{colorTranslations[color.key]?.[locale] || color.key}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => {
+                            const newMix = { ...colorMix };
+                            if (count > 0) {
+                              newMix[color.key] = count - 1;
+                              if (newMix[color.key] === 0) delete newMix[color.key];
+                              setColorMix(newMix);
+                              const total = Object.values(newMix).reduce((a, b) => a + b, 0);
+                              setRoseCount(total);
+                              setCustomCount('');
+                            }
+                          }}
+                          className="w-8 h-8 rounded-lg border-2 border-gray-200 hover:border-gray-400 flex items-center justify-center text-gray-600 font-bold transition-all"
+                        >
+                          -
+                        </button>
+                        <span className="w-12 text-center font-semibold text-gray-900">{count}</span>
+                        <button
+                          onClick={() => {
+                            const newMix = { ...colorMix, [color.key]: count + 1 };
+                            setColorMix(newMix);
+                            const total = Object.values(newMix).reduce((a, b) => a + b, 0);
+                            setRoseCount(total);
+                            setCustomCount('');
+                          }}
+                          className="w-8 h-8 rounded-lg border-2 border-gray-200 hover:border-gray-400 flex items-center justify-center text-gray-600 font-bold transition-all"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -366,7 +405,25 @@ export default function BuildBouquetPage() {
                 {presetCounts.map((count) => (
                   <button
                     key={count}
-                    onClick={() => { setRoseCount(count); setCustomCount(''); }}
+                    onClick={() => {
+                      setRoseCount(count);
+                      setCustomCount('');
+                      // Distribute evenly across selected colors or set first color
+                      const colors = Object.keys(colorMix).filter(k => colorMix[k] > 0);
+                      if (colors.length === 0) {
+                        setColorMix({ 'Red': count });
+                      } else if (colors.length === 1) {
+                        setColorMix({ [colors[0]]: count });
+                      } else {
+                        const perColor = Math.floor(count / colors.length);
+                        const remainder = count % colors.length;
+                        const newMix: Record<string, number> = {};
+                        colors.forEach((c, i) => {
+                          newMix[c] = perColor + (i < remainder ? 1 : 0);
+                        });
+                        setColorMix(newMix);
+                      }
+                    }}
                     className={`min-w-[44px] px-3 py-2.5 rounded-lg border-2 text-sm font-semibold transition-all ${
                       roseCount === count && customCount === ''
                         ? 'border-gray-900 bg-gray-900 text-white'
@@ -388,7 +445,15 @@ export default function BuildBouquetPage() {
                     const val = e.target.value;
                     setCustomCount(val);
                     const num = parseInt(val);
-                    if (num >= 1 && num <= 101) setRoseCount(num);
+                    if (num >= 1 && num <= 101) {
+                      setRoseCount(num);
+                      const colors = Object.keys(colorMix).filter(k => colorMix[k] > 0);
+                      if (colors.length === 0) {
+                        setColorMix({ 'Red': num });
+                      } else if (colors.length === 1) {
+                        setColorMix({ [colors[0]]: num });
+                      }
+                    }
                   }}
                   placeholder="1-101"
                   className={`w-24 px-3 py-2.5 rounded-lg border-2 text-sm font-semibold text-center transition-all focus:outline-none focus:border-gray-900 ${
@@ -451,21 +516,25 @@ export default function BuildBouquetPage() {
                 <span className="font-normal text-gray-500">{wrappingOptions.find(w => w.key === wrapping)?.label}</span>
               </p>
               <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 mt-3">
-                {wrappingOptions.map((opt) => (
+                {wrappingOptions.map((opt, i) => (
                   <button
-                    key={opt.key}
-                    onClick={() => setWrapping(opt.key)}
-                    className={`relative rounded-lg border-2 overflow-hidden transition-all aspect-[3/4] ${
-                      wrapping === opt.key ? 'border-gray-900 ring-1 ring-gray-900' : 'border-gray-200 hover:border-gray-400'
+                    key={i}
+                    onClick={() => {
+                      setActiveThumb(i);
+                      // Update preview to show this color
+                    }}
+                    className={`w-16 h-20 rounded-lg border-2 overflow-hidden transition-all cursor-pointer ${
+                      activeThumb === i ? 'border-gray-900 ring-1 ring-gray-900' : 'border-gray-200 hover:border-gray-400'
                     }`}
-                    title={opt.label}
                   >
-                    <img
-                      src={opt.image}
-                      alt={opt.label}
-                      className="w-full h-full object-cover"
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                    />
+                    <div className="relative w-full h-full bg-gradient-to-br from-rose-50 to-pink-50">
+                      <img
+                        src={opt.image}
+                        alt={opt.label}
+                        className="absolute inset-0 w-full h-full object-contain p-1"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      />
+                    </div>
                   </button>
                 ))}
               </div>
