@@ -59,8 +59,8 @@ export default function BuildBouquetPage() {
   const { locale, t } = useLanguage();
   const { addToCart } = useCart();
 
-  const [colorMix, setColorMix] = useState<Record<string, number>>({ 'Red': 50 });
-  const [roseCount, setRoseCount] = useState(50);
+  const [colorMix, setColorMix] = useState<Record<string, number>>({});
+  const [roseCount, setRoseCount] = useState(0);
   const [selectedRibbon, setSelectedRibbon] = useState('none');
   const [wrapping, setWrapping] = useState('blush-pink');
   const [selectedDecorations, setSelectedDecorations] = useState<string[]>(['noThanks']);
