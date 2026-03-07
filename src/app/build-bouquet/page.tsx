@@ -202,13 +202,12 @@ export default function BuildBouquetPage() {
                   />
                 ) : null;
               })()}
-              {/* Roses — tight circular bouquet */}
+              {/* Roses — tight circular bouquet with mixed colors */}
               {(() => {
                 const displayCount = Math.min(roseCount, 37);
                 const positions: { x: number; y: number }[] = [];
                 const cx = 50, cy = 46;
                 // Concentric rings with tight spacing
-                // Ring 0: 1 center, Ring 1: up to 6, Ring 2: up to 12, Ring 3: up to 18
                 const rings = [
                   { count: 1, radius: 0 },
                   { count: 6, radius: 11 },
@@ -233,25 +232,44 @@ export default function BuildBouquetPage() {
                     placed++;
                   }
                 }
+                
+                // Build array of rose colors based on colorMix
+                const roseColorArray: string[] = [];
+                Object.entries(colorMix).forEach(([color, count]) => {
+                  for (let i = 0; i < count; i++) {
+                    roseColorArray.push(color);
+                  }
+                });
+                
+                // Shuffle for natural mix (Fisher-Yates)
+                for (let i = roseColorArray.length - 1; i > 0; i--) {
+                  const j = Math.floor(Math.random() * (i + 1));
+                  [roseColorArray[i], roseColorArray[j]] = [roseColorArray[j], roseColorArray[i]];
+                }
+                
                 const roseSize = displayCount <= 1 ? 60 : displayCount <= 7 ? 44 : displayCount <= 19 ? 34 : 26;
                 return (
                   <div className="absolute inset-0" style={{ zIndex: 2 }}>
-                    {positions.map((pos, i) => (
-                      <img
-                        key={i}
-                        src={currentColorObj?.image}
-                        alt=""
-                        className="absolute object-contain drop-shadow-md"
-                        style={{
-                          width: `${roseSize}%`,
-                          height: `${roseSize}%`,
-                          left: `${pos.x}%`,
-                          top: `${pos.y}%`,
-                          transform: 'translate(-50%, -50%)',
-                        }}
-                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                      />
-                    ))}
+                    {positions.map((pos, i) => {
+                      const colorKey = roseColorArray[i % roseColorArray.length] || 'Red';
+                      const colorObj = roseColors.find(c => c.key === colorKey);
+                      return (
+                        <img
+                          key={i}
+                          src={colorObj?.image}
+                          alt=""
+                          className="absolute object-contain drop-shadow-md"
+                          style={{
+                            width: `${roseSize}%`,
+                            height: `${roseSize}%`,
+                            left: `${pos.x}%`,
+                            top: `${pos.y}%`,
+                            transform: 'translate(-50%, -50%)',
+                          }}
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                        />
+                      );
+                    })}
                   </div>
                 );
               })()}
