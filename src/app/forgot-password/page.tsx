@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { app } from '@/lib/firebase';
 import { useLanguage } from '@/context/LanguageContext';
 import Image from 'next/image';
 import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
@@ -27,31 +27,19 @@ export default function ForgotPasswordPage() {
 
     setLoading(true);
     try {
-      // Send password reset email - Firebase will only send if account exists
-      const actionCodeSettings = {
-        url: `${window.location.origin}/login`,
-        handleCodeInApp: false,
-      };
+      // Use custom Cloud Function to send password reset email from Gmail
+      const functions = getFunctions(app, 'us-central1');
+      const sendCustomPasswordReset = httpsCallable(functions, 'sendCustomPasswordReset');
       
-      await sendPasswordResetEmail(auth, email, actionCodeSettings);
+      await sendCustomPasswordReset({ email });
       
-      console.log('Password reset email request sent for', email);
+      console.log('Custom password reset email sent for', email);
       
       setSuccess(true);
       setEmail('');
     } catch (err: unknown) {
-      const code = (err as { code?: string })?.code;
-      console.error('Password reset error:', code, err);
-      
-      if (code === 'auth/user-not-found') {
-        // Show generic success message to prevent email enumeration
-        setSuccess(true);
-        setEmail('');
-      } else if (code === 'auth/invalid-email') {
-        setError(t.auth.errorEmail);
-      } else {
-        setError(t.forgotPassword.errorSendFailed);
-      }
+      console.error('Password reset error:', err);
+      setError(t.forgotPassword.errorSendFailed);
     } finally {
       setLoading(false);
     }

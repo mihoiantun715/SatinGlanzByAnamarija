@@ -49,6 +49,11 @@ const getTrackingUrl = (carrier: string, trackingNumber: string): string => {
   }
 };
 
+// Generate random reset token
+const generateResetToken = (): string => {
+  return Math.random().toString(36).substring(2) + Date.now().toString(36);
+};
+
 // Shipping rates - MUST match client-side shippingCalculator.ts
 const SHIPPING_RATES = {
   dhl: {
@@ -1015,6 +1020,155 @@ export const sendContactEmail = functions.https.onCall(async (data: any, context
   } catch (error) {
     console.error('Contact email error:', error);
     throw new functions.https.HttpsError('internal', 'Failed to send contact email');
+  }
+});
+
+// Custom password reset - send email with reset token
+export const sendCustomPasswordReset = functions.https.onCall(async (data: any, context) => {
+  try {
+    const { email } = data;
+
+    if (!email || typeof email !== 'string') {
+      throw new functions.https.HttpsError('invalid-argument', 'Email is required');
+    }
+
+    // Check if user exists
+    let userRecord;
+    try {
+      userRecord = await admin.auth().getUserByEmail(email);
+    } catch (error) {
+      // User doesn't exist - show success anyway to prevent enumeration
+      return { success: true };
+    }
+
+    // Generate reset token
+    const resetToken = generateResetToken();
+    const expiresAt = Date.now() + (60 * 60 * 1000); // 1 hour expiration
+
+    // Store token in Firestore
+    await admin.firestore().collection('password_resets').doc(resetToken).set({
+      email: email,
+      userId: userRecord.uid,
+      expiresAt: expiresAt,
+      used: false,
+      createdAt: Date.now(),
+    });
+
+    const transporter = createTransporter();
+    const resetLink = `https://satinglanzbyanamarija.com/reset-password?token=${resetToken}`;
+
+    const htmlContent = `
+      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #f43f5e, #ec4899); color: white; padding: 35px 30px; text-align: center; border-radius: 16px 16px 0 0;">
+          <div style="font-size: 48px; margin-bottom: 10px;">🔑</div>
+          <h1 style="margin: 0; font-size: 26px; font-weight: 700;">Passwort zurücksetzen</h1>
+          <p style="margin: 10px 0 0 0; font-size: 15px; opacity: 0.9;">SatinGlanz by Anamarija</p>
+        </div>
+        
+        <div style="background: #ffffff; padding: 30px; border-radius: 0 0 16px 16px; border: 1px solid #f3e8f0;">
+          <p style="color: #374151; font-size: 16px; line-height: 1.6;">
+            Hallo,
+          </p>
+          <p style="color: #6b7280; line-height: 1.6; font-size: 15px;">
+            Sie haben eine Anfrage zum Zurücksetzen Ihres Passworts für Ihr SatinGlanz-Konto gestellt.
+          </p>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${resetLink}" style="background: #f43f5e; color: white; padding: 14px 32px; text-decoration: none; border-radius: 50px; display: inline-block; font-weight: 600; font-size: 14px; box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);">
+              Passwort zurücksetzen 🔑
+            </a>
+          </div>
+
+          <p style="color: #6b7280; font-size: 13px; line-height: 1.6;">
+            Oder kopieren Sie diesen Link in Ihren Browser:<br>
+            <a href="${resetLink}" style="color: #f43f5e; word-break: break-all;">${resetLink}</a>
+          </p>
+
+          <div style="background: #fef3c7; border: 1px solid #fbbf24; padding: 16px; border-radius: 10px; margin-top: 20px;">
+            <p style="margin: 0; color: #92400e; font-size: 13px;">
+              <strong>⚠️ Wichtig:</strong><br>
+              Dieser Link ist nur 1 Stunde gültig. Wenn Sie diese Anfrage nicht gestellt haben, können Sie diese E-Mail ignorieren.
+            </p>
+          </div>
+
+          <div style="border-top: 1px solid #f3e8f0; padding-top: 20px; margin-top: 25px; text-align: center;">
+            <p style="color: #6b7280; font-size: 13px; margin: 5px 0;">Fragen?</p>
+            <p style="color: #9ca3af; font-size: 12px; margin: 5px 0;">
+              📧 <a href="mailto:satinglanzbyanamarija@gmail.com" style="color: #f43f5e; text-decoration: none;">satinglanzbyanamarija@gmail.com</a><br>
+              🌐 <a href="https://satinglanzbyanamarija.com/" style="color: #f43f5e; text-decoration: none;">satinglanzbyanamarija.com</a>
+            </p>
+            <p style="color: #9ca3af; font-size: 12px; margin: 15px 0 0 0;">Mit ❤️ von Anamarija</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    await transporter.sendMail({
+      from: GMAIL_FROM,
+      to: email,
+      subject: '🔑 Passwort zurücksetzen - SatinGlanz by Anamarija',
+      html: htmlContent,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Custom password reset error:', error);
+    throw new functions.https.HttpsError('internal', 'Failed to send password reset email');
+  }
+});
+
+// Verify reset token and update password
+export const verifyResetToken = functions.https.onCall(async (data: any, context) => {
+  try {
+    const { token, newPassword } = data;
+
+    if (!token || !newPassword) {
+      throw new functions.https.HttpsError('invalid-argument', 'Token and new password are required');
+    }
+
+    if (newPassword.length < 6) {
+      throw new functions.https.HttpsError('invalid-argument', 'Password must be at least 6 characters');
+    }
+
+    // Get token from Firestore
+    const tokenDoc = await admin.firestore().collection('password_resets').doc(token).get();
+
+    if (!tokenDoc.exists) {
+      throw new functions.https.HttpsError('not-found', 'Invalid or expired reset token');
+    }
+
+    const tokenData = tokenDoc.data();
+    if (!tokenData) {
+      throw new functions.https.HttpsError('not-found', 'Invalid reset token');
+    }
+
+    // Check if token is expired
+    if (tokenData.expiresAt < Date.now()) {
+      await admin.firestore().collection('password_resets').doc(token).delete();
+      throw new functions.https.HttpsError('deadline-exceeded', 'Reset token has expired');
+    }
+
+    // Check if token was already used
+    if (tokenData.used) {
+      throw new functions.https.HttpsError('failed-precondition', 'Reset token has already been used');
+    }
+
+    // Update user password
+    await admin.auth().updateUser(tokenData.userId, {
+      password: newPassword,
+    });
+
+    // Mark token as used
+    await admin.firestore().collection('password_resets').doc(token).update({
+      used: true,
+      usedAt: Date.now(),
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Verify reset token error:', error);
+    if (error instanceof functions.https.HttpsError) throw error;
+    throw new functions.https.HttpsError('internal', 'Failed to reset password');
   }
 });
 
