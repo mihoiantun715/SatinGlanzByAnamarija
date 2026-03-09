@@ -30,8 +30,11 @@ export default function ForgotPasswordPage() {
       // First, check if the email exists in Firebase Authentication
       const signInMethods = await fetchSignInMethodsForEmail(auth, email);
       
+      console.log('Sign-in methods for', email, ':', signInMethods);
+      
       // If no sign-in methods exist, the account doesn't exist
       if (signInMethods.length === 0) {
+        console.log('No account found for', email, '- not sending email');
         // Show generic success message to prevent email enumeration
         // but DON'T actually send an email
         setSuccess(true);
@@ -40,6 +43,8 @@ export default function ForgotPasswordPage() {
         return;
       }
       
+      console.log('Account exists for', email, '- sending password reset email');
+      
       // Account exists - send the password reset email
       const actionCodeSettings = {
         url: `${window.location.origin}/login`,
@@ -47,6 +52,8 @@ export default function ForgotPasswordPage() {
       };
       
       await sendPasswordResetEmail(auth, email, actionCodeSettings);
+      
+      console.log('Password reset email sent successfully to', email);
       
       setSuccess(true);
       setEmail('');
