@@ -49,7 +49,53 @@ const getTrackingUrl = (carrier: string, trackingNumber: string): string => {
   }
 };
 
-// Create Stripe Payment Intent
+// Shipping rates - MUST match client-side shippingCalculator.ts
+const SHIPPING_RATES = {
+  dhl: {
+    bouquet: [
+      { maxRoses: 20, price: 5.19 },
+      { maxRoses: 50, price: 7.69 },
+      { maxRoses: 101, price: 7.69 },
+    ],
+    default: 5.19,
+  },
+  gls: {
+    bouquet: [
+      { maxRoses: 20, price: 5.59 },
+      { maxRoses: 50, price: 7.79 },
+      { maxRoses: 101, price: 10.00 },
+    ],
+    default: 5.59,
+  },
+};
+
+// Calculate shipping cost on server (must match client calculation)
+function calculateServerShipping(items: any[], carrier: 'dhl' | 'gls'): number {
+  let totalBouquetRoses = 0;
+  let hasBouquets = false;
+
+  for (const item of items) {
+    if (item.roseCount || item.category === 'Bouquets') {
+      hasBouquets = true;
+      const roses = item.roseCount || 1;
+      totalBouquetRoses += roses * (item.quantity || 1);
+    }
+  }
+
+  if (hasBouquets && totalBouquetRoses > 0) {
+    const rates = SHIPPING_RATES[carrier].bouquet;
+    for (const rate of rates) {
+      if (totalBouquetRoses <= rate.maxRoses) {
+        return rate.price;
+      }
+    }
+    return rates[rates.length - 1].price;
+  }
+
+  return SHIPPING_RATES[carrier].default;
+}
+
+// Create Stripe Payment Intent with SERVER-SIDE PRICE VERIFICATION
 export const createPaymentIntent = functions.https.onCall(async (data: any, context) => {
   // Allow both authenticated and guest users to create payment intents
   if (false) {
@@ -64,8 +110,68 @@ export const createPaymentIntent = functions.https.onCall(async (data: any, cont
       throw new functions.https.HttpsError('invalid-argument', 'Invalid amount.');
     }
 
-    // amount should be in cents
-    const amountInCents = Math.round(amount * 100);
+    // SECURITY: Verify the order exists and recalculate prices server-side
+    if (!orderId) {
+      throw new functions.https.HttpsError('invalid-argument', 'Order ID is required.');
+    }
+
+    const orderDoc = await admin.firestore().collection('orders').doc(orderId).get();
+    if (!orderDoc.exists) {
+      throw new functions.https.HttpsError('not-found', 'Order not found.');
+    }
+
+    const orderData = orderDoc.data();
+    if (!orderData || !orderData.items || orderData.items.length === 0) {
+      throw new functions.https.HttpsError('invalid-argument', 'Order has no items.');
+    }
+
+    // Fetch real product prices from Firestore
+    let calculatedSubtotal = 0;
+    const productIds = orderData.items.map((item: any) => item.productId);
+    const productDocs = await admin.firestore().collection('products').where(admin.firestore.FieldPath.documentId(), 'in', productIds).get();
+    
+    const productPrices: Record<string, number> = {};
+    productDocs.forEach(doc => {
+      const data = doc.data();
+      if (data && typeof data.price === 'number') {
+        productPrices[doc.id] = data.price;
+      }
+    });
+
+    // Recalculate subtotal using real prices from database
+    for (const item of orderData.items) {
+      const realPrice = productPrices[item.productId];
+      if (realPrice === undefined) {
+        throw new functions.https.HttpsError('not-found', `Product ${item.productId} not found.`);
+      }
+      calculatedSubtotal += realPrice * (item.quantity || 1);
+    }
+
+    // Recalculate shipping using server-side logic
+    const carrier = orderData.shippingCarrier || 'dhl';
+    const calculatedShipping = calculateServerShipping(orderData.items, carrier);
+
+    // Calculate expected total
+    const expectedTotal = calculatedSubtotal + calculatedShipping;
+
+    // SECURITY CHECK: Verify client amount matches server calculation
+    // Allow 0.01 difference for rounding
+    if (Math.abs(amount - expectedTotal) > 0.01) {
+      console.error('Price mismatch detected!', {
+        clientAmount: amount,
+        serverCalculated: expectedTotal,
+        subtotal: calculatedSubtotal,
+        shipping: calculatedShipping,
+        orderId: orderId,
+      });
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        `Price verification failed. Expected €${expectedTotal.toFixed(2)}, received €${amount.toFixed(2)}`
+      );
+    }
+
+    // Use server-calculated amount (not client amount!)
+    const amountInCents = Math.round(expectedTotal * 100);
 
     if (amountInCents < 50) {
       throw new functions.https.HttpsError('invalid-argument', 'Amount must be at least €0.50');
@@ -79,10 +185,11 @@ export const createPaymentIntent = functions.https.onCall(async (data: any, cont
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amountInCents,
       currency: currency || 'eur',
-      receipt_email: customerEmail || context.auth.token.email,
+      receipt_email: customerEmail || context.auth?.token?.email,
       metadata: {
         orderId: orderId || '',
-        userId: context.auth.uid,
+        userId: context.auth?.uid || 'guest',
+        verifiedAmount: expectedTotal.toFixed(2),
       },
     });
 
