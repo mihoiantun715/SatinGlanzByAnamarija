@@ -527,12 +527,10 @@ export default function AdminPage() {
 
   if (!user || !isAdmin) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="text-center">
-          <ShieldCheck className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500 font-medium">Access Denied</p>
-          <p className="text-sm text-gray-400 mt-1">You need admin privileges to view this page.</p>
-          <a href="/" className="text-rose-500 hover:text-rose-600 text-sm font-medium mt-4 inline-block">Go Home</a>
+          <h1 className="text-6xl font-bold text-gray-900 mb-4">404</h1>
+          <p className="text-xl text-gray-600 mb-2">This page could not be found.</p>
         </div>
       </div>
     );
