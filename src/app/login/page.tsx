@@ -3,12 +3,12 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
 import Image from 'next/image';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Chrome } from 'lucide-react';
 
 export default function LoginPage() {
   const { t } = useLanguage();
@@ -40,6 +40,23 @@ export default function LoginPage() {
       const code = (err as { code?: string })?.code;
       if (code === 'auth/user-not-found') setError(t.auth.errorUserNotFound);
       else if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') setError(t.auth.errorWrongPassword);
+      else setError(t.auth.errorGeneric);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      router.push('/account');
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code;
+      if (code === 'auth/popup-closed-by-user') setError('Sign-in cancelled');
+      else if (code === 'auth/popup-blocked') setError('Please allow popups for this site');
       else setError(t.auth.errorGeneric);
     } finally {
       setLoading(false);
@@ -105,6 +122,25 @@ export default function LoginPage() {
               {loading ? t.common.loading : t.auth.login}
             </button>
           </form>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-200"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-white text-gray-500">or</span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+            className="w-full bg-white hover:bg-gray-50 disabled:bg-gray-100 border-2 border-gray-200 text-gray-700 py-3.5 rounded-xl font-semibold text-sm transition-all hover:shadow-md flex items-center justify-center gap-3"
+          >
+            <Chrome className="w-5 h-5 text-blue-500" />
+            Continue with Google
+          </button>
 
           <div className="text-center mt-4">
             <Link href="/forgot-password" className="text-sm text-gray-600 hover:text-rose-500 transition-colors">
