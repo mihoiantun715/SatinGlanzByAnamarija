@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { sendPasswordResetEmail, fetchSignInMethodsForEmail } from 'firebase/auth';
+import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useLanguage } from '@/context/LanguageContext';
 import Image from 'next/image';
@@ -27,25 +27,7 @@ export default function ForgotPasswordPage() {
 
     setLoading(true);
     try {
-      // First, check if the email exists in Firebase Authentication
-      const signInMethods = await fetchSignInMethodsForEmail(auth, email);
-      
-      console.log('Sign-in methods for', email, ':', signInMethods);
-      
-      // If no sign-in methods exist, the account doesn't exist
-      if (signInMethods.length === 0) {
-        console.log('No account found for', email, '- not sending email');
-        // Show generic success message to prevent email enumeration
-        // but DON'T actually send an email
-        setSuccess(true);
-        setEmail('');
-        setLoading(false);
-        return;
-      }
-      
-      console.log('Account exists for', email, '- sending password reset email');
-      
-      // Account exists - send the password reset email
+      // Send password reset email - Firebase will only send if account exists
       const actionCodeSettings = {
         url: `${window.location.origin}/login`,
         handleCodeInApp: false,
@@ -53,14 +35,16 @@ export default function ForgotPasswordPage() {
       
       await sendPasswordResetEmail(auth, email, actionCodeSettings);
       
-      console.log('Password reset email sent successfully to', email);
+      console.log('Password reset email request sent for', email);
       
       setSuccess(true);
       setEmail('');
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code;
+      console.error('Password reset error:', code, err);
+      
       if (code === 'auth/user-not-found') {
-        // Show generic success message instead of error
+        // Show generic success message to prevent email enumeration
         setSuccess(true);
         setEmail('');
       } else if (code === 'auth/invalid-email') {
