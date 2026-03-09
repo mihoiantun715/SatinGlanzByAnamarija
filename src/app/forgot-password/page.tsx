@@ -41,8 +41,9 @@ export default function ForgotPasswordPage() {
       const functions = getFunctions(app, 'us-central1');
       const sendCustomReset = httpsCallable(functions, 'sendPasswordResetEmail');
       
-      // Create a custom reset link that points to Firebase's action handler
-      const resetLink = `${window.location.origin}/__/auth/action?mode=resetPassword&email=${encodeURIComponent(email)}`;
+      // Note: Firebase will send its own email with the proper reset link
+      // We don't need to send a custom email since Firebase handles this automatically
+      const resetLink = `${window.location.origin}/auth/action?mode=resetPassword&email=${encodeURIComponent(email)}`;
       
       try {
         await sendCustomReset({ email, resetLink });
