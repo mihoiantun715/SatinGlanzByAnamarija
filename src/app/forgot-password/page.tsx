@@ -33,12 +33,9 @@ export default function ForgotPasswordPage() {
       
       await sendCustomPasswordReset({ email });
       
-      console.log('Custom password reset email sent for', email);
-      
       setSuccess(true);
       setEmail('');
     } catch (err: unknown) {
-      console.error('Password reset error:', err);
       setError(t.forgotPassword.errorSendFailed);
     } finally {
       setLoading(false);
