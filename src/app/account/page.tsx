@@ -7,7 +7,7 @@ import { collection, query, where, getDocs, doc, getDoc, updateDoc } from 'fireb
 import { db } from '@/lib/firebase';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
-import { User, Package, LogOut, ShoppingBag, ArrowRight, Truck, ExternalLink, Plus } from 'lucide-react';
+import { User, Package, LogOut, ShoppingBag, ArrowRight, Truck, ExternalLink, Plus, Key } from 'lucide-react';
 
 interface OrderItem {
   name: string;
@@ -201,13 +201,22 @@ export default function AccountPage() {
                 <p className="text-sm text-gray-500">{user.email}</p>
               </div>
             </div>
-            <button
-              onClick={handleLogout}
-              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors"
-            >
-              <LogOut className="w-4 h-4" />
-              {t.auth.logout}
-            </button>
+            <div className="hidden sm:flex items-center gap-3">
+              <Link
+                href="/account/change-password"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-rose-50 hover:text-rose-600 transition-colors"
+              >
+                <Key className="w-4 h-4" />
+                Change Password
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                {t.auth.logout}
+              </button>
+            </div>
           </div>
         </div>
 
