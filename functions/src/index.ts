@@ -1154,9 +1154,11 @@ export const verifyResetToken = functions.https.onCall(async (data: any, context
     }
 
     // Update user password
-    await admin.auth().updateUser(tokenData.userId, {
+    console.log('Updating password for user:', tokenData.userId);
+    const updateResult = await admin.auth().updateUser(tokenData.userId, {
       password: newPassword,
     });
+    console.log('Password update result:', updateResult);
 
     // Mark token as used
     await admin.firestore().collection('password_resets').doc(token).update({
@@ -1164,6 +1166,7 @@ export const verifyResetToken = functions.https.onCall(async (data: any, context
       usedAt: Date.now(),
     });
 
+    console.log('Password successfully updated for user:', tokenData.userId);
     return { success: true };
   } catch (error) {
     console.error('Verify reset token error:', error);
