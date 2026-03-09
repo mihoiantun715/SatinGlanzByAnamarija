@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { sendPasswordResetEmail } from 'firebase/auth';
+import { sendPasswordResetEmail, fetchSignInMethodsForEmail } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useLanguage } from '@/context/LanguageContext';
 import Image from 'next/image';
@@ -27,8 +27,20 @@ export default function ForgotPasswordPage() {
 
     setLoading(true);
     try {
-      // Send Firebase password reset email
-      // Firebase will automatically send an email with the proper reset link including oobCode
+      // First, check if the email exists in Firebase Authentication
+      const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+      
+      // If no sign-in methods exist, the account doesn't exist
+      if (signInMethods.length === 0) {
+        // Show generic success message to prevent email enumeration
+        // but DON'T actually send an email
+        setSuccess(true);
+        setEmail('');
+        setLoading(false);
+        return;
+      }
+      
+      // Account exists - send the password reset email
       const actionCodeSettings = {
         url: `${window.location.origin}/login`,
         handleCodeInApp: false,
@@ -41,7 +53,9 @@ export default function ForgotPasswordPage() {
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code;
       if (code === 'auth/user-not-found') {
-        setError(t.auth.errorUserNotFound);
+        // Show generic success message instead of error
+        setSuccess(true);
+        setEmail('');
       } else if (code === 'auth/invalid-email') {
         setError(t.auth.errorEmail);
       } else {
