@@ -111,6 +111,7 @@ export default function AdminPage() {
   const [adminOrders, setAdminOrders] = useState<AdminOrder[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'finances'>('orders');
+  const [orderStatusFilter, setOrderStatusFilter] = useState<'all' | 'paid' | 'pending_payment' | 'payment_failed'>('all');
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
   const [deleteOrderConfirm, setDeleteOrderConfirm] = useState<string | null>(null);
   const [editingOrder, setEditingOrder] = useState<AdminOrder | null>(null);
@@ -140,6 +141,7 @@ export default function AdminPage() {
       const data = snap.docs.map(d => ({ id: d.id, ...d.data() })) as AdminOrder[];
       data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       setAdminOrders(data);
+      setOrderStatusFilter('all');
     } catch (err) {
       console.error('Failed to fetch orders:', err);
       setAdminOrders([]);
@@ -927,21 +929,69 @@ export default function AdminPage() {
         {/* Orders Management */}
         {activeTab === 'orders' && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
-              <ClipboardList className="w-5 h-5 text-gray-500" />
-              <h2 className="font-bold text-gray-900">Orders ({adminOrders.length})</h2>
+            <div className="px-6 py-4 border-b border-gray-100">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <ClipboardList className="w-5 h-5 text-gray-500" />
+                  <h2 className="font-bold text-gray-900">Orders ({adminOrders.filter(o => orderStatusFilter === 'all' || o.status === orderStatusFilter).length})</h2>
+                </div>
+              </div>
+              
+              {/* Status Filter Buttons */}
+              <div className="flex gap-2 flex-wrap">
+                <button
+                  onClick={() => setOrderStatusFilter('all')}
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    orderStatusFilter === 'all'
+                      ? 'bg-gray-900 text-white shadow-md'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  All ({adminOrders.length})
+                </button>
+                <button
+                  onClick={() => setOrderStatusFilter('paid')}
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    orderStatusFilter === 'paid'
+                      ? 'bg-green-500 text-white shadow-md'
+                      : 'bg-green-50 text-green-700 hover:bg-green-100'
+                  }`}
+                >
+                  Paid ({adminOrders.filter(o => o.status === 'paid').length})
+                </button>
+                <button
+                  onClick={() => setOrderStatusFilter('pending_payment')}
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    orderStatusFilter === 'pending_payment'
+                      ? 'bg-yellow-500 text-white shadow-md'
+                      : 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100'
+                  }`}
+                >
+                  Pending ({adminOrders.filter(o => o.status === 'pending_payment').length})
+                </button>
+                <button
+                  onClick={() => setOrderStatusFilter('payment_failed')}
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    orderStatusFilter === 'payment_failed'
+                      ? 'bg-red-500 text-white shadow-md'
+                      : 'bg-red-50 text-red-700 hover:bg-red-100'
+                  }`}
+                >
+                  Failed ({adminOrders.filter(o => o.status === 'payment_failed').length})
+                </button>
+              </div>
             </div>
 
             {loadingOrders ? (
               <div className="p-8 text-center text-gray-400">{t.common.loading}</div>
-            ) : adminOrders.length === 0 ? (
+            ) : adminOrders.filter(o => orderStatusFilter === 'all' || o.status === orderStatusFilter).length === 0 ? (
               <div className="p-12 text-center">
                 <ClipboardList className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500">No orders yet.</p>
+                <p className="text-gray-500">No {orderStatusFilter !== 'all' ? orderStatusFilter.replace(/_/g, ' ') : ''} orders yet.</p>
               </div>
             ) : (
               <div className="divide-y divide-gray-100">
-                {adminOrders.map((order) => (
+                {adminOrders.filter(o => orderStatusFilter === 'all' || o.status === orderStatusFilter).map((order) => (
                   <div key={order.id} className="p-5 hover:bg-gray-50 transition-colors">
                     <div className="flex items-start justify-between mb-3">
                       <div>
