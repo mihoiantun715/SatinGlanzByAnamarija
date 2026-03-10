@@ -8,7 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useProducts } from '@/context/ProductsContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { Product, Locale } from '@/lib/types';
-import { Plus, Trash2, Edit3, Save, X, ShieldCheck, Package, Upload, Image as ImageIcon, ClipboardList, Truck, ExternalLink, DollarSign, TrendingUp, FileText, Send, Download } from 'lucide-react';
+import { Plus, Trash2, Edit3, Save, X, ShieldCheck, Package, Upload, Image as ImageIcon, ClipboardList, Truck, ExternalLink, DollarSign, TrendingUp, FileText, Send, Download, MessageCircle, Mail } from 'lucide-react';
 import FinancialDashboard from '@/components/FinancialDashboard';
 
 const LOCALES: Locale[] = ['en', 'de', 'hr', 'ro', 'bg', 'tr'];
@@ -110,7 +110,7 @@ export default function AdminPage() {
   // Orders state
   const [adminOrders, setAdminOrders] = useState<AdminOrder[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
-  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'finances'>('orders');
+  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'finances' | 'messages'>('orders');
   const [orderStatusFilter, setOrderStatusFilter] = useState<'all' | 'paid' | 'pending_payment' | 'payment_failed'>('all');
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
   const [deleteOrderConfirm, setDeleteOrderConfirm] = useState<string | null>(null);
@@ -127,11 +127,14 @@ export default function AdminPage() {
   const imageUploadRef = useRef<HTMLInputElement>(null);
   const [modalNotification, setModalNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [sendingTracking, setSendingTracking] = useState<string | null>(null);
+  const [customerMessages, setCustomerMessages] = useState<any[]>([]);
+  const [loadingMessages, setLoadingMessages] = useState(true);
 
   useEffect(() => {
     if (!authLoading && user && isAdmin) {
       fetchProducts();
       fetchOrders();
+      fetchMessages();
     }
   }, [authLoading, user, isAdmin]);
 
@@ -147,6 +150,33 @@ export default function AdminPage() {
       setAdminOrders([]);
     } finally {
       setLoadingOrders(false);
+    }
+  };
+
+  const fetchMessages = async () => {
+    try {
+      const snap = await getDocs(collection(db, 'customerMessages'));
+      const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      data.sort((a: any, b: any) => {
+        const aTime = a.createdAt?.toMillis?.() || 0;
+        const bTime = b.createdAt?.toMillis?.() || 0;
+        return bTime - aTime;
+      });
+      setCustomerMessages(data);
+    } catch (err) {
+      console.error('Failed to fetch messages:', err);
+      setCustomerMessages([]);
+    } finally {
+      setLoadingMessages(false);
+    }
+  };
+
+  const markMessageAsRead = async (messageId: string) => {
+    try {
+      await updateDoc(doc(db, 'customerMessages', messageId), { status: 'read' });
+      setCustomerMessages(prev => prev.map(m => m.id === messageId ? { ...m, status: 'read' } : m));
+    } catch (err) {
+      console.error('Failed to mark message as read:', err);
     }
   };
 
@@ -603,6 +633,17 @@ export default function AdminPage() {
           >
             <DollarSign className="w-4 h-4" />
             Finances
+          </button>
+          <button
+            onClick={() => setActiveTab('messages')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+              activeTab === 'messages'
+                ? 'bg-gray-900 text-white'
+                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <MessageCircle className="w-4 h-4" />
+            Messages ({customerMessages.filter(m => m.status === 'unread').length})
           </button>
         </div>
 
@@ -1394,6 +1435,77 @@ export default function AdminPage() {
 
         {/* Financial Dashboard */}
         {activeTab === 'finances' && <FinancialDashboard />}
+
+        {/* Customer Messages */}
+        {activeTab === 'messages' && (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
+              <MessageCircle className="w-5 h-5 text-gray-500" />
+              <h2 className="font-bold text-gray-900">Customer Messages ({customerMessages.length})</h2>
+            </div>
+
+            {loadingMessages ? (
+              <div className="p-8 text-center text-gray-400">Loading messages...</div>
+            ) : customerMessages.length === 0 ? (
+              <div className="p-12 text-center">
+                <Mail className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-500">No customer messages yet.</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-100">
+                {customerMessages.map((msg: any) => (
+                  <div key={msg.id} className={`p-5 hover:bg-gray-50 transition-colors ${msg.status === 'unread' ? 'bg-blue-50' : ''}`}>
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-1">
+                          <span className="text-sm font-bold text-gray-900">{msg.subject}</span>
+                          {msg.status === 'unread' && (
+                            <span className="text-xs font-bold px-2 py-0.5 bg-blue-500 text-white rounded-full">
+                              NEW
+                            </span>
+                          )}
+                          {msg.orderId && (
+                            <span className="text-xs font-mono text-gray-500">
+                              Order: #{msg.orderId.slice(0, 8).toUpperCase()}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          From: {msg.userEmail}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {msg.createdAt?.toDate?.().toLocaleString() || 'Just now'}
+                        </p>
+                      </div>
+                      {msg.status === 'unread' && (
+                        <button
+                          onClick={() => markMessageAsRead(msg.id)}
+                          className="px-3 py-1.5 text-xs font-semibold text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                        >
+                          Mark as Read
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="bg-gray-50 rounded-lg p-4 mt-3">
+                      <p className="text-sm text-gray-700 whitespace-pre-wrap">{msg.message}</p>
+                    </div>
+
+                    <div className="mt-3 flex gap-2">
+                      <a
+                        href={`mailto:${msg.userEmail}?subject=Re: ${msg.subject}`}
+                        className="flex items-center gap-2 px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-lg text-sm font-semibold transition-colors"
+                      >
+                        <Mail className="w-4 h-4" />
+                        Reply via Email
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Image Upload Modal for Completing Order */}

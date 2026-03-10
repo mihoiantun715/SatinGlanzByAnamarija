@@ -7,7 +7,8 @@ import { collection, query, where, getDocs, doc, getDoc, updateDoc } from 'fireb
 import { db } from '@/lib/firebase';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
-import { User, Package, LogOut, ShoppingBag, ArrowRight, Truck, ExternalLink, Plus, Key } from 'lucide-react';
+import { User, Package, LogOut, ShoppingBag, ArrowRight, Truck, ExternalLink, Plus, Key, MessageCircle } from 'lucide-react';
+import ContactSellerModal from '@/components/ContactSellerModal';
 
 interface OrderItem {
   name: string;
@@ -55,6 +56,7 @@ export default function AccountPage() {
   const [claimOrderNumber, setClaimOrderNumber] = useState('');
   const [claimingOrder, setClaimingOrder] = useState(false);
   const [claimMessage, setClaimMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [contactOrderId, setContactOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -332,19 +334,36 @@ export default function AccountPage() {
                     </div>
                   )}
 
-                  <div className="border-t border-gray-100 pt-3 flex justify-between">
-                    <span className="text-sm text-gray-500">
-                      {order.shippingCarrier.toUpperCase()} · {order.shippingCost === 0 ? 'FREE' : `${t.common.currency}${order.shippingCost.toFixed(2)}`}
-                    </span>
-                    <span className="font-bold text-gray-900">
-                      {t.auth.orderTotal}: {t.common.currency}{order.total.toFixed(2)}
-                    </span>
+                  <div className="border-t border-gray-100 pt-3">
+                    <div className="flex justify-between mb-3">
+                      <span className="text-sm text-gray-500">
+                        {order.shippingCarrier.toUpperCase()} · {order.shippingCost === 0 ? 'FREE' : `${t.common.currency}${order.shippingCost.toFixed(2)}`}
+                      </span>
+                      <span className="font-bold text-gray-900">
+                        {t.auth.orderTotal}: {t.common.currency}{order.total.toFixed(2)}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => setContactOrderId(order.id)}
+                      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-lg font-semibold text-sm transition-all"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      Contact Seller
+                    </button>
                   </div>
                 </div>
               ))}
             </div>
           )}
         </div>
+
+        {/* Contact Seller Modal */}
+        {contactOrderId && (
+          <ContactSellerModal
+            orderId={contactOrderId}
+            onClose={() => setContactOrderId(null)}
+          />
+        )}
       </div>
     </div>
   );
