@@ -191,6 +191,7 @@ export const hr: Translation = {
   checkout: {
     title: 'Plaćanje',
     shippingAddress: 'Adresa za dostavu',
+    useSavedAddress: 'Koristite spremljenu adresu',
     firstName: 'Ime',
     lastName: 'Prezime',
     street: 'Ulica i kućni broj',

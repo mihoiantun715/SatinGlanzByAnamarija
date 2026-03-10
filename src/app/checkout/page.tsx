@@ -288,7 +288,7 @@ function CheckoutForm() {
                       />
                       <div className="flex-1">
                         <p className="font-semibold text-gray-900 mb-1">
-                          Koristite spremljenu adresu
+                          {t.checkout.useSavedAddress}
                         </p>
                         <div className="text-sm text-gray-600 space-y-0.5">
                           <p>{savedAddress.firstName} {savedAddress.lastName}</p>

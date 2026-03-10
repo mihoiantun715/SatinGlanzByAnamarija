@@ -212,6 +212,7 @@ export interface Translation {
   checkout: {
     title: string;
     shippingAddress: string;
+    useSavedAddress: string;
     firstName: string;
     lastName: string;
     street: string;

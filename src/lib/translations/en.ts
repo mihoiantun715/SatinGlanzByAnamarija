@@ -191,6 +191,7 @@ export const en: Translation = {
   checkout: {
     title: 'Checkout',
     shippingAddress: 'Shipping Address',
+    useSavedAddress: 'Use saved address',
     firstName: 'First Name',
     lastName: 'Last Name',
     street: 'Street Address',
