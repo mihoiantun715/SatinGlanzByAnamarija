@@ -243,8 +243,8 @@ function CheckoutForm() {
         setOrderId(docRef.id);
         setShowSuccessModal(true);
         
-        // Clear cart after showing modal
-        clearCart();
+        // Don't clear cart immediately - let user navigate away first
+        // Cart will be cleared when they click a button in the modal
       }
     } catch (err: any) {
       console.error('Order error:', err);
@@ -611,13 +611,19 @@ function CheckoutForm() {
                 {/* Action Buttons */}
                 <div className="flex flex-col gap-3">
                   <button
-                    onClick={() => router.push('/account')}
+                    onClick={() => {
+                      clearCart();
+                      router.push('/account');
+                    }}
                     className="w-full px-6 py-3.5 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-rose-500/30"
                   >
                     {t.auth.myOrders || 'Moje narudžbe'}
                   </button>
                   <button
-                    onClick={() => router.push('/shop')}
+                    onClick={() => {
+                      clearCart();
+                      router.push('/shop');
+                    }}
                     className="w-full px-6 py-3.5 border-2 border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl font-semibold text-sm transition-all"
                   >
                     {t.checkout.backToShop || 'Nastavi kupovinu'}
