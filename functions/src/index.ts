@@ -75,7 +75,12 @@ const SHIPPING_RATES = {
 };
 
 // Calculate shipping cost on server (must match client calculation)
-function calculateServerShipping(items: any[], carrier: 'dhl' | 'gls'): number {
+function calculateServerShipping(items: any[], carrier: 'dhl' | 'gls', subtotal: number): number {
+  // TESTING MODE: Free shipping for orders under €1 (for Stripe testing)
+  if (subtotal < 1) {
+    return 0;
+  }
+
   let totalBouquetRoses = 0;
   let hasBouquets = false;
 
@@ -154,7 +159,7 @@ export const createPaymentIntent = functions.https.onCall(async (data: any, cont
 
     // Recalculate shipping using server-side logic
     const carrier = orderData.shippingCarrier || 'dhl';
-    const calculatedShipping = calculateServerShipping(orderData.items, carrier);
+    const calculatedShipping = calculateServerShipping(orderData.items, carrier, calculatedSubtotal);
 
     // Calculate expected total
     const expectedTotal = calculatedSubtotal + calculatedShipping;
