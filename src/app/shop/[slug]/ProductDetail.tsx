@@ -126,7 +126,7 @@ export default function ProductDetail({ slug }: { slug: string }) {
                   )}
                   {product.featured && (
                     <div className="absolute top-4 left-4 bg-rose-500 text-white text-sm font-bold px-4 py-1.5 rounded-full">
-                      ★ {t.common.featured}
+                      {t.common.featured}
                     </div>
                   )}
                 </div>

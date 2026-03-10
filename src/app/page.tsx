@@ -24,7 +24,7 @@ export default function Home() {
           <div className="max-w-3xl mx-auto text-center">
             <div className="animate-fade-in">
               <span className="inline-block bg-rose-100 text-rose-700 text-sm font-semibold px-4 py-1.5 rounded-full mb-6">
-                ✨ {t.common.handcraftedWithLove}
+                {t.common.handcraftedWithLove}
               </span>
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6 animate-fade-in">
