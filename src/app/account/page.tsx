@@ -192,16 +192,11 @@ export default function AccountPage() {
         {/* Profile Header */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-rose-100 rounded-full flex items-center justify-center">
-                <User className="w-7 h-7 text-rose-500" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">
-                  {t.auth.welcome}, {user.displayName || user.email}
-                </h1>
-                <p className="text-sm text-gray-500">{user.email}</p>
-              </div>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">
+                {t.auth.welcome}, {user.displayName || user.email}
+              </h1>
+              <p className="text-sm text-gray-500">{user.email}</p>
             </div>
             <div className="hidden sm:flex items-center gap-3">
               <Link
