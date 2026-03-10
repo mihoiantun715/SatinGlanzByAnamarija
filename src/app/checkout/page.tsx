@@ -11,7 +11,7 @@ import { db, app } from '@/lib/firebase';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
-import { Lock, MapPin, Check, ShoppingBag, ArrowRight, Truck, CreditCard, Shield, AlertCircle } from 'lucide-react';
+import { Lock, MapPin, Check, ShoppingBag, ArrowRight, Truck, CreditCard, Shield, AlertCircle, CheckCircle, Package } from 'lucide-react';
 import { calculateCartShipping, getRecommendedCarrier } from '@/lib/shippingCalculator';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 
@@ -58,6 +58,7 @@ function CheckoutForm() {
   const [error, setError] = useState('');
   const [cardComplete, setCardComplete] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // Handle address autocomplete selection
   const handlePlaceSelected = (place: { street: string; city: string; postalCode: string }) => {
@@ -78,37 +79,6 @@ function CheckoutForm() {
     setSelectedCarrier(recommendedCarrier);
   }, [recommendedCarrier]);
 
-  // Order success
-  if (orderPlaced) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="text-center max-w-lg">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Check className="w-10 h-10 text-green-500" />
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-3">{t.checkout.orderSuccess}</h1>
-          <p className="text-gray-500 mb-4">{t.checkout.orderSuccessMessage}</p>
-          <p className="text-sm text-gray-400 mb-8">
-            {t.checkout.orderNumber}: <span className="font-mono font-semibold text-gray-700">#{orderId.slice(0, 8).toUpperCase()}</span>
-          </p>
-          <div className="flex gap-3 justify-center">
-            <Link
-              href="/account"
-              className="px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-semibold text-sm transition-all"
-            >
-              {t.auth.myOrders}
-            </Link>
-            <Link
-              href="/shop"
-              className="px-6 py-3 border-2 border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl font-semibold text-sm transition-all"
-            >
-              {t.checkout.backToShop}
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -207,9 +177,6 @@ function CheckoutForm() {
           stripePaymentIntentId: paymentIntent.id,
         });
 
-        // Clear cart
-        clearCart();
-
         // 5. Send order confirmation email (non-blocking)
         try {
           const sendOrderEmail = httpsCallable(functions, 'sendOrderEmail');
@@ -218,8 +185,12 @@ function CheckoutForm() {
           console.error('Email send failed (order still placed):', emailErr);
         }
 
-        // 6. Redirect to confirmation page
-        router.push(`/order-confirmation?orderId=${docRef.id}`);
+        // 6. Show success modal and set order ID
+        setOrderId(docRef.id);
+        setShowSuccessModal(true);
+        
+        // Clear cart after showing modal
+        clearCart();
       }
     } catch (err: any) {
       console.error('Order error:', err);
@@ -502,6 +473,81 @@ function CheckoutForm() {
             </div>
           </div>
         </form>
+
+        {/* Payment Success Modal */}
+        {showSuccessModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in duration-300">
+              {/* Success Header */}
+              <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-8 text-center">
+                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <CheckCircle className="w-12 h-12 text-green-500" />
+                </div>
+                <h2 className="text-2xl font-bold text-white mb-2">
+                  {t.checkout.orderSuccess || 'Narudžba uspješno poslana!'}
+                </h2>
+                <p className="text-green-50 text-sm">
+                  {t.checkout.orderSuccessMessage || 'Hvala na narudžbi! Uskoro ćemo je obraditi i poslati vam e-mail s potvrdom.'}
+                </p>
+              </div>
+
+              {/* Order Details */}
+              <div className="p-8">
+                <div className="bg-gray-50 rounded-2xl p-6 mb-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Package className="w-5 h-5 text-gray-600" />
+                    <p className="text-sm text-gray-600 font-medium">
+                      {t.checkout.orderNumber || 'Broj narudžbe'}
+                    </p>
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900 font-mono">
+                    #{orderId.slice(0, 8).toUpperCase()}
+                  </p>
+                </div>
+
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold text-gray-900 text-sm">Plaćanje potvrđeno</p>
+                      <p className="text-xs text-gray-500">Vaša uplata je uspješno obrađena</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold text-gray-900 text-sm">E-mail potvrda poslana</p>
+                      <p className="text-xs text-gray-500">Provjerite svoj inbox</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Truck className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold text-gray-900 text-sm">Priprema za dostavu</p>
+                      <p className="text-xs text-gray-500">Pratit ćemo vas putem e-maila</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={() => router.push('/account')}
+                    className="w-full px-6 py-3.5 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-rose-500/30"
+                  >
+                    {t.auth.myOrders || 'Moje narudžbe'}
+                  </button>
+                  <button
+                    onClick={() => router.push('/shop')}
+                    className="w-full px-6 py-3.5 border-2 border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl font-semibold text-sm transition-all"
+                  >
+                    {t.checkout.backToShop || 'Nastavi kupovinu'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
