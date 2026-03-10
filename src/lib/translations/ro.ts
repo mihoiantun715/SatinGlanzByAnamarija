@@ -87,8 +87,11 @@ export const ro: Translation = {
     storyText2: 'Fiecare trandafir spune o poveste de răbdare, precizie și dragoste. De la selectarea materialului satin perfect până la modelarea fiecărei petale de mână.',
     mission: 'Misiunea noastră',
     missionText: 'Să aducem frumusețe veșnică în fiecare casă prin trandafiri din satin lucrați manual care surprind eleganța naturii fără caracterul ei efemer.',
-    craftsmanship: 'Meșteșugul',
-    craftsmanshipText: 'Fiecare trandafir din satin trece printr-un proces meticulos: de la tăierea materialului satin premium, la modelarea manuală a fiecărei petale, până la asamblarea florii finale.',
+    craftsmanship: 'Meșteșug',
+    craftsmanshipText: 'Fiecare trandafir de satin parcurge un proces meticulos: de la tăierea țesăturii de satin premium, la modelarea manuală a fiecărei petale, până la asamblarea florii finale.',
+    cutting: 'Tăiere',
+    shaping: 'Modelare',
+    assembly: 'Asamblare',
   },
   contact: {
     title: 'Contactați-ne',

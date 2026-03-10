@@ -87,8 +87,11 @@ export const de: Translation = {
     storyText2: 'Jede Rose erzählt eine Geschichte von Geduld, Präzision und Liebe. Von der Auswahl des perfekten Satinstoffs bis zur Formung jedes Blütenblatts von Hand steckt Anamarija ihr Herz in jede Kreation.',
     mission: 'Unsere Mission',
     missionText: 'Unvergängliche Schönheit in jedes Zuhause zu bringen durch handgefertigte Satinrosen, die die Eleganz der Natur ohne ihre Vergänglichkeit einfangen.',
-    craftsmanship: 'Die Handwerkskunst',
-    craftsmanshipText: 'Jede Satinrose durchläuft einen sorgfältigen Prozess: vom Zuschneiden des Premium-Satinstoffs über das Formen jedes Blütenblatts bis zur Montage der fertigen Blüte.',
+    craftsmanship: 'Handwerkskunst',
+    craftsmanshipText: 'Jede Satinrose durchläuft einen sorgfältigen Prozess: vom Schneiden des Premium-Satinstoffs über das handgeformte Gestalten jedes Blütenblatts bis hin zur Montage der fertigen Blume.',
+    cutting: 'Schneiden',
+    shaping: 'Formen',
+    assembly: 'Montage',
   },
   contact: {
     title: 'Kontaktieren Sie uns',

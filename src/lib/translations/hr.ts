@@ -89,6 +89,9 @@ export const hr: Translation = {
     missionText: 'Donijeti vječnu ljepotu u svaki dom kroz ručno izrađene satenske ruže koje hvataju eleganciju prirode bez njezine prolaznosti.',
     craftsmanship: 'Zanatstvo',
     craftsmanshipText: 'Svaka satenska ruža prolazi kroz pažljiv proces: od rezanja premium satenske tkanine, preko ručnog oblikovanja svake latice, do sastavljanja konačnog cvijeta.',
+    cutting: 'Rezanje',
+    shaping: 'Oblikovanje',
+    assembly: 'Sastavljanje',
   },
   contact: {
     title: 'Kontaktirajte nas',

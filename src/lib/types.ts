@@ -110,6 +110,9 @@ export interface Translation {
     missionText: string;
     craftsmanship: string;
     craftsmanshipText: string;
+    cutting: string;
+    shaping: string;
+    assembly: string;
   };
   contact: {
     title: string;

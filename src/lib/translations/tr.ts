@@ -87,8 +87,11 @@ export const tr: Translation = {
     storyText2: 'Her gül sabır, hassasiyet ve sevgi hikayesi anlatır. Mükemmel saten kumaşı seçmekten her yaprağı elle şekillendirmeye kadar.',
     mission: 'Misyonumuz',
     missionText: 'Doğanın zarafetini geçiciliği olmadan yakalayan el yapımı saten güller aracılığıyla her eve sonsuz güzellik getirmek.',
-    craftsmanship: 'Zanaatkarlık',
-    craftsmanshipText: 'Her saten gül titiz bir süreçten geçer: premium saten kumaşın kesilmesinden, her yaprağın elle şekillendirilmesine, son çiçeğin montajına kadar.',
+    craftsmanship: 'Ustalık',
+    craftsmanshipText: 'Her saten gülü titiz bir süreçten geçer: premium saten kumaşın kesilmesinden, her yaprağın elle şekillendirilmesine, nihai çiçeğin montajına kadar.',
+    cutting: 'Kesme',
+    shaping: 'Şekillendirme',
+    assembly: 'Montaj',
   },
   contact: {
     title: 'Bize Ulaşın',
