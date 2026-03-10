@@ -8,7 +8,8 @@ import { useAuth } from '@/context/AuthContext';
 import { useProducts } from '@/context/ProductsContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { Product, Locale } from '@/lib/types';
-import { Plus, Trash2, Edit3, Save, X, ShieldCheck, Package, Upload, Image as ImageIcon, ClipboardList, Truck, ExternalLink } from 'lucide-react';
+import { Plus, Trash2, Edit3, Save, X, ShieldCheck, Package, Upload, Image as ImageIcon, ClipboardList, Truck, ExternalLink, DollarSign, TrendingUp, FileText, Send, Download } from 'lucide-react';
+import FinancialDashboard from '@/components/FinancialDashboard';
 
 const LOCALES: Locale[] = ['en', 'de', 'hr', 'ro', 'bg', 'tr'];
 const LOCALE_LABELS: Record<Locale, string> = { en: 'EN', de: 'DE', hr: 'HR', ro: 'RO', bg: 'BG', tr: 'TR' };
@@ -63,6 +64,8 @@ interface ProductForm {
   boxLength: number;
   boxWidth: number;
   boxHeight: number;
+  materialCost: number;
+  laborCost: number;
   name: Record<Locale, string>;
   description: Record<Locale, string>;
   shortDescription: Record<Locale, string>;
@@ -80,6 +83,8 @@ const emptyForm = (): ProductForm => ({
   boxLength: 0,
   boxWidth: 0,
   boxHeight: 0,
+  materialCost: 0,
+  laborCost: 0,
   name: { en: '', de: '', hr: '', ro: '', bg: '', tr: '' },
   description: { en: '', de: '', hr: '', ro: '', bg: '', tr: '' },
   shortDescription: { en: '', de: '', hr: '', ro: '', bg: '', tr: '' },
@@ -105,7 +110,7 @@ export default function AdminPage() {
   // Orders state
   const [adminOrders, setAdminOrders] = useState<AdminOrder[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
-  const [activeTab, setActiveTab] = useState<'products' | 'orders'>('orders');
+  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'finances'>('orders');
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
   const [deleteOrderConfirm, setDeleteOrderConfirm] = useState<string | null>(null);
   const [editingOrder, setEditingOrder] = useState<AdminOrder | null>(null);
@@ -392,6 +397,8 @@ export default function AdminPage() {
       boxLength: (product as any).boxLength ?? 0,
       boxWidth: (product as any).boxWidth ?? 0,
       boxHeight: (product as any).boxHeight ?? 0,
+      materialCost: (product as any).materialCost ?? 0,
+      laborCost: (product as any).laborCost ?? 0,
       name: { ...emptyForm().name, ...product.name },
       description: { ...emptyForm().description, ...product.description },
       shortDescription: { ...emptyForm().shortDescription, ...product.shortDescription },
@@ -473,6 +480,8 @@ export default function AdminPage() {
         boxLength: form.boxLength,
         boxWidth: form.boxWidth,
         boxHeight: form.boxHeight,
+        materialCost: form.materialCost,
+        laborCost: form.laborCost,
         name: form.name,
         description: form.description,
         shortDescription: form.shortDescription,
@@ -581,6 +590,17 @@ export default function AdminPage() {
           >
             <Package className="w-4 h-4" />
             Products ({firestoreProducts.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('finances')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+              activeTab === 'finances'
+                ? 'bg-gray-900 text-white'
+                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <DollarSign className="w-4 h-4" />
+            Finances
           </button>
         </div>
 
@@ -733,6 +753,44 @@ export default function AdminPage() {
                     </div>
                   </div>
                   <p className="text-xs text-gray-500 mt-2">Leave at 0 for bouquets (shipping calculated by rose count)</p>
+                </div>
+
+                {/* Cost Tracking */}
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                  <h4 className="text-sm font-semibold text-amber-900 mb-3 flex items-center gap-2">
+                    <DollarSign className="w-4 h-4" />
+                    Cost Tracking (for profit calculation)
+                  </h4>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs text-amber-700 mb-1">Material Cost (€)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={form.materialCost}
+                        onChange={(e) => setForm({ ...form, materialCost: parseFloat(e.target.value) || 0 })}
+                        placeholder="0.00"
+                        className="w-full px-4 py-3 rounded-xl border border-amber-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-amber-700 mb-1">Labor Cost (€)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={form.laborCost}
+                        onChange={(e) => setForm({ ...form, laborCost: parseFloat(e.target.value) || 0 })}
+                        placeholder="0.00"
+                        className="w-full px-4 py-3 rounded-xl border border-amber-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-300"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-amber-600 mt-2">
+                    Total cost per item: €{(form.materialCost + form.laborCost).toFixed(2)} • 
+                    Profit per item: €{(form.price - form.materialCost - form.laborCost).toFixed(2)}
+                  </p>
                 </div>
 
                 {/* Category */}
@@ -1283,6 +1341,9 @@ export default function AdminPage() {
             </div>
           )}
         </div>}
+
+        {/* Financial Dashboard */}
+        {activeTab === 'finances' && <FinancialDashboard />}
       </div>
 
       {/* Image Upload Modal for Completing Order */}

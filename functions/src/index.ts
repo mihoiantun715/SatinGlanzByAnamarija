@@ -1172,6 +1172,153 @@ export const verifyResetToken = functions.https.onCall(async (data: any, context
   }
 });
 
+// Send invoice email to customer
+export const sendInvoiceEmail = functions.https.onCall(async (data: any, context) => {
+  try {
+    const { orderId, customerEmail, orderData } = data;
+
+    if (!orderId || !customerEmail || !orderData) {
+      throw new functions.https.HttpsError('invalid-argument', 'Missing required fields');
+    }
+
+    const transporter = createTransporter();
+    const invoiceDate = new Date().toLocaleDateString('de-DE');
+    const invoiceNumber = `INV-${orderId.substring(0, 8).toUpperCase()}`;
+
+    // Calculate items HTML
+    let itemsHtml = '';
+    let itemNumber = 1;
+    orderData.items.forEach((item: any) => {
+      const itemTotal = item.price * item.quantity;
+      itemsHtml += `
+        <tr>
+          <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; color: #374151;">${itemNumber}</td>
+          <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; color: #374151;">
+            ${sanitize(item.name)}${item.color ? ` (${sanitize(item.color)})` : ''}
+          </td>
+          <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: center; color: #374151;">${item.quantity}</td>
+          <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: right; color: #374151;">€${item.price.toFixed(2)}</td>
+          <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: right; color: #374151; font-weight: 600;">€${itemTotal.toFixed(2)}</td>
+        </tr>
+      `;
+      itemNumber++;
+    });
+
+    const htmlContent = `
+      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: #f9fafb;">
+        <div style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+          <!-- Header -->
+          <div style="background: linear-gradient(135deg, #f43f5e, #ec4899); color: white; padding: 40px 30px; text-align: center;">
+            <h1 style="margin: 0; font-size: 32px; font-weight: 700;">RECHNUNG</h1>
+            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">SatinGlanz by Anamarija</p>
+          </div>
+
+          <!-- Invoice Details -->
+          <div style="padding: 30px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+              <div>
+                <h3 style="margin: 0 0 10px 0; color: #1f2937; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Von:</h3>
+                <p style="margin: 0; color: #374151; line-height: 1.6;">
+                  <strong>SatinGlanz by Anamarija</strong><br>
+                  Anamarija Marković<br>
+                  📧 satinglanzbyanamarija@gmail.com<br>
+                  🌐 satinglanzbyanamarija.com
+                </p>
+              </div>
+              <div style="text-align: right;">
+                <h3 style="margin: 0 0 10px 0; color: #1f2937; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">An:</h3>
+                <p style="margin: 0; color: #374151; line-height: 1.6;">
+                  <strong>${sanitize(orderData.shippingAddress.firstName)} ${sanitize(orderData.shippingAddress.lastName)}</strong><br>
+                  ${sanitize(orderData.shippingAddress.street)}<br>
+                  ${sanitize(orderData.shippingAddress.postalCode)} ${sanitize(orderData.shippingAddress.city)}<br>
+                  ${sanitize(orderData.shippingAddress.country)}
+                </p>
+              </div>
+            </div>
+
+            <div style="background: #f3f4f6; padding: 20px; border-radius: 12px; margin-bottom: 30px;">
+              <div style="display: flex; justify-content: space-between;">
+                <div>
+                  <p style="margin: 0 0 5px 0; color: #6b7280; font-size: 12px; text-transform: uppercase;">Rechnungsnummer</p>
+                  <p style="margin: 0; color: #1f2937; font-weight: 700; font-size: 18px;">${invoiceNumber}</p>
+                </div>
+                <div style="text-align: right;">
+                  <p style="margin: 0 0 5px 0; color: #6b7280; font-size: 12px; text-transform: uppercase;">Rechnungsdatum</p>
+                  <p style="margin: 0; color: #1f2937; font-weight: 700; font-size: 18px;">${invoiceDate}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Items Table -->
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+              <thead>
+                <tr style="background: #f9fafb;">
+                  <th style="padding: 12px; text-align: left; color: #6b7280; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb;">Pos.</th>
+                  <th style="padding: 12px; text-align: left; color: #6b7280; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb;">Artikel</th>
+                  <th style="padding: 12px; text-align: center; color: #6b7280; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb;">Menge</th>
+                  <th style="padding: 12px; text-align: right; color: #6b7280; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb;">Einzelpreis</th>
+                  <th style="padding: 12px; text-align: right; color: #6b7280; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb;">Gesamt</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsHtml}
+              </tbody>
+            </table>
+
+            <!-- Totals -->
+            <div style="border-top: 2px solid #e5e7eb; padding-top: 20px;">
+              <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+                <div style="width: 300px;">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="color: #6b7280;">Zwischensumme:</span>
+                    <span style="color: #374151; font-weight: 600;">€${orderData.subtotal.toFixed(2)}</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="color: #6b7280;">Versandkosten:</span>
+                    <span style="color: #374151; font-weight: 600;">€${orderData.shippingCost.toFixed(2)}</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; padding-top: 12px; border-top: 2px solid #e5e7eb;">
+                    <span style="color: #1f2937; font-size: 18px; font-weight: 700;">Gesamtbetrag:</span>
+                    <span style="color: #f43f5e; font-size: 20px; font-weight: 700;">€${orderData.total.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Payment Info -->
+            <div style="background: #ecfdf5; border: 1px solid #10b981; padding: 20px; border-radius: 12px; margin-top: 30px;">
+              <p style="margin: 0; color: #065f46; font-weight: 600; font-size: 14px;">✓ Zahlung erhalten</p>
+              <p style="margin: 5px 0 0 0; color: #047857; font-size: 13px;">Diese Rechnung wurde bereits bezahlt.</p>
+            </div>
+
+            <!-- Footer -->
+            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center;">
+              <p style="margin: 0 0 10px 0; color: #6b7280; font-size: 13px;">
+                Vielen Dank für Ihren Einkauf bei SatinGlanz by Anamarija!
+              </p>
+              <p style="margin: 0; color: #9ca3af; font-size: 12px;">
+                📧 satinglanzbyanamarija@gmail.com • 🌐 satinglanzbyanamarija.com
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    await transporter.sendMail({
+      from: GMAIL_FROM,
+      to: customerEmail,
+      subject: `Rechnung ${invoiceNumber} - SatinGlanz by Anamarija`,
+      html: htmlContent,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Send invoice error:', error);
+    throw new functions.https.HttpsError('internal', 'Failed to send invoice');
+  }
+});
+
 // Send special bouquet request email (for 101+ roses)
 export const sendSpecialBouquetRequest = functions.https.onCall(async (data: any, context) => {
   try {
