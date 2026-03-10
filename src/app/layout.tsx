@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "SatinGlanz by Anamarija | Handgefertigte Satinrosen",
   description: "SatinGlanz by Anamarija — Handgefertigte Satinrosen. Elegant, everlasting floral art made with love. Shop single roses, bouquets, arrangements, and wedding pieces.",
-  keywords: "SatinGlanz, satin roses, handcrafted roses, satenske ruže, handgefertigte Satinrosen, Anamarija Marković, everlasting flowers, wedding bouquets, satin flower art",
+  keywords: "SatinGlanz, satin roses, handcrafted roses, satenske ruže, handgefertigte Satinrosen, Anamarija, everlasting flowers, wedding bouquets, satin flower art",
   icons: {
     icon: [
       { url: '/logo.png', sizes: 'any' },
