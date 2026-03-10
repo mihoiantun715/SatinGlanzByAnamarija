@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, getDoc, setDoc } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
@@ -59,6 +59,8 @@ function CheckoutForm() {
   const [cardComplete, setCardComplete] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [savedAddress, setSavedAddress] = useState<any>(null);
+  const [useSavedAddress, setUseSavedAddress] = useState(false);
 
   // Handle address autocomplete selection
   const handlePlaceSelected = (place: { street: string; city: string; postalCode: string }) => {
@@ -78,6 +80,39 @@ function CheckoutForm() {
   useEffect(() => {
     setSelectedCarrier(recommendedCarrier);
   }, [recommendedCarrier]);
+
+  // Load saved address from user profile
+  useEffect(() => {
+    const loadSavedAddress = async () => {
+      if (!user) return;
+      
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData.savedAddress) {
+            setSavedAddress(userData.savedAddress);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading saved address:', error);
+      }
+    };
+
+    loadSavedAddress();
+  }, [user]);
+
+  // Auto-fill address when user selects saved address
+  useEffect(() => {
+    if (useSavedAddress && savedAddress) {
+      setFirstName(savedAddress.firstName || '');
+      setLastName(savedAddress.lastName || '');
+      setStreet(savedAddress.street || '');
+      setCity(savedAddress.city || '');
+      setPostalCode(savedAddress.postalCode || '');
+      setPhone(savedAddress.phone || '');
+    }
+  }, [useSavedAddress, savedAddress]);
 
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
@@ -185,7 +220,26 @@ function CheckoutForm() {
           console.error('Email send failed (order still placed):', emailErr);
         }
 
-        // 6. Show success modal and set order ID
+        // 6. Save shipping address to user profile for future use
+        if (user) {
+          try {
+            await setDoc(doc(db, 'users', user.uid), {
+              savedAddress: {
+                firstName,
+                lastName,
+                street,
+                city,
+                postalCode,
+                country: 'Germany',
+                phone,
+              },
+            }, { merge: true });
+          } catch (error) {
+            console.error('Error saving address:', error);
+          }
+        }
+
+        // 7. Show success modal and set order ID
         setOrderId(docRef.id);
         setShowSuccessModal(true);
         
@@ -219,6 +273,31 @@ function CheckoutForm() {
                 {error && (
                   <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3 mb-6">
                     {error}
+                  </div>
+                )}
+
+                {/* Saved Address Option */}
+                {savedAddress && (
+                  <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl">
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={useSavedAddress}
+                        onChange={(e) => setUseSavedAddress(e.target.checked)}
+                        className="mt-1 w-5 h-5 text-rose-500 border-gray-300 rounded focus:ring-rose-500"
+                      />
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-900 mb-1">
+                          Koristite spremljenu adresu
+                        </p>
+                        <div className="text-sm text-gray-600 space-y-0.5">
+                          <p>{savedAddress.firstName} {savedAddress.lastName}</p>
+                          <p>{savedAddress.street}</p>
+                          <p>{savedAddress.postalCode} {savedAddress.city}</p>
+                          <p>{savedAddress.phone}</p>
+                        </div>
+                      </div>
+                    </label>
                   </div>
                 )}
 
