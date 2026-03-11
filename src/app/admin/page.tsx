@@ -8,8 +8,9 @@ import { useAuth } from '@/context/AuthContext';
 import { useProducts } from '@/context/ProductsContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { Product, Locale } from '@/lib/types';
-import { Plus, Trash2, Edit3, Save, X, ShieldCheck, Package, Upload, Image as ImageIcon, ClipboardList, Truck, ExternalLink, DollarSign, TrendingUp, FileText, Send, Download, MessageCircle, Mail } from 'lucide-react';
+import { Plus, Trash2, Edit3, Save, X, ShieldCheck, Package, Upload, Image as ImageIcon, ClipboardList, Truck, ExternalLink, DollarSign, TrendingUp, FileText, Send, Download, MessageCircle, Mail, BarChart3 } from 'lucide-react';
 import FinancialDashboard from '@/components/FinancialDashboard';
+import AnalyticsDashboard from '@/components/AnalyticsDashboard';
 
 const LOCALES: Locale[] = ['en', 'de', 'hr', 'ro', 'bg', 'tr'];
 const LOCALE_LABELS: Record<Locale, string> = { en: 'EN', de: 'DE', hr: 'HR', ro: 'RO', bg: 'BG', tr: 'TR' };
@@ -110,7 +111,7 @@ export default function AdminPage() {
   // Orders state
   const [adminOrders, setAdminOrders] = useState<AdminOrder[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
-  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'finances' | 'messages'>('orders');
+  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'finances' | 'messages' | 'analytics'>('orders');
   const [orderStatusFilter, setOrderStatusFilter] = useState<'all' | 'paid' | 'pending_payment' | 'payment_failed'>('all');
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
   const [deleteOrderConfirm, setDeleteOrderConfirm] = useState<string | null>(null);
@@ -644,6 +645,17 @@ export default function AdminPage() {
           >
             <MessageCircle className="w-4 h-4" />
             Messages ({customerMessages.filter(m => m.status === 'unread').length})
+          </button>
+          <button
+            onClick={() => setActiveTab('analytics')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+              activeTab === 'analytics'
+                ? 'bg-gray-900 text-white'
+                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <BarChart3 className="w-4 h-4" />
+            Analytics
           </button>
         </div>
 
@@ -1435,6 +1447,9 @@ export default function AdminPage() {
 
         {/* Financial Dashboard */}
         {activeTab === 'finances' && <FinancialDashboard />}
+
+        {/* Analytics Dashboard */}
+        {activeTab === 'analytics' && <AnalyticsDashboard />}
 
         {/* Customer Messages */}
         {activeTab === 'messages' && (

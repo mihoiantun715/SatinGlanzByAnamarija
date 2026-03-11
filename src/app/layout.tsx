@@ -8,6 +8,7 @@ import { ProductsProvider } from "@/context/ProductsContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import AnalyticsTracker from "@/components/AnalyticsTracker";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,6 +50,7 @@ export default function RootLayout({
             <AuthProvider>
               <ProductsProvider>
                 <CartProvider>
+                  <AnalyticsTracker />
                   <div className="flex flex-col min-h-screen">
                     <Navbar />
                     <main className="flex-1">{children}</main>
