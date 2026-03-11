@@ -136,6 +136,13 @@ export const ro: Translation = {
     added: 'Adăugat!',
     roses: 'trandafiri',
     perRose: 'per trandafir',
+    volumeDiscount: 'Reducere de volum aplicată!',
+    unlockDiscount: 'Adăugați',
+    moreRoses: 'încă',
+    rose: 'trandafir',
+    toUnlock: 'pentru a debloca',
+    saveOn: 'Economisiți',
+    onYourSelection: 'la selecția dvs. actuală',
     decorations: {
       crown: 'Coroană',
       goldCrown: 'Coroană de aur',

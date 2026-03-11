@@ -136,6 +136,13 @@ export const de: Translation = {
     added: 'Hinzugefügt!',
     roses: 'Rosen',
     perRose: 'pro Rose',
+    volumeDiscount: 'Mengenrabatt angewendet!',
+    unlockDiscount: 'Fügen Sie',
+    moreRoses: 'weitere',
+    rose: 'Rose',
+    toUnlock: 'hinzu, um',
+    saveOn: 'Sparen Sie',
+    onYourSelection: 'bei Ihrer aktuellen Auswahl',
     decorations: {
       crown: 'Krone',
       goldCrown: 'Goldkrone',

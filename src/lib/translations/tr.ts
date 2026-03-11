@@ -136,6 +136,13 @@ export const tr: Translation = {
     added: 'Eklendi!',
     roses: 'gül',
     perRose: 'gül başına',
+    volumeDiscount: 'Hacim indirimi uygulandı!',
+    unlockDiscount: 'Ekleyin',
+    moreRoses: 'daha fazla',
+    rose: 'gül',
+    toUnlock: 'kilidini açmak için',
+    saveOn: 'Tasarruf edin',
+    onYourSelection: 'mevcut seçiminizde',
     decorations: {
       crown: 'Taç',
       goldCrown: 'Altın Taç',

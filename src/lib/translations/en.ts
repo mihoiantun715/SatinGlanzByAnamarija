@@ -136,6 +136,13 @@ export const en: Translation = {
     added: 'Added to Cart!',
     roses: 'roses',
     perRose: 'per rose',
+    volumeDiscount: 'Volume Discount Applied!',
+    unlockDiscount: 'Add',
+    moreRoses: 'more',
+    rose: 'rose',
+    toUnlock: 'to unlock',
+    saveOn: 'Save',
+    onYourSelection: 'on your current selection',
     decorations: {
       crown: 'Crown',
       goldCrown: 'Gold Crown',

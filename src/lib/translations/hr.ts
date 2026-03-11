@@ -136,6 +136,13 @@ export const hr: Translation = {
     added: 'Dodano!',
     roses: 'ruža',
     perRose: 'po ruži',
+    volumeDiscount: 'Popust na količinu primijenjen!',
+    unlockDiscount: 'Dodajte',
+    moreRoses: 'još',
+    rose: 'ružu',
+    toUnlock: 'da otključate',
+    saveOn: 'Uštedite',
+    onYourSelection: 'na vašem trenutnom odabiru',
     decorations: {
       crown: 'Kruna',
       goldCrown: 'Zlatna kruna',

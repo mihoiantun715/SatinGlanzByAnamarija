@@ -136,6 +136,13 @@ export const bg: Translation = {
     added: 'Добавено!',
     roses: 'рози',
     perRose: 'на роза',
+    volumeDiscount: 'Приложена отстъпка за количество!',
+    unlockDiscount: 'Добавете',
+    moreRoses: 'още',
+    rose: 'роза',
+    toUnlock: 'за да отключите',
+    saveOn: 'Спестете',
+    onYourSelection: 'при вашия текущ избор',
     decorations: {
       crown: 'Корона',
       goldCrown: 'Златна корона',

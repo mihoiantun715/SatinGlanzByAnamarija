@@ -157,6 +157,13 @@ export interface Translation {
     added: string;
     roses: string;
     perRose: string;
+    volumeDiscount: string;
+    unlockDiscount: string;
+    moreRoses: string;
+    rose: string;
+    toUnlock: string;
+    saveOn: string;
+    onYourSelection: string;
     decorations: {
       crown: string;
       goldCrown: string;

@@ -601,10 +601,10 @@ export default function BuildBouquetPage() {
               {incentiveMessage && (
                 <div className="mb-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg">
                   <p className="text-sm font-semibold text-green-800">
-                    💰 Add {incentiveMessage.needed} more {incentiveMessage.needed === 1 ? 'rose' : 'roses'} to unlock €{incentiveMessage.newPrice}/rose!
+                    💰 {t.bouquetBuilder.unlockDiscount} {incentiveMessage.needed} {t.bouquetBuilder.moreRoses} {incentiveMessage.needed === 1 ? t.bouquetBuilder.rose : t.bouquetBuilder.roses} {t.bouquetBuilder.toUnlock} {t.common.currency}{incentiveMessage.newPrice}/{t.bouquetBuilder.rose}!
                   </p>
                   <p className="text-xs text-green-600 mt-1">
-                    Save €{incentiveMessage.savings.toFixed(2)} on your current selection
+                    {t.bouquetBuilder.saveOn} {t.common.currency}{incentiveMessage.savings.toFixed(2)} {t.bouquetBuilder.onYourSelection}
                   </p>
                 </div>
               )}
@@ -616,7 +616,7 @@ export default function BuildBouquetPage() {
               <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
                 <span>{roseCount} {t.bouquetBuilder.roses} × {t.common.currency}{pricePerRose.toFixed(2)} {t.bouquetBuilder.perRose}</span>
                 {roseCount > 5 && (
-                  <span className="text-green-600 font-semibold">Volume Discount Applied!</span>
+                  <span className="text-green-600 font-semibold">{t.bouquetBuilder.volumeDiscount}</span>
                 )}
               </div>
               <button
