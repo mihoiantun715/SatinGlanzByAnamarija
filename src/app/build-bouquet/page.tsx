@@ -6,7 +6,15 @@ import { useCart } from '@/context/CartContext';
 import { colorTranslations } from '@/lib/products';
 import { Check, ShoppingBag } from 'lucide-react';
 
-const PRICE_PER_ROSE = 2.5;
+// Volume-based pricing tiers
+const getPricePerRose = (count: number): number => {
+  if (count <= 5) return 2.50;
+  if (count <= 10) return 2.30;
+  if (count <= 20) return 2.10;
+  if (count <= 30) return 1.95;
+  return 1.80; // 31-50+
+};
+
 const RIBBON_PRICE = 3;
 const DECORATION_PRICE = 2;
 const CARD_PRICE = 2;
@@ -83,13 +91,41 @@ export default function BuildBouquetPage() {
     });
   };
 
+  const pricePerRose = useMemo(() => getPricePerRose(roseCount), [roseCount]);
+
   const totalPrice = useMemo(() => {
-    let price = roseCount * PRICE_PER_ROSE;
+    let price = roseCount * pricePerRose;
     if (selectedRibbon !== 'none') price += RIBBON_PRICE;
     const decoCount = selectedDecorations.filter(d => d !== 'noThanks').length;
     price += decoCount * DECORATION_PRICE;
     return price;
-  }, [roseCount, selectedRibbon, selectedDecorations]);
+  }, [roseCount, pricePerRose, selectedRibbon, selectedDecorations]);
+
+  // Calculate incentive message for next discount tier
+  const incentiveMessage = useMemo(() => {
+    if (roseCount === 0) return null;
+    if (roseCount < 6) {
+      const needed = 6 - roseCount;
+      const savings = (roseCount * 2.50 - roseCount * 2.30).toFixed(2);
+      return { needed, nextTier: 6, savings: parseFloat(savings), newPrice: 2.30 };
+    }
+    if (roseCount < 11) {
+      const needed = 11 - roseCount;
+      const savings = (roseCount * 2.30 - roseCount * 2.10).toFixed(2);
+      return { needed, nextTier: 11, savings: parseFloat(savings), newPrice: 2.10 };
+    }
+    if (roseCount < 21) {
+      const needed = 21 - roseCount;
+      const savings = (roseCount * 2.10 - roseCount * 1.95).toFixed(2);
+      return { needed, nextTier: 21, savings: parseFloat(savings), newPrice: 1.95 };
+    }
+    if (roseCount < 31) {
+      const needed = 31 - roseCount;
+      const savings = (roseCount * 1.95 - roseCount * 1.80).toFixed(2);
+      return { needed, nextTier: 31, savings: parseFloat(savings), newPrice: 1.80 };
+    }
+    return null; // Max tier reached
+  }, [roseCount]);
 
   const handleAddToCart = () => {
     const wrapName = wrappingOptions.find(w => w.key === wrapping)?.label || wrapping;
@@ -561,13 +597,28 @@ export default function BuildBouquetPage() {
 
             {/* Price + Add to Cart */}
             <div className="border-t border-gray-200 pt-6">
+              {/* Volume Discount Incentive */}
+              {incentiveMessage && (
+                <div className="mb-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg">
+                  <p className="text-sm font-semibold text-green-800">
+                    💰 Add {incentiveMessage.needed} more {incentiveMessage.needed === 1 ? 'rose' : 'roses'} to unlock €{incentiveMessage.newPrice}/rose!
+                  </p>
+                  <p className="text-xs text-green-600 mt-1">
+                    Save €{incentiveMessage.savings.toFixed(2)} on your current selection
+                  </p>
+                </div>
+              )}
+
               <div className="flex items-center justify-between mb-4">
                 <span className="text-lg font-bold text-gray-900">{t.bouquetBuilder.totalPrice}</span>
                 <span className="text-2xl font-bold text-gray-900">{t.common.currency}{totalPrice.toFixed(2)}</span>
               </div>
-              <p className="text-xs text-gray-400 mb-4">
-                {roseCount} {t.bouquetBuilder.roses} × {t.common.currency}{PRICE_PER_ROSE} {t.bouquetBuilder.perRose}
-              </p>
+              <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
+                <span>{roseCount} {t.bouquetBuilder.roses} × {t.common.currency}{pricePerRose.toFixed(2)} {t.bouquetBuilder.perRose}</span>
+                {roseCount > 5 && (
+                  <span className="text-green-600 font-semibold">Volume Discount Applied!</span>
+                )}
+              </div>
               <button
                 onClick={handleAddToCart}
                 className={`flex items-center justify-center gap-3 w-full py-4 rounded-lg text-base font-semibold transition-all ${
