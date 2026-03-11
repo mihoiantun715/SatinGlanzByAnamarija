@@ -385,6 +385,17 @@ export default function BuildBouquetPage() {
               {t.common.currency}{totalPrice.toFixed(2)}
             </div>
 
+            {/* Volume Discount Incentive - Moved to top for visibility */}
+            {incentiveMessage && (
+              <div className="mb-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-xl shadow-sm">
+                <p className="text-sm font-bold text-green-800">
+                  💰 {t.bouquetBuilder.unlockDiscount} {incentiveMessage.needed} {t.bouquetBuilder.moreRoses} {incentiveMessage.needed === 1 ? t.bouquetBuilder.rose : t.bouquetBuilder.roses} {t.bouquetBuilder.toUnlock} {t.common.currency}{incentiveMessage.newPrice}/{t.bouquetBuilder.rose}!
+                </p>
+                <p className="text-xs text-green-700 mt-1 font-medium">
+                  {t.bouquetBuilder.saveOn} {t.common.currency}{incentiveMessage.savings.toFixed(2)} {t.bouquetBuilder.onYourSelection}
+                </p>
+              </div>
+            )}
 
             {/* Color Mix Selection */}
             <div className="mb-8">
@@ -597,18 +608,6 @@ export default function BuildBouquetPage() {
 
             {/* Price + Add to Cart */}
             <div className="border-t border-gray-200 pt-6">
-              {/* Volume Discount Incentive */}
-              {incentiveMessage && (
-                <div className="mb-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg">
-                  <p className="text-sm font-semibold text-green-800">
-                    💰 {t.bouquetBuilder.unlockDiscount} {incentiveMessage.needed} {t.bouquetBuilder.moreRoses} {incentiveMessage.needed === 1 ? t.bouquetBuilder.rose : t.bouquetBuilder.roses} {t.bouquetBuilder.toUnlock} {t.common.currency}{incentiveMessage.newPrice}/{t.bouquetBuilder.rose}!
-                  </p>
-                  <p className="text-xs text-green-600 mt-1">
-                    {t.bouquetBuilder.saveOn} {t.common.currency}{incentiveMessage.savings.toFixed(2)} {t.bouquetBuilder.onYourSelection}
-                  </p>
-                </div>
-              )}
-
               <div className="flex items-center justify-between mb-4">
                 <span className="text-lg font-bold text-gray-900">{t.bouquetBuilder.totalPrice}</span>
                 <span className="text-2xl font-bold text-gray-900">{t.common.currency}{totalPrice.toFixed(2)}</span>

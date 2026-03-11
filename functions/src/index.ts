@@ -1437,3 +1437,6 @@ export const sendSpecialBouquetRequest = functions.https.onCall(async (data: any
     throw new functions.https.HttpsError('internal', 'Failed to send special bouquet request');
   }
 });
+
+// Export bouquet price validation function
+export { validateBouquetPrice } from './validateBouquetPrice';
