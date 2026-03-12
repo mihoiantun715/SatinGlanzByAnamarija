@@ -135,26 +135,40 @@ export const createPaymentIntent = functions.https.onCall(async (data: any, cont
       throw new functions.https.HttpsError('invalid-argument', 'Order has no items.');
     }
 
-    // Fetch real product prices from Firestore
+    // Fetch real product prices from Firestore (skip custom bouquets)
     let calculatedSubtotal = 0;
-    const productIds = orderData.items.map((item: any) => item.productId);
-    const productDocs = await admin.firestore().collection('products').where(admin.firestore.FieldPath.documentId(), 'in', productIds).get();
+    const regularProductIds = orderData.items
+      .filter((item: any) => !item.productId.startsWith('custom-bouquet'))
+      .map((item: any) => item.productId);
     
     const productPrices: Record<string, number> = {};
-    productDocs.forEach(doc => {
-      const data = doc.data();
-      if (data && typeof data.price === 'number') {
-        productPrices[doc.id] = data.price;
-      }
-    });
+    
+    if (regularProductIds.length > 0) {
+      const productDocs = await admin.firestore().collection('products')
+        .where(admin.firestore.FieldPath.documentId(), 'in', regularProductIds)
+        .get();
+      
+      productDocs.forEach(doc => {
+        const data = doc.data();
+        if (data && typeof data.price === 'number') {
+          productPrices[doc.id] = data.price;
+        }
+      });
+    }
 
     // Recalculate subtotal using real prices from database
     for (const item of orderData.items) {
-      const realPrice = productPrices[item.productId];
-      if (realPrice === undefined) {
-        throw new functions.https.HttpsError('not-found', `Product ${item.productId} not found.`);
+      // Custom bouquets: use the price from the order (already validated client-side)
+      if (item.productId.startsWith('custom-bouquet')) {
+        calculatedSubtotal += item.price * (item.quantity || 1);
+      } else {
+        // Regular products: fetch from Firestore
+        const realPrice = productPrices[item.productId];
+        if (realPrice === undefined) {
+          throw new functions.https.HttpsError('not-found', `Product ${item.productId} not found.`);
+        }
+        calculatedSubtotal += realPrice * (item.quantity || 1);
       }
-      calculatedSubtotal += realPrice * (item.quantity || 1);
     }
 
     // Recalculate shipping using server-side logic
