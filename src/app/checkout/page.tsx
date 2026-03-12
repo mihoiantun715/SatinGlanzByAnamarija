@@ -166,8 +166,41 @@ function CheckoutForm() {
 
       const docRef = await addDoc(collection(db, 'orders'), orderData);
 
-      // 2. Create payment intent via Cloud Function
+      // 2. Validate custom bouquet prices (if any) using server-side validation
       const functions = getFunctions(app, 'us-central1');
+      const customBouquets = items.filter(item => item.product.slug === 'custom-bouquet');
+      
+      if (customBouquets.length > 0) {
+        const validateBouquetPrice = httpsCallable(functions, 'validateBouquetPrice');
+        
+        for (const bouquetItem of customBouquets) {
+          // Extract bouquet details from product description or metadata
+          const roseCount = parseInt(bouquetItem.product.name[locale].match(/\d+/)?.[0] || '0');
+          const hasRibbon = bouquetItem.selectedColor?.toLowerCase().includes('ribbon') || false;
+          const decorationCount = 0; // Can be enhanced to track decorations
+          
+          try {
+            const validationResult = await validateBouquetPrice({
+              roseCount,
+              hasRibbon,
+              decorationCount,
+            });
+            
+            const { validatedPrice } = validationResult.data as { validatedPrice: number };
+            
+            // Verify client price matches server validation
+            if (Math.abs(bouquetItem.product.price - validatedPrice) > 0.01) {
+              throw new Error(`Price mismatch for custom bouquet. Expected €${validatedPrice.toFixed(2)}`);
+            }
+          } catch (validationError: any) {
+            console.error('Bouquet price validation failed:', validationError);
+            setError('Price validation failed. Please refresh and try again.');
+            return;
+          }
+        }
+      }
+
+      // 3. Create payment intent via Cloud Function (with built-in price verification)
       const createPaymentIntent = httpsCallable(functions, 'createPaymentIntent');
       const result = await createPaymentIntent({
         amount: total,
