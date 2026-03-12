@@ -8,7 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 
 interface CartContextType {
   items: CartItem[];
-  addToCart: (product: Product, quantity?: number, color?: string) => void;
+  addToCart: (product: Product, quantity?: number, color?: string, details?: Partial<CartItem>) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
@@ -103,7 +103,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const addToCart = (product: Product, quantity: number = 1, color?: string) => {
+  const addToCart = (product: Product, quantity: number = 1, color?: string, details?: Partial<CartItem>) => {
     setItems(prev => {
       const existing = prev.find(item => item.product.id === product.id && item.selectedColor === color);
       if (existing) {
@@ -113,7 +113,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
             : item
         );
       }
-      return [...prev, { product, quantity, selectedColor: color }];
+      return [...prev, { 
+        product, 
+        quantity, 
+        selectedColor: color,
+        ...details // Include all additional details (roseColors, wrapping, ribbon, decorations)
+      }];
     });
   };
 

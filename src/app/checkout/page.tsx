@@ -161,6 +161,12 @@ function CheckoutForm() {
           price: item.product.price,
           quantity: item.quantity,
           color: item.selectedColor || '',
+          // Detailed bouquet information
+          roseColors: item.roseColors || [],
+          wrappingPaper: item.wrappingPaper || '',
+          ribbon: item.ribbon || '',
+          decorations: item.decorations || [],
+          customization: item.customization || '',
         })),
       };
 

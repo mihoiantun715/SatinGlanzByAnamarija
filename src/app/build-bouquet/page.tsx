@@ -138,6 +138,17 @@ export default function BuildBouquetPage() {
     const colorDesc = colorParts.join(', ');
     const colorList = Object.keys(colorMix).filter(k => colorMix[k] > 0);
 
+    // Build detailed rose colors array
+    const roseColorsArray = Object.entries(colorMix)
+      .filter(([_, count]) => count > 0)
+      .map(([color, count]) => ({ color, quantity: count }));
+
+    // Build decorations array
+    const decorationsArray = [];
+    if (selectedDecorations.length > 0 && !selectedDecorations.includes('noThanks')) {
+      decorationsArray.push(...selectedDecorations);
+    }
+
     const customProduct = {
       id: `custom-bouquet-${Date.now()}`,
       slug: 'custom-bouquet',
@@ -173,7 +184,14 @@ export default function BuildBouquetPage() {
       },
     };
 
-    addToCart(customProduct, 1, `${colorDesc}, ${wrapName}`);
+    // Add to cart with detailed information
+    addToCart(customProduct, 1, `${colorDesc}, ${wrapName}`, {
+      roseColors: roseColorsArray,
+      wrappingPaper: wrapName,
+      ribbon: selectedRibbon !== 'none' ? ribbonName : undefined,
+      decorations: decorationsArray.length > 0 ? decorationsArray : undefined,
+    });
+    
     setAdded(true);
     setTimeout(() => setAdded(false), 3000);
   };

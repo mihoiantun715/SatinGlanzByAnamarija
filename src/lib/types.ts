@@ -19,6 +19,13 @@ export interface CartItem {
   product: Product;
   quantity: number;
   selectedColor?: string;
+  // Bouquet-specific details
+  roseColors?: { color: string; quantity: number }[];
+  wrappingPaper?: string;
+  ribbon?: string;
+  decorations?: string[];
+  // General product details
+  customization?: string;
 }
 
 export interface Translation {

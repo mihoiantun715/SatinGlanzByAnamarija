@@ -259,17 +259,55 @@ export const sendOrderEmail = functions.https.onCall(async (data: any, context) 
 
     const orderNumber = sanitize(orderId.slice(0, 8).toUpperCase());
 
-    // Build items HTML (sanitized)
-    const itemsHtml = orderData.items.map((item: any) => `
-      <tr>
-        <td style="padding: 12px; border-bottom: 1px solid #f3f4f6;">
-          <strong>${sanitize(item.name)}</strong>
-          ${item.color ? `<br><span style="color: #9ca3af; font-size: 13px;">Color: ${sanitize(item.color)}</span>` : ''}
-        </td>
-        <td style="padding: 12px; border-bottom: 1px solid #f3f4f6; text-align: center;">${Number(item.quantity)}</td>
-        <td style="padding: 12px; border-bottom: 1px solid #f3f4f6; text-align: right;">€${(Number(item.price) * Number(item.quantity)).toFixed(2)}</td>
-      </tr>
-    `).join('');
+    // Build items HTML (sanitized) with detailed product information
+    const itemsHtml = orderData.items.map((item: any) => {
+      let detailsHtml = '';
+      
+      // Add color if present
+      if (item.color) {
+        detailsHtml += `<br><span style="color: #9ca3af; font-size: 13px;">Color: ${sanitize(item.color)}</span>`;
+      }
+      
+      // Add rose colors breakdown for custom bouquets
+      if (item.roseColors && Array.isArray(item.roseColors) && item.roseColors.length > 0) {
+        const roseColorsList = item.roseColors
+          .map((rc: any) => `${rc.quantity}x ${sanitize(rc.color)}`)
+          .join(', ');
+        detailsHtml += `<br><span style="color: #9ca3af; font-size: 13px;">🌹 Roses: ${roseColorsList}</span>`;
+      }
+      
+      // Add wrapping paper
+      if (item.wrappingPaper) {
+        detailsHtml += `<br><span style="color: #9ca3af; font-size: 13px;">📦 Wrapping: ${sanitize(item.wrappingPaper)}</span>`;
+      }
+      
+      // Add ribbon
+      if (item.ribbon) {
+        detailsHtml += `<br><span style="color: #9ca3af; font-size: 13px;">🎀 Ribbon: ${sanitize(item.ribbon)}</span>`;
+      }
+      
+      // Add decorations
+      if (item.decorations && Array.isArray(item.decorations) && item.decorations.length > 0) {
+        const decorationsList = item.decorations.map((d: string) => sanitize(d)).join(', ');
+        detailsHtml += `<br><span style="color: #9ca3af; font-size: 13px;">✨ Decorations: ${decorationsList}</span>`;
+      }
+      
+      // Add customization notes
+      if (item.customization) {
+        detailsHtml += `<br><span style="color: #9ca3af; font-size: 13px;">📝 Notes: ${sanitize(item.customization)}</span>`;
+      }
+      
+      return `
+        <tr>
+          <td style="padding: 12px; border-bottom: 1px solid #f3f4f6;">
+            <strong>${sanitize(item.name)}</strong>
+            ${detailsHtml}
+          </td>
+          <td style="padding: 12px; border-bottom: 1px solid #f3f4f6; text-align: center;">${Number(item.quantity)}</td>
+          <td style="padding: 12px; border-bottom: 1px solid #f3f4f6; text-align: right;">€${(Number(item.price) * Number(item.quantity)).toFixed(2)}</td>
+        </tr>
+      `;
+    }).join('');
 
     const addr = orderData.shippingAddress;
     if (!addr || !addr.firstName) {

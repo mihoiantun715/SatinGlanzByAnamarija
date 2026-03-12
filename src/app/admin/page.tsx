@@ -30,7 +30,17 @@ interface AdminOrder {
   trackingNumber?: string;
   stripePaymentIntentId?: string;
   userEmail: string;
-  items: { name: string; quantity: number; price: number; color?: string }[];
+  items: { 
+    name: string; 
+    quantity: number; 
+    price: number; 
+    color?: string;
+    roseColors?: { color: string; quantity: number }[];
+    wrappingPaper?: string;
+    ribbon?: string;
+    decorations?: string[];
+    customization?: string;
+  }[];
   shippingAddress: {
     firstName: string;
     lastName: string;
@@ -1067,9 +1077,34 @@ export default function AdminPage() {
                     {/* Items */}
                     <div className="bg-gray-50 rounded-lg p-3 mb-3">
                       {order.items.map((item, idx) => (
-                        <div key={idx} className="flex justify-between text-sm">
-                          <span className="text-gray-700">{item.name} × {item.quantity}{item.color ? ` (${item.color})` : ''}</span>
-                          <span className="font-medium">€{(item.price * item.quantity).toFixed(2)}</span>
+                        <div key={idx} className="mb-3 last:mb-0">
+                          <div className="flex justify-between text-sm mb-1">
+                            <span className="text-gray-700 font-medium">{item.name} × {item.quantity}</span>
+                            <span className="font-semibold">€{(item.price * item.quantity).toFixed(2)}</span>
+                          </div>
+                          {/* Detailed product information */}
+                          <div className="ml-2 space-y-0.5">
+                            {item.color && (
+                              <div className="text-xs text-gray-600">Color: {item.color}</div>
+                            )}
+                            {item.roseColors && Array.isArray(item.roseColors) && item.roseColors.length > 0 && (
+                              <div className="text-xs text-gray-600">
+                                🌹 Roses: {item.roseColors.map((rc: any) => `${rc.quantity}x ${rc.color}`).join(', ')}
+                              </div>
+                            )}
+                            {item.wrappingPaper && (
+                              <div className="text-xs text-gray-600">📦 Wrapping: {item.wrappingPaper}</div>
+                            )}
+                            {item.ribbon && (
+                              <div className="text-xs text-gray-600">🎀 Ribbon: {item.ribbon}</div>
+                            )}
+                            {item.decorations && Array.isArray(item.decorations) && item.decorations.length > 0 && (
+                              <div className="text-xs text-gray-600">✨ Decorations: {item.decorations.join(', ')}</div>
+                            )}
+                            {item.customization && (
+                              <div className="text-xs text-gray-600">📝 Notes: {item.customization}</div>
+                            )}
+                          </div>
                         </div>
                       ))}
                     </div>
