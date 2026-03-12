@@ -239,6 +239,19 @@ export interface Translation {
     loginToCheckout: string;
     germany: string;
   };
+  contactSeller: {
+    title: string;
+    regardingOrder: string;
+    subject: string;
+    subjectPlaceholder: string;
+    message: string;
+    messagePlaceholder: string;
+    cancel: string;
+    sendMessage: string;
+    sending: string;
+    messageSent: string;
+    messageSentDescription: string;
+  };
   common: {
     currency: string;
     loading: string;

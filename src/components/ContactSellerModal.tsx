@@ -54,7 +54,7 @@ export default function ContactSellerModal({ orderId, onClose }: ContactSellerMo
         {/* Header */}
         <div className="bg-gradient-to-r from-rose-500 to-pink-500 p-6 text-white">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Contact Seller</h2>
+            <h2 className="text-2xl font-bold">{t.contactSeller.title}</h2>
             <button
               onClick={onClose}
               className="p-2 hover:bg-white/20 rounded-full transition-colors"
@@ -64,7 +64,7 @@ export default function ContactSellerModal({ orderId, onClose }: ContactSellerMo
           </div>
           {orderId && (
             <p className="text-sm text-white/90 mt-2">
-              Regarding Order #{orderId.slice(0, 8).toUpperCase()}
+              {t.contactSeller.regardingOrder} #{orderId.slice(0, 8).toUpperCase()}
             </p>
           )}
         </div>
@@ -74,14 +74,14 @@ export default function ContactSellerModal({ orderId, onClose }: ContactSellerMo
           {sent ? (
             <div className="text-center py-8">
               <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Message Sent!</h3>
-              <p className="text-gray-600">We'll get back to you soon.</p>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">{t.contactSeller.messageSent}</h3>
+              <p className="text-gray-600">{t.contactSeller.messageSentDescription}</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Subject
+                  {t.contactSeller.subject}
                 </label>
                 <input
                   type="text"
@@ -89,13 +89,13 @@ export default function ContactSellerModal({ orderId, onClose }: ContactSellerMo
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-300"
-                  placeholder="What is your inquiry about?"
+                  placeholder={t.contactSeller.subjectPlaceholder}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Message
+                  {t.contactSeller.message}
                 </label>
                 <textarea
                   required
@@ -103,7 +103,7 @@ export default function ContactSellerModal({ orderId, onClose }: ContactSellerMo
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-300 resize-none"
-                  placeholder="Describe your question or concern..."
+                  placeholder={t.contactSeller.messagePlaceholder}
                 />
               </div>
 
@@ -113,7 +113,7 @@ export default function ContactSellerModal({ orderId, onClose }: ContactSellerMo
                   onClick={onClose}
                   className="flex-1 px-6 py-3 border-2 border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl font-semibold transition-all"
                 >
-                  Cancel
+                  {t.contactSeller.cancel}
                 </button>
                 <button
                   type="submit"
@@ -123,12 +123,12 @@ export default function ContactSellerModal({ orderId, onClose }: ContactSellerMo
                   {sending ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin" />
-                      Sending...
+                      {t.contactSeller.sending}
                     </>
                   ) : (
                     <>
                       <Send className="w-5 h-5" />
-                      Send Message
+                      {t.contactSeller.sendMessage}
                     </>
                   )}
                 </button>
