@@ -211,7 +211,7 @@ function CheckoutForm() {
         }
 
         // 6. Save shipping address to user profile for future use
-        if (user) {
+        if (user?.uid) {
           try {
             await setDoc(doc(db, 'users', user.uid), {
               savedAddress: {
