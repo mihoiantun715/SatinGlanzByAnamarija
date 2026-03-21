@@ -13,16 +13,77 @@ function SuccessContent() {
   const { t } = useLanguage();
   const { clearCart } = useCart();
   const [orderId, setOrderId] = useState('');
+  const [isValidating, setIsValidating] = useState(true);
+  const [isValid, setIsValid] = useState(false);
 
   useEffect(() => {
-    // Get order ID from URL params
-    const orderIdFromUrl = searchParams.get('orderId');
-    if (orderIdFromUrl) {
-      setOrderId(orderIdFromUrl);
-      // Clear cart after successful payment
-      clearCart();
-    }
-  }, [searchParams, clearCart]);
+    const validateOrder = async () => {
+      const orderIdFromUrl = searchParams.get('orderId');
+      
+      // No order ID in URL - redirect to home
+      if (!orderIdFromUrl) {
+        router.push('/');
+        return;
+      }
+
+      try {
+        // Verify order exists in Firestore
+        const { doc, getDoc } = await import('firebase/firestore');
+        const { db } = await import('@/lib/firebase');
+        
+        const orderDoc = await getDoc(doc(db, 'orders', orderIdFromUrl));
+        
+        // Order doesn't exist - redirect to home
+        if (!orderDoc.exists()) {
+          router.push('/');
+          return;
+        }
+
+        const orderData = orderDoc.data();
+        
+        // Check if order was created recently (within last 10 minutes)
+        const orderTime = new Date(orderData.createdAt).getTime();
+        const now = Date.now();
+        const tenMinutes = 10 * 60 * 1000;
+        
+        // If order is too old, redirect (prevents bookmarking success page)
+        if (now - orderTime > tenMinutes) {
+          router.push('/account');
+          return;
+        }
+
+        // Valid order - show success page
+        setOrderId(orderIdFromUrl);
+        setIsValid(true);
+        setIsValidating(false);
+        
+        // Clear cart after successful payment
+        clearCart();
+      } catch (error) {
+        console.error('Error validating order:', error);
+        router.push('/');
+      }
+    };
+
+    validateOrder();
+  }, [searchParams, clearCart, router]);
+
+  // Show loading while validating
+  if (isValidating) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Verifying your order...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render anything if not valid (will redirect)
+  if (!isValid) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 flex items-center justify-center px-4 py-12">
