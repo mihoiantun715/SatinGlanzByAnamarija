@@ -106,11 +106,6 @@ function CheckoutForm() {
       return;
     }
 
-    if (!clientSecret) {
-      setError('Payment not ready. Please wait or refresh the page.');
-      return;
-    }
-
     setLoading(true);
     try {
       // 1. Save order to Firestore first
