@@ -5,9 +5,6 @@ import Stripe from 'stripe';
 
 admin.initializeApp();
 
-// Export Stripe webhook handler
-export { stripeWebhook } from './stripeWebhook';
-
 let _stripe: Stripe | null = null;
 const getStripe = () => {
   if (!_stripe) {
@@ -313,6 +310,65 @@ export const createCheckoutSession = functions.https.onCall(async (data: any, co
     console.error('Checkout session error:', error);
     if (error instanceof functions.https.HttpsError) throw error;
     throw new functions.https.HttpsError('internal', 'Failed to create checkout session');
+  }
+});
+
+// Stripe Webhook Handler - Updates order status when payment succeeds
+export const stripeWebhook = functions.https.onRequest(async (req, res) => {
+  const stripe = getStripe();
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  if (!webhookSecret) {
+    console.error('STRIPE_WEBHOOK_SECRET not configured');
+    res.status(200).send('Webhook secret not configured');
+    return;
+  }
+
+  const sig = req.headers['stripe-signature'];
+  if (!sig) {
+    res.status(400).send('No signature');
+    return;
+  }
+
+  let event: any;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig as string, webhookSecret);
+  } catch (err: any) {
+    console.error('Webhook signature verification failed:', err.message);
+    res.status(400).send(`Webhook Error: ${err.message}`);
+    return;
+  }
+
+  // Handle the checkout.session.completed event
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+    
+    try {
+      const orderId = session.metadata?.orderId;
+      
+      if (!orderId) {
+        console.error('No orderId in session metadata');
+        res.status(200).send('No orderId in metadata');
+        return;
+      }
+
+      // Update order status to paid
+      await admin.firestore().collection('orders').doc(orderId).update({
+        status: 'paid',
+        stripeSessionId: session.id,
+        stripePaymentIntentId: session.payment_intent,
+        paidAt: new Date().toISOString(),
+      });
+
+      console.log(`Order ${orderId} marked as paid`);
+      res.json({ received: true, orderId });
+    } catch (error: any) {
+      console.error('Error updating order:', error);
+      res.status(500).send(`Error: ${error.message}`);
+    }
+  } else {
+    res.json({ received: true });
   }
 });
 
