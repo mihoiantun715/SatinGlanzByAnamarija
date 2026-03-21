@@ -30,8 +30,10 @@ const ribbonOptions = [
 const roseColors = [
   { key: 'Red', hex: '#dc2626', image: '/Roses For Bouquete/Red.png' },
   { key: 'Cherry Red', hex: '#9f1239', image: '/Roses For Bouquete/Cherry red.png' },
+  { key: 'Burgundy', hex: '#7c2d3e', image: '/Roses For Bouquete/Burgundy.png' },
   { key: 'Dusty Rose', hex: '#d4a0a0', image: '/Roses For Bouquete/Dusty rose.png' },
   { key: 'Peach', hex: '#fb923c', image: '/Roses For Bouquete/Peach.png' },
+  { key: 'White', hex: '#f8f8f8', image: '/Roses For Bouquete/White.png' },
   { key: 'Royal Blue', hex: '#1d4ed8', image: '/Roses For Bouquete/Royal Blue.png' },
   { key: 'Sunflower Yellow', hex: '#eab308', image: '/Roses For Bouquete/Sunflower yellow.png' },
 ];
