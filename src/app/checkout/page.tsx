@@ -61,45 +61,7 @@ function CheckoutForm() {
   
   const total = totalPrice + shippingCost;
 
-  // Create payment intent when component loads
-  useEffect(() => {
-    if (items.length === 0 || total <= 0) return;
-
-    const createIntent = async () => {
-      try {
-        const functions = getFunctions(app, 'us-central1');
-        
-        // Create a temporary order to get payment intent
-        const tempOrderData = {
-          items: items.map(item => ({
-            productId: item.product.id,
-            name: item.product.name[locale],
-            price: item.product.price,
-            quantity: item.quantity,
-            roseCount: item.roseColors?.reduce((sum, c) => sum + c.quantity, 0) || 0,
-            roseColors: item.roseColors || [],
-          })),
-        };
-
-        const createPaymentIntent = httpsCallable(functions, 'createPaymentIntent');
-        const result = await createPaymentIntent({
-          amount: total,
-          currency: 'eur',
-          customerEmail: user?.email || 'guest@satinglanz.com',
-          orderId: 'pending',
-          orderData: tempOrderData,
-        });
-
-        const { clientSecret: secret } = result.data as { clientSecret: string };
-        setClientSecret(secret);
-      } catch (err) {
-        console.error('Failed to create payment intent:', err);
-        setError('Failed to initialize payment. Please refresh the page.');
-      }
-    };
-
-    createIntent();
-  }, [items, total, user, locale]);
+  // PaymentElement will be initialized after order is created
 
 
   // Load saved address from user profile
@@ -226,9 +188,22 @@ function CheckoutForm() {
         }
       }
 
-      // 3. Confirm payment with Stripe using PaymentElement
+      // 3. Create payment intent via Cloud Function (with built-in price verification)
+      const createPaymentIntent = httpsCallable(functions, 'createPaymentIntent');
+      const result = await createPaymentIntent({
+        amount: total,
+        currency: 'eur',
+        customerEmail: user?.email || `guest-${docRef.id}@satinglanz.com`,
+        orderId: docRef.id,
+      });
+
+      const { clientSecret: secret } = result.data as { clientSecret: string };
+      setClientSecret(secret);
+
+      // 4. Confirm payment with Stripe using PaymentElement
       const { error: stripeError, paymentIntent } = await stripe.confirmPayment({
         elements,
+        clientSecret: secret,
         confirmParams: {
           return_url: `${window.location.origin}/checkout?success=true&orderId=${docRef.id}`,
           payment_method_data: {
@@ -466,19 +441,27 @@ function CheckoutForm() {
                   <h2 className="text-lg font-bold text-gray-900">Payment</h2>
                 </div>
 
-                {clientSecret ? (
-                  <div className="space-y-4">
-                    <PaymentElement
-                      options={paymentElementOptions}
-                      onReady={() => setPaymentReady(true)}
-                    />
+                <div className="space-y-4">
+                  <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-gray-200">
+                    <div className="flex items-center gap-3 mb-3">
+                      <CreditCard className="w-6 h-6 text-gray-700" />
+                      <h3 className="font-bold text-gray-900">Payment Methods Available</h3>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <Check className="w-4 h-4 text-green-600" />
+                        <span>💳 Credit & Debit Cards</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <Check className="w-4 h-4 text-green-600" />
+                        <span>🛍️ Klarna (Buy now, pay later)</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-3">
+                      You'll be redirected to Stripe's secure payment page to complete your purchase.
+                    </p>
                   </div>
-                ) : (
-                  <div className="p-8 text-center">
-                    <div className="w-8 h-8 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-                    <p className="text-sm text-gray-500">Loading payment methods...</p>
-                  </div>
-                )}
+                </div>
 
                 <div className="flex items-center gap-2 mt-4 text-xs text-gray-400">
                   <Shield className="w-4 h-4" />
@@ -555,7 +538,7 @@ function CheckoutForm() {
 
                 <button
                   type="submit"
-                  disabled={loading || !stripe || !paymentReady || !termsAccepted || !clientSecret}
+                  disabled={loading || !stripe || !termsAccepted}
                   className="w-full bg-rose-500 hover:bg-rose-600 disabled:bg-rose-300 text-white py-4 rounded-full font-semibold text-lg transition-all hover:shadow-lg hover:shadow-rose-200 flex items-center justify-center gap-2"
                 >
                   {loading ? (
