@@ -12,7 +12,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { Lock, MapPin, Check, ShoppingBag, ArrowRight, Truck, CreditCard, Shield, AlertCircle, CheckCircle, Package } from 'lucide-react';
-import { calculateCartShipping, getRecommendedCarrier } from '@/lib/shippingCalculator';
+import { calculateCartShipping } from '@/lib/shippingCalculator';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 
 const stripePromise = loadStripe('pk_live_51T6HdURxZ5rzXIkdeQqyjWs9mTaYOvCQNeGlgukCgvMNs4MrasTO6Tr9zoIp2Dfcxdcak60DiBQkkAE6iuWGg9fO00OCC5EmrL');
@@ -42,10 +42,7 @@ function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
 
-  // Get recommended carrier based on cart items (DHL for bouquets, GLS for products)
-  const recommendedCarrier = useMemo(() => getRecommendedCarrier(items), [items]);
-  
-  const [selectedCarrier, setSelectedCarrier] = useState<'dhl' | 'gls'>(recommendedCarrier);
+  const [selectedCarrier] = useState<'dhl' | 'gls'>('dhl');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [street, setStreet] = useState('');
@@ -69,17 +66,13 @@ function CheckoutForm() {
     setPostalCode(place.postalCode);
   };
 
-  // Calculate shipping cost based on box sizes and bouquet rose counts
+  // Calculate shipping cost based on cart items
   const shippingCost = useMemo(() => {
-    return calculateCartShipping(items, selectedCarrier);
-  }, [items, selectedCarrier]);
+    return calculateCartShipping(items);
+  }, [items]);
   
   const total = totalPrice + shippingCost;
 
-  // Update selected carrier when recommended carrier changes
-  useEffect(() => {
-    setSelectedCarrier(recommendedCarrier);
-  }, [recommendedCarrier]);
 
   // Load saved address from user profile
   useEffect(() => {
@@ -413,66 +406,37 @@ function CheckoutForm() {
                 </div>
               </div>
 
-              {/* Shipping Method */}
+              {/* Shipping Info */}
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
-                <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center gap-3 mb-4">
                   <Truck className="w-5 h-5 text-gray-700" />
-                  <h2 className="text-lg font-bold text-gray-900">{t.cart.selectShipping}</h2>
+                  <h2 className="text-lg font-bold text-gray-900">{t.cart.shipping}</h2>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedCarrier('dhl')}
-                      className={`relative text-left p-5 rounded-xl border-2 transition-all ${
-                        selectedCarrier === 'dhl'
-                          ? 'border-yellow-400 bg-yellow-50 shadow-sm'
-                          : 'border-gray-200 hover:border-gray-300 bg-white'
-                      }`}
-                    >
-                      {selectedCarrier === 'dhl' && (
-                        <div className="absolute top-3 right-3">
-                          <div className="w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center">
-                            <Check className="w-3 h-3 text-yellow-900" />
-                          </div>
-                        </div>
-                      )}
-                      <span className="text-2xl font-black text-yellow-500">DHL</span>
-                      <div className="text-xl font-bold text-gray-900 mt-2">
-                        {t.common.currency}{calculateCartShipping(items, 'dhl').toFixed(2)}
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">✓ {t.cart.tracking}</p>
-                      {recommendedCarrier === 'dhl' && (
-                        <p className="text-xs text-yellow-600 font-semibold mt-1">⭐ Empfohlen</p>
-                      )}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setSelectedCarrier('gls')}
-                      className={`relative text-left p-5 rounded-xl border-2 transition-all ${
-                        selectedCarrier === 'gls'
-                          ? 'border-blue-400 bg-blue-50 shadow-sm'
-                          : 'border-gray-200 hover:border-gray-300 bg-white'
-                      }`}
-                    >
-                      {selectedCarrier === 'gls' && (
-                        <div className="absolute top-3 right-3">
-                          <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
-                            <Check className="w-3 h-3 text-white" />
-                          </div>
-                        </div>
-                      )}
-                      <span className="text-2xl font-black text-blue-600">GLS</span>
-                      <div className="text-xl font-bold text-gray-900 mt-2">
-                        {t.common.currency}{calculateCartShipping(items, 'gls').toFixed(2)}
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">✓ {t.cart.tracking}</p>
-                      {recommendedCarrier === 'gls' && (
-                        <p className="text-xs text-blue-600 font-semibold mt-1">⭐ Empfohlen</p>
-                      )}
-                    </button>
+                {totalPrice >= 70 ? (
+                  <div className="p-5 rounded-xl border-2 border-green-400 bg-green-50">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Check className="w-6 h-6 text-green-600" />
+                      <span className="text-lg font-bold text-green-900">{t.cart.freeShipping}</span>
+                    </div>
+                    <p className="text-sm text-green-700">🎉 {t.cart.freeShippingNote || 'Your order qualifies for free shipping!'}</p>
+                    <p className="text-xs text-gray-600 mt-2">🚚 Delivery: 1-3 business days after order completion</p>
                   </div>
+                ) : (
+                  <div className="p-5 rounded-xl border-2 border-gray-200 bg-gray-50">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-lg font-bold text-gray-900">{t.cart.shippingCost}</span>
+                      <span className="text-xl font-bold text-gray-900">{t.common.currency}{shippingCost.toFixed(2)}</span>
+                    </div>
+                    <p className="text-xs text-gray-500">✓ Tracking included</p>
+                    <p className="text-xs text-gray-500">✓ 1-3 business days delivery</p>
+                    <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-xs text-blue-700">
+                        💡 Add {t.common.currency}{(70 - totalPrice).toFixed(2)} more to get free shipping!
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Payment */}
@@ -482,16 +446,27 @@ function CheckoutForm() {
                   <h2 className="text-lg font-bold text-gray-900">Payment</h2>
                 </div>
 
-                <div className="border border-gray-200 rounded-xl p-4 bg-gray-50 focus-within:ring-2 focus-within:ring-rose-300 focus-within:border-rose-300 transition-all">
-                  <CardElement
-                    options={cardElementOptions}
-                    onChange={(e) => setCardComplete(e.complete)}
-                  />
+                <div className="space-y-4">
+                  <div className="border border-gray-200 rounded-xl p-4 bg-gray-50 focus-within:ring-2 focus-within:ring-rose-300 focus-within:border-rose-300 transition-all">
+                    <CardElement
+                      options={cardElementOptions}
+                      onChange={(e) => setCardComplete(e.complete)}
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <span>💳 Also accepts:</span>
+                    <span className="font-semibold">Klarna</span>
+                    <span>•</span>
+                    <span className="font-semibold">Giropay</span>
+                    <span>•</span>
+                    <span className="font-semibold">SEPA</span>
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2 mt-4 text-xs text-gray-400">
                   <Shield className="w-4 h-4" />
-                  <span>Secured by Stripe. Your card details are encrypted and never stored on our servers.</span>
+                  <span>Secured by Stripe. Your payment details are encrypted and never stored on our servers.</span>
                 </div>
               </div>
 
@@ -547,15 +522,10 @@ function CheckoutForm() {
                     <span className="font-semibold">{t.common.currency}{totalPrice.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-gray-600">
-                    <span className="flex items-center gap-1.5">
-                      {t.cart.shipping}
-                      {shippingCost > 0 && (
-                        <span className="text-xs text-gray-400">({selectedCarrier.toUpperCase()})</span>
-                      )}
-                    </span>
+                    <span>{t.cart.shipping}</span>
                     <span className="font-semibold">
                       {shippingCost === 0 ? (
-                        <span className="text-green-500">{t.cart.freeShipping}</span>
+                        <span className="text-green-600">{t.cart.freeShipping}</span>
                       ) : (
                         `${t.common.currency}${shippingCost.toFixed(2)}`
                       )}

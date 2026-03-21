@@ -54,28 +54,19 @@ const generateResetToken = (): string => {
   return Math.random().toString(36).substring(2) + Date.now().toString(36);
 };
 
-// Shipping rates - MUST match client-side shippingCalculator.ts
-const SHIPPING_RATES = {
-  dhl: {
-    bouquet: [
-      { maxRoses: 20, price: 5.19 },
-      { maxRoses: 50, price: 7.69 },
-      { maxRoses: 101, price: 7.69 },
-    ],
-    default: 5.19,
-  },
-  gls: {
-    bouquet: [
-      { maxRoses: 20, price: 5.59 },
-      { maxRoses: 50, price: 7.79 },
-      { maxRoses: 101, price: 10.00 },
-    ],
-    default: 5.59,
-  },
-};
+// Simplified shipping rates - MUST match client-side shippingCalculator.ts
+const SHOP_PRODUCT_SHIPPING = 3.19;
+const BOUQUET_SMALL_SHIPPING = 3.19; // ≤10 roses
+const BOUQUET_LARGE_SHIPPING = 5.19; // >10 roses
+const FREE_SHIPPING_THRESHOLD = 70.00;
 
 // Calculate shipping cost on server (must match client calculation)
-function calculateServerShipping(items: any[], carrier: 'dhl' | 'gls', subtotal: number): number {
+function calculateServerShipping(items: any[], subtotal: number): number {
+  // FREE SHIPPING for orders above €70
+  if (subtotal >= FREE_SHIPPING_THRESHOLD) {
+    return 0;
+  }
+
   // TESTING MODE: Free shipping for orders under €1 (for Stripe testing)
   if (subtotal < 1) {
     return 0;
@@ -83,26 +74,48 @@ function calculateServerShipping(items: any[], carrier: 'dhl' | 'gls', subtotal:
 
   let totalBouquetRoses = 0;
   let hasBouquets = false;
+  let hasShopProducts = false;
 
   for (const item of items) {
-    if (item.roseCount || item.category === 'Bouquets') {
+    // Check if it's a custom bouquet (has roseCount or roseColors)
+    if (item.roseCount || item.roseColors) {
       hasBouquets = true;
-      const roses = item.roseCount || 1;
-      totalBouquetRoses += roses * (item.quantity || 1);
-    }
-  }
-
-  if (hasBouquets && totalBouquetRoses > 0) {
-    const rates = SHIPPING_RATES[carrier].bouquet;
-    for (const rate of rates) {
-      if (totalBouquetRoses <= rate.maxRoses) {
-        return rate.price;
+      // Calculate total roses from roseColors array if available
+      if (item.roseColors && Array.isArray(item.roseColors)) {
+        const rosesInItem = item.roseColors.reduce((sum: number, color: any) => sum + color.quantity, 0);
+        totalBouquetRoses += rosesInItem * (item.quantity || 1);
+      } else {
+        totalBouquetRoses += (item.roseCount || 1) * (item.quantity || 1);
       }
     }
-    return rates[rates.length - 1].price;
+    // Check if it's a bouquet by category or productId
+    else if (item.category === 'Bouquets' || item.productId?.startsWith('custom-bouquet')) {
+      hasBouquets = true;
+      // Try to extract rose count from product name
+      const nameMatch = item.name?.match(/(\d+)\s*rose/i);
+      const roses = nameMatch ? parseInt(nameMatch[1]) : 1;
+      totalBouquetRoses += roses * (item.quantity || 1);
+    }
+    // Otherwise it's a shop product
+    else {
+      hasShopProducts = true;
+    }
   }
 
-  return SHIPPING_RATES[carrier].default;
+  // Calculate shipping based on cart contents
+  if (hasBouquets && totalBouquetRoses > 0) {
+    // If cart has bouquets, use bouquet shipping rate
+    if (totalBouquetRoses <= 10) {
+      return BOUQUET_SMALL_SHIPPING;
+    }
+    return BOUQUET_LARGE_SHIPPING;
+  } else if (hasShopProducts) {
+    // If cart has only shop products, use shop product rate
+    return SHOP_PRODUCT_SHIPPING;
+  }
+
+  // Default fallback
+  return SHOP_PRODUCT_SHIPPING;
 }
 
 // Create Stripe Payment Intent with SERVER-SIDE PRICE VERIFICATION
@@ -172,8 +185,7 @@ export const createPaymentIntent = functions.https.onCall(async (data: any, cont
     }
 
     // Recalculate shipping using server-side logic
-    const carrier = orderData.shippingCarrier || 'dhl';
-    const calculatedShipping = calculateServerShipping(orderData.items, carrier, calculatedSubtotal);
+    const calculatedShipping = calculateServerShipping(orderData.items, calculatedSubtotal);
 
     // Calculate expected total
     const expectedTotal = calculatedSubtotal + calculatedShipping;
@@ -210,6 +222,7 @@ export const createPaymentIntent = functions.https.onCall(async (data: any, cont
       amount: amountInCents,
       currency: currency || 'eur',
       receipt_email: customerEmail || context.auth?.token?.email,
+      payment_method_types: ['card', 'klarna', 'giropay', 'sepa_debit'],
       metadata: {
         orderId: orderId || '',
         userId: context.auth?.uid || 'guest',
