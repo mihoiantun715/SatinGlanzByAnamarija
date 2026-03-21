@@ -457,10 +457,7 @@ function CheckoutForm() {
                   <div className="flex items-center gap-2 text-xs text-gray-500">
                     <span>💳 Also accepts:</span>
                     <span className="font-semibold">Klarna</span>
-                    <span>•</span>
-                    <span className="font-semibold">Giropay</span>
-                    <span>•</span>
-                    <span className="font-semibold">SEPA</span>
+                    <span className="text-gray-400">(Buy now, pay later)</span>
                   </div>
                 </div>
 

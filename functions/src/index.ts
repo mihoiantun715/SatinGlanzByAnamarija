@@ -222,7 +222,7 @@ export const createPaymentIntent = functions.https.onCall(async (data: any, cont
       amount: amountInCents,
       currency: currency || 'eur',
       receipt_email: customerEmail || context.auth?.token?.email,
-      payment_method_types: ['card', 'klarna', 'giropay', 'sepa_debit'],
+      payment_method_types: ['card', 'klarna'],
       metadata: {
         orderId: orderId || '',
         userId: context.auth?.uid || 'guest',
