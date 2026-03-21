@@ -20,7 +20,12 @@ const getStripe = () => {
   return _stripe;
 };
 
-// HTML sanitizer to prevent XSS in email templates
+/**
+ * Sanitizes HTML strings to prevent XSS attacks in email templates.
+ * 
+ * @param {string} str - String to sanitize
+ * @returns {string} Sanitized string with HTML entities escaped
+ */
 const sanitize = (str: string): string => {
   if (!str) return '';
   return String(str)
@@ -31,7 +36,13 @@ const sanitize = (str: string): string => {
     .replace(/'/g, '&#x27;');
 };
 
-// Generate tracking URL based on carrier
+/**
+ * Generates tracking URL for various shipping carriers.
+ * 
+ * @param {string} carrier - Carrier name (DHL, GLS, UPS, FedEx, USPS)
+ * @param {string} trackingNumber - Package tracking number
+ * @returns {string} Full tracking URL or empty string if carrier unknown
+ */
 const getTrackingUrl = (carrier: string, trackingNumber: string): string => {
   switch (carrier.toLowerCase()) {
     case 'dhl':
@@ -240,7 +251,17 @@ export const createPaymentIntent = functions.https.onCall(async (data: any, cont
   }
 });
 
-// Create Stripe Checkout Session (supports Klarna + Card natively)
+/**
+ * Creates a Stripe Checkout Session for processing payments.
+ * Supports Card and Klarna payment methods.
+ * 
+ * @param {Object} data - Request data
+ * @param {string} data.orderId - Firestore order document ID
+ * @param {string} [data.successUrl] - Custom success redirect URL
+ * @param {string} [data.cancelUrl] - Custom cancel redirect URL
+ * @returns {Promise<{sessionId: string, url: string}>} Checkout session details
+ * @throws {functions.https.HttpsError} If order not found or invalid
+ */
 export const createCheckoutSession = functions.https.onCall(async (data: any, context) => {
   try {
     const stripe = getStripe();
@@ -313,7 +334,14 @@ export const createCheckoutSession = functions.https.onCall(async (data: any, co
   }
 });
 
-// Stripe Webhook Handler - Updates order status when payment succeeds
+/**
+ * Stripe webhook handler for processing payment events.
+ * Updates order status to 'paid' when checkout.session.completed event received.
+ * 
+ * @param {functions.https.Request} req - HTTP request with Stripe signature
+ * @param {functions.Response} res - HTTP response
+ * @security Verifies Stripe webhook signature before processing
+ */
 export const stripeWebhook = functions.https.onRequest(async (req, res) => {
   const stripe = getStripe();
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
