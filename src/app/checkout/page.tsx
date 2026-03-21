@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { collection, addDoc, doc, getDoc, setDoc } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { db, app } from '@/lib/firebase';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
@@ -17,21 +17,8 @@ import AddressAutocomplete from '@/components/AddressAutocomplete';
 
 const stripePromise = loadStripe('pk_live_51T6HdURxZ5rzXIkdeQqyjWs9mTaYOvCQNeGlgukCgvMNs4MrasTO6Tr9zoIp2Dfcxdcak60DiBQkkAE6iuWGg9fO00OCC5EmrL');
 
-const cardElementOptions = {
-  style: {
-    base: {
-      fontSize: '16px',
-      color: '#1f2937',
-      fontFamily: '"Inter", "Segoe UI", sans-serif',
-      '::placeholder': {
-        color: '#9ca3af',
-      },
-    },
-    invalid: {
-      color: '#ef4444',
-      iconColor: '#ef4444',
-    },
-  },
+const paymentElementOptions = {
+  layout: 'tabs' as const,
 };
 
 function CheckoutForm() {
@@ -53,7 +40,8 @@ function CheckoutForm() {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderId, setOrderId] = useState('');
   const [error, setError] = useState('');
-  const [cardComplete, setCardComplete] = useState(false);
+  const [paymentReady, setPaymentReady] = useState(false);
+  const [clientSecret, setClientSecret] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [savedAddress, setSavedAddress] = useState<any>(null);
@@ -72,6 +60,46 @@ function CheckoutForm() {
   }, [items]);
   
   const total = totalPrice + shippingCost;
+
+  // Create payment intent when component loads
+  useEffect(() => {
+    if (items.length === 0 || total <= 0) return;
+
+    const createIntent = async () => {
+      try {
+        const functions = getFunctions(app, 'us-central1');
+        
+        // Create a temporary order to get payment intent
+        const tempOrderData = {
+          items: items.map(item => ({
+            productId: item.product.id,
+            name: item.product.name[locale],
+            price: item.product.price,
+            quantity: item.quantity,
+            roseCount: item.roseColors?.reduce((sum, c) => sum + c.quantity, 0) || 0,
+            roseColors: item.roseColors || [],
+          })),
+        };
+
+        const createPaymentIntent = httpsCallable(functions, 'createPaymentIntent');
+        const result = await createPaymentIntent({
+          amount: total,
+          currency: 'eur',
+          customerEmail: user?.email || 'guest@satinglanz.com',
+          orderId: 'pending',
+          orderData: tempOrderData,
+        });
+
+        const { clientSecret: secret } = result.data as { clientSecret: string };
+        setClientSecret(secret);
+      } catch (err) {
+        console.error('Failed to create payment intent:', err);
+        setError('Failed to initialize payment. Please refresh the page.');
+      }
+    };
+
+    createIntent();
+  }, [items, total, user, locale]);
 
 
   // Load saved address from user profile
@@ -122,9 +150,8 @@ function CheckoutForm() {
       return;
     }
 
-    const cardElement = elements.getElement(CardElement);
-    if (!cardElement) {
-      setError('Payment card not found. Please refresh the page.');
+    if (!clientSecret) {
+      setError('Payment not ready. Please wait or refresh the page.');
       return;
     }
 
@@ -199,33 +226,26 @@ function CheckoutForm() {
         }
       }
 
-      // 3. Create payment intent via Cloud Function (with built-in price verification)
-      const createPaymentIntent = httpsCallable(functions, 'createPaymentIntent');
-      const result = await createPaymentIntent({
-        amount: total,
-        currency: 'eur',
-        customerEmail: user?.email || `guest-${docRef.id}@satinglanz.com`,
-        orderId: docRef.id,
-      });
-
-      const { clientSecret } = result.data as { clientSecret: string };
-
-      // 3. Confirm payment with Stripe
-      const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: cardElement,
-          billing_details: {
-            name: `${firstName} ${lastName}`,
-            email: user?.email || undefined,
-            phone: phone,
-            address: {
-              line1: street,
-              city: city,
-              postal_code: postalCode,
-              country: 'DE',
+      // 3. Confirm payment with Stripe using PaymentElement
+      const { error: stripeError, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/checkout?success=true&orderId=${docRef.id}`,
+          payment_method_data: {
+            billing_details: {
+              name: `${firstName} ${lastName}`,
+              email: user?.email || undefined,
+              phone: phone,
+              address: {
+                line1: street,
+                city: city,
+                postal_code: postalCode,
+                country: 'DE',
+              },
             },
           },
         },
+        redirect: 'if_required',
       });
 
       if (stripeError) {
@@ -446,20 +466,19 @@ function CheckoutForm() {
                   <h2 className="text-lg font-bold text-gray-900">Payment</h2>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="border border-gray-200 rounded-xl p-4 bg-gray-50 focus-within:ring-2 focus-within:ring-rose-300 focus-within:border-rose-300 transition-all">
-                    <CardElement
-                      options={cardElementOptions}
-                      onChange={(e) => setCardComplete(e.complete)}
+                {clientSecret ? (
+                  <div className="space-y-4">
+                    <PaymentElement
+                      options={paymentElementOptions}
+                      onReady={() => setPaymentReady(true)}
                     />
                   </div>
-
-                  <div className="flex items-center gap-2 text-xs text-gray-500">
-                    <span>💳 Also accepts:</span>
-                    <span className="font-semibold">Klarna</span>
-                    <span className="text-gray-400">(Buy now, pay later)</span>
+                ) : (
+                  <div className="p-8 text-center">
+                    <div className="w-8 h-8 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                    <p className="text-sm text-gray-500">Loading payment methods...</p>
                   </div>
-                </div>
+                )}
 
                 <div className="flex items-center gap-2 mt-4 text-xs text-gray-400">
                   <Shield className="w-4 h-4" />
@@ -536,7 +555,7 @@ function CheckoutForm() {
 
                 <button
                   type="submit"
-                  disabled={loading || !stripe || !cardComplete || !termsAccepted}
+                  disabled={loading || !stripe || !paymentReady || !termsAccepted || !clientSecret}
                   className="w-full bg-rose-500 hover:bg-rose-600 disabled:bg-rose-300 text-white py-4 rounded-full font-semibold text-lg transition-all hover:shadow-lg hover:shadow-rose-200 flex items-center justify-center gap-2"
                 >
                   {loading ? (
