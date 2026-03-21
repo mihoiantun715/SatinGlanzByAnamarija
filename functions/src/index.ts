@@ -5,6 +5,9 @@ import Stripe from 'stripe';
 
 admin.initializeApp();
 
+// Export Stripe webhook handler
+export { stripeWebhook } from './stripeWebhook';
+
 let _stripe: Stripe | null = null;
 const getStripe = () => {
   if (!_stripe) {

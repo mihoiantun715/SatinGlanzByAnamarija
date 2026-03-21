@@ -83,20 +83,20 @@ function SuccessContent() {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4">
-          <Link
-            href="/account"
+          <button
+            onClick={() => router.push('/account')}
             className="flex-1 px-6 py-4 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white rounded-xl font-semibold text-center transition-all shadow-lg shadow-rose-500/30 flex items-center justify-center gap-2"
           >
             <Package className="w-5 h-5" />
             View My Orders
-          </Link>
-          <Link
-            href="/"
+          </button>
+          <button
+            onClick={() => router.push('/')}
             className="flex-1 px-6 py-4 border-2 border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl font-semibold text-center transition-all flex items-center justify-center gap-2"
           >
             <Home className="w-5 h-5" />
             Back to Home
-          </Link>
+          </button>
         </div>
 
         {/* Additional Info */}
