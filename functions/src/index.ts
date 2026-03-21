@@ -5,6 +5,9 @@ import Stripe from 'stripe';
 
 admin.initializeApp();
 
+// Export createCheckoutSession
+export { createCheckoutSession } from './createCheckoutSession';
+
 let _stripe: Stripe | null = null;
 const getStripe = () => {
   if (!_stripe) {

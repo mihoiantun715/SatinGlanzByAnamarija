@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { collection, addDoc, doc, getDoc, setDoc } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { Elements, useStripe, useElements } from '@stripe/react-stripe-js';
 import { db, app } from '@/lib/firebase';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
@@ -17,9 +17,6 @@ import AddressAutocomplete from '@/components/AddressAutocomplete';
 
 const stripePromise = loadStripe('pk_live_51T6HdURxZ5rzXIkdeQqyjWs9mTaYOvCQNeGlgukCgvMNs4MrasTO6Tr9zoIp2Dfcxdcak60DiBQkkAE6iuWGg9fO00OCC5EmrL');
 
-const paymentElementOptions = {
-  layout: 'tabs' as const,
-};
 
 function CheckoutForm() {
   const router = useRouter();
@@ -40,8 +37,6 @@ function CheckoutForm() {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderId, setOrderId] = useState('');
   const [error, setError] = useState('');
-  const [paymentReady, setPaymentReady] = useState(false);
-  const [clientSecret, setClientSecret] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [savedAddress, setSavedAddress] = useState<any>(null);
@@ -61,7 +56,6 @@ function CheckoutForm() {
   
   const total = totalPrice + shippingCost;
 
-  // PaymentElement will be initialized after order is created
 
 
   // Load saved address from user profile
@@ -188,55 +182,29 @@ function CheckoutForm() {
         }
       }
 
-      // 3. Create payment intent via Cloud Function (with built-in price verification)
-      const createPaymentIntent = httpsCallable(functions, 'createPaymentIntent');
-      const result = await createPaymentIntent({
-        amount: total,
-        currency: 'eur',
-        customerEmail: user?.email || `guest-${docRef.id}@satinglanz.com`,
+      // 3. Create Stripe Checkout Session (supports Card + Klarna natively)
+      const createCheckoutSession = httpsCallable(functions, 'createCheckoutSession');
+      const sessionResult = await createCheckoutSession({
         orderId: docRef.id,
+        successUrl: `${window.location.origin}/checkout/success?orderId=${docRef.id}`,
+        cancelUrl: `${window.location.origin}/checkout`,
       });
 
-      const { clientSecret: secret } = result.data as { clientSecret: string };
-      setClientSecret(secret);
+      const { url } = sessionResult.data as { sessionId: string; url: string };
 
-      // 4. Confirm payment with Stripe using PaymentElement
-      const { error: stripeError, paymentIntent } = await stripe.confirmPayment({
-        elements,
-        clientSecret: secret,
-        confirmParams: {
-          return_url: `${window.location.origin}/checkout?success=true&orderId=${docRef.id}`,
-          payment_method_data: {
-            billing_details: {
-              name: `${firstName} ${lastName}`,
-              email: user?.email || undefined,
-              phone: phone,
-              address: {
-                line1: street,
-                city: city,
-                postal_code: postalCode,
-                country: 'DE',
-              },
-            },
-          },
-        },
-        redirect: 'if_required',
-      });
+      // 4. Redirect to Stripe Checkout (user selects Card or Klarna there)
+      window.location.href = url;
+      
+      // Code below won't execute as user is redirected
+      return;
 
-      if (stripeError) {
-        setError(stripeError.message || 'Payment failed. Please try again.');
-        // Update order status to failed
-        const { doc, updateDoc } = await import('firebase/firestore');
-        await updateDoc(doc(db, 'orders', docRef.id), { status: 'payment_failed' });
-        return;
-      }
-
-      if (paymentIntent && paymentIntent.status === 'succeeded') {
+      // Fallback code (won't execute due to redirect)
+      if (false) {
         // 4. Update order status to paid
         const { doc, updateDoc } = await import('firebase/firestore');
         await updateDoc(doc(db, 'orders', docRef.id), {
           status: 'paid',
-          stripePaymentIntentId: paymentIntent.id,
+          stripePaymentIntentId: 'pending',
         });
 
         // 5. Send order confirmation email (non-blocking)
