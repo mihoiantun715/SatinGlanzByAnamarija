@@ -148,15 +148,20 @@ export default function ProductCard({ product }: ProductCardProps) {
             </span>
             {product.inStock && (
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={(e) => {
                   e.stopPropagation();
                   addToCart(product, 1, product.colors[0]);
                 }}
-                className="bg-rose-500 hover:bg-rose-600 text-white px-5 py-2.5 rounded-full text-sm font-medium tracking-wide transition-colors"
+                className="relative group"
               >
-                {t.shop.addToCart}
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-purple-500 rounded transform translate-x-0.5 translate-y-0.5 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform"></div>
+                <div className="relative bg-gradient-to-br from-rose-200 via-rose-300 to-rose-200 px-4 py-2 rounded border-2 border-amber-500 shadow-md">
+                  <span className="text-sm font-medium text-gray-700">
+                    {t.shop.addToCart}
+                  </span>
+                </div>
               </motion.button>
             )}
           </div>
