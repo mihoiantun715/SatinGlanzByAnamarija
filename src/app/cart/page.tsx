@@ -80,9 +80,14 @@ export default function CartPage() {
                     {item.selectedColor && (
                       <p className="text-sm text-gray-500 mt-1">{item.selectedColor}</p>
                     )}
-                    <p className="text-lg font-bold text-rose-500 mt-2">
-                      {t.common.currency}{item.product.price.toFixed(2)}
-                    </p>
+                    <div className="relative inline-block mt-2">
+                      <div className="absolute inset-0 bg-gradient-to-br from-rose-300 to-rose-400 rounded-full blur-sm opacity-30"></div>
+                      <div className="relative bg-gradient-to-br from-rose-100 via-rose-200 to-rose-100 px-3 py-1.5 rounded-full border border-rose-300/40">
+                        <span className="text-lg font-bold bg-gradient-to-r from-gray-800 to-gray-700 bg-clip-text text-transparent">
+                          {t.common.currency}{item.product.price.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
                     <div className="flex items-center justify-between mt-4">
                       <div className="flex items-center gap-3">
                         <button
@@ -135,7 +140,14 @@ export default function CartPage() {
                 <div className="p-5 rounded-xl border-2 border-gray-200 bg-gray-50">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-lg font-bold text-gray-900">{t.cart.shippingCost}</span>
-                    <span className="text-xl font-bold text-gray-900">{t.common.currency}{shippingCost.toFixed(2)}</span>
+                    <div className="relative inline-block">
+                      <div className="absolute inset-0 bg-gradient-to-br from-rose-300 to-rose-400 rounded-full blur-sm opacity-30"></div>
+                      <div className="relative bg-gradient-to-br from-rose-100 via-rose-200 to-rose-100 px-3 py-1.5 rounded-full border border-rose-300/40">
+                        <span className="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-700 bg-clip-text text-transparent">
+                          {t.common.currency}{shippingCost.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                   <p className="text-xs text-gray-500">✓ Tracking included</p>
                   <p className="text-xs text-gray-500">✓ 1-3 business days delivery</p>
@@ -157,7 +169,14 @@ export default function CartPage() {
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between text-gray-600">
                   <span>{t.cart.subtotal}</span>
-                  <span className="font-semibold">{t.common.currency}{totalPrice.toFixed(2)}</span>
+                  <div className="relative inline-block">
+                    <div className="absolute inset-0 bg-gradient-to-br from-rose-300 to-rose-400 rounded-full blur-sm opacity-30"></div>
+                    <div className="relative bg-gradient-to-br from-rose-100 via-rose-200 to-rose-100 px-3 py-1.5 rounded-full border border-rose-300/40">
+                      <span className="font-semibold bg-gradient-to-r from-gray-800 to-gray-700 bg-clip-text text-transparent">
+                        {t.common.currency}{totalPrice.toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>{t.cart.shipping}</span>
@@ -171,7 +190,14 @@ export default function CartPage() {
                 </div>
                 <div className="border-t border-gray-100 pt-4 flex justify-between">
                   <span className="text-lg font-bold text-gray-900">{t.cart.total}</span>
-                  <span className="text-lg font-bold text-gray-900">{t.common.currency}{total.toFixed(2)}</span>
+                  <div className="relative inline-block">
+                    <div className="absolute inset-0 bg-gradient-to-br from-rose-300 to-rose-400 rounded-full blur-sm opacity-30"></div>
+                    <div className="relative bg-gradient-to-br from-rose-100 via-rose-200 to-rose-100 px-4 py-2 rounded-full border border-rose-300/40">
+                      <span className="text-lg font-bold bg-gradient-to-r from-gray-800 to-gray-700 bg-clip-text text-transparent">
+                        {t.common.currency}{total.toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
