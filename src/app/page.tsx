@@ -160,18 +160,14 @@ export default function Home() {
               </Link>
             </div>
             <div className="relative">
-              <div className="bg-white rounded-3xl shadow-xl p-12 text-center">
-                <div className="w-32 h-32 rounded-2xl overflow-hidden mx-auto mb-6 bg-gray-100">
-                  <Image 
-                    src="/Quote Rose Icon.png" 
-                    alt="Satin Rose Bouquet" 
-                    width={128} 
-                    height={128} 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <p className="text-gray-500 italic text-lg">&ldquo;Every rose tells a story of love and patience&rdquo;</p>
-                <p className="text-rose-500 font-semibold mt-3">— SatinGlanz by Anamarija</p>
+              <div className="bg-white rounded-3xl shadow-xl p-8 flex items-center justify-center">
+                <Image 
+                  src="/Quote Rose Icon.png" 
+                  alt="Every rose tells a story of love and patience - SatinGlanz by Anamarija" 
+                  width={400} 
+                  height={400} 
+                  className="w-full h-auto max-w-[400px]"
+                />
               </div>
             </div>
           </div>
