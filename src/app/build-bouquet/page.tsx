@@ -548,8 +548,8 @@ export default function BuildBouquetPage() {
                   <button
                     key={rib.key}
                     onClick={() => setSelectedRibbon(rib.key)}
-                    className={`flex flex-col items-center justify-center rounded-lg border-2 text-xs transition-all aspect-square overflow-hidden ${
-                      selectedRibbon === rib.key ? 'border-gray-900 ring-1 ring-gray-900' : 'border-gray-200 hover:border-gray-400'
+                    className={`flex flex-col items-center justify-center rounded-lg border-2 text-xs transition-all duration-300 aspect-square overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 ${
+                      selectedRibbon === rib.key ? 'border-rose-400 ring-2 ring-rose-300 shadow-md' : 'border-gray-200 hover:border-rose-200'
                     }`}
                     title={rib.label}
                   >
@@ -580,8 +580,8 @@ export default function BuildBouquetPage() {
                       setActiveThumb(i);
                       // Update preview to show this color
                     }}
-                    className={`w-16 h-20 rounded-lg border-2 overflow-hidden transition-all cursor-pointer ${
-                      activeThumb === i ? 'border-gray-900 ring-1 ring-gray-900' : 'border-gray-200 hover:border-gray-400'
+                    className={`w-16 h-20 rounded-lg border-2 overflow-hidden transition-all duration-300 cursor-pointer shadow-sm hover:shadow-lg hover:-translate-y-1 ${
+                      activeThumb === i ? 'border-rose-400 ring-2 ring-rose-300 shadow-md' : 'border-gray-200 hover:border-rose-200'
                     }`}
                   >
                     <div className="relative w-full h-full bg-gradient-to-br from-rose-50 to-pink-50">
@@ -606,10 +606,10 @@ export default function BuildBouquetPage() {
                   <button
                     key={deco.key}
                     onClick={() => toggleDecoration(deco.key)}
-                    className={`flex flex-col items-center justify-center rounded-lg border-2 text-xs transition-all aspect-square overflow-hidden ${
+                    className={`flex flex-col items-center justify-center rounded-lg border-2 text-xs transition-all duration-300 aspect-square overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 ${
                       selectedDecorations.includes(deco.key)
-                        ? 'border-gray-900 bg-gray-50 ring-1 ring-gray-900'
-                        : 'border-gray-200 hover:border-gray-400'
+                        ? 'border-rose-400 bg-rose-50 ring-2 ring-rose-300 shadow-md'
+                        : 'border-gray-200 hover:border-rose-200'
                     }`}
                   >
                     {deco.image ? (
