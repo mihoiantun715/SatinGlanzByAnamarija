@@ -24,6 +24,7 @@ export interface CartItem {
   wrappingPaper?: string;
   ribbon?: string;
   decorations?: string[];
+  customText?: string;
   // General product details
   customization?: string;
 }
