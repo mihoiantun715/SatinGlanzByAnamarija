@@ -94,11 +94,10 @@ export default function CookieConsent() {
             {/* Content */}
             <div className="flex-1">
               <h3 className="text-lg font-bold text-gray-900 mb-2">
-                🍪 We Value Your Privacy
+                🍪 {t.cookies.title}
               </h3>
               <p className="text-sm text-gray-600 mb-4">
-                We use cookies to enhance your browsing experience, analyze site traffic, and personalize content. 
-                By clicking "Accept All", you consent to our use of cookies. You can customize your preferences or decline non-essential cookies.
+                {t.cookies.description}
               </p>
 
               {/* Buttons */}
@@ -107,31 +106,31 @@ export default function CookieConsent() {
                   onClick={acceptAll}
                   className="px-6 py-2 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white rounded-lg font-semibold transition-all shadow-lg shadow-rose-500/30"
                 >
-                  Accept All
+                  {t.cookies.acceptAll}
                 </button>
                 <button
                   onClick={acceptNecessary}
                   className="px-6 py-2 border-2 border-gray-300 hover:border-gray-400 text-gray-700 rounded-lg font-semibold transition-all"
                 >
-                  Necessary Only
+                  {t.cookies.necessaryOnly}
                 </button>
                 <button
                   onClick={() => setShowSettings(true)}
                   className="px-6 py-2 text-gray-600 hover:text-gray-800 font-semibold transition-all underline"
                 >
-                  Customize
+                  {t.cookies.customize}
                 </button>
               </div>
 
               {/* Privacy Policy Link */}
               <p className="text-xs text-gray-500 mt-3">
-                Read our{' '}
+                {t.cookies.readOur}{' '}
                 <a href="/privacy-policy" className="text-rose-600 hover:underline">
-                  Privacy Policy
+                  {t.cookies.privacyPolicy}
                 </a>{' '}
-                and{' '}
+                {t.cookies.and}{' '}
                 <a href="/terms" className="text-rose-600 hover:underline">
-                  Terms of Service
+                  {t.cookies.termsOfService}
                 </a>
               </p>
             </div>
@@ -155,7 +154,7 @@ export default function CookieConsent() {
             <div className="p-6">
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Cookie Preferences</h2>
+                <h2 className="text-2xl font-bold text-gray-900">{t.cookies.settingsTitle}</h2>
                 <button
                   onClick={() => setShowSettings(false)}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -172,14 +171,13 @@ export default function CookieConsent() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <Shield className="w-5 h-5 text-green-600" />
-                        <h3 className="text-lg font-semibold text-gray-900">Necessary Cookies</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">{t.cookies.necessaryCookies}</h3>
                         <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded">
-                          Always Active
+                          {t.cookies.alwaysActive}
                         </span>
                       </div>
                       <p className="text-sm text-gray-600">
-                        Essential for the website to function properly. These cookies enable core functionality such as security, 
-                        network management, shopping cart, and accessibility.
+                        {t.cookies.necessaryDesc}
                       </p>
                     </div>
                     <div className="ml-4">
@@ -192,10 +190,9 @@ export default function CookieConsent() {
                 <div className="border-b pb-6">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Analytics Cookies</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">{t.cookies.analyticsCookies}</h3>
                       <p className="text-sm text-gray-600">
-                        Help us understand how visitors interact with our website by collecting and reporting information anonymously. 
-                        This helps us improve our services.
+                        {t.cookies.analyticsDesc}
                       </p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer ml-4">
@@ -214,10 +211,9 @@ export default function CookieConsent() {
                 <div className="pb-6">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Marketing Cookies</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">{t.cookies.marketingCookies}</h3>
                       <p className="text-sm text-gray-600">
-                        Used to track visitors across websites to display relevant advertisements. 
-                        These cookies help us show you personalized content and measure campaign effectiveness.
+                        {t.cookies.marketingDesc}
                       </p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer ml-4">
@@ -239,13 +235,13 @@ export default function CookieConsent() {
                   onClick={savePreferences}
                   className="flex-1 px-6 py-3 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white rounded-lg font-semibold transition-all shadow-lg shadow-rose-500/30"
                 >
-                  Save Preferences
+                  {t.cookies.savePreferences}
                 </button>
                 <button
                   onClick={acceptAll}
                   className="flex-1 px-6 py-3 border-2 border-rose-500 text-rose-600 hover:bg-rose-50 rounded-lg font-semibold transition-all"
                 >
-                  Accept All
+                  {t.cookies.acceptAll}
                 </button>
               </div>
             </div>

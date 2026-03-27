@@ -322,8 +322,48 @@ export interface Translation {
     title: string;
     contact: string;
     email: string;
+    content: string;
   };
   refundPolicy: {
     title: string;
+    content: string;
+  };
+  cookies: {
+    title: string;
+    description: string;
+    acceptAll: string;
+    necessaryOnly: string;
+    customize: string;
+    privacyPolicy: string;
+    termsOfService: string;
+    readOur: string;
+    and: string;
+    settingsTitle: string;
+    necessaryCookies: string;
+    necessaryDesc: string;
+    alwaysActive: string;
+    analyticsCookies: string;
+    analyticsDesc: string;
+    marketingCookies: string;
+    marketingDesc: string;
+    savePreferences: string;
+  };
+  trustBadges: {
+    whyShopWithUs: string;
+    securePayment: string;
+    securePaymentDesc: string;
+    fastDelivery: string;
+    fastDeliveryDesc: string;
+    premiumQuality: string;
+    premiumQualityDesc: string;
+    satisfaction: string;
+    satisfactionDesc: string;
+    weAccept: string;
+    sslEncrypted: string;
+    sslEncryptedDesc: string;
+    securePaymentBadge: string;
+    securePaymentBadgeDesc: string;
+    moneyBack: string;
+    moneyBackDesc: string;
   };
 }
