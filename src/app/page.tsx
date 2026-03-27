@@ -102,7 +102,7 @@ export default function Home() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Handmade with Love */}
-            <div className="bg-white rounded-2xl p-6 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow min-h-[280px]">
+            <div className="bg-[#f5f1e8] rounded-2xl p-6 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow min-h-[280px]">
               <Image 
                 src={`/Why Choose Our Roses/${locale === 'en' ? 'English' : locale === 'de' ? 'German' : locale === 'hr' ? 'Croatian' : locale === 'ro' ? 'Romanian' : locale === 'bg' ? 'Bulgarian' : 'Turkish'} Handmade.png`}
                 alt={t.whyChooseRoses.handmadeTitle}
@@ -113,7 +113,7 @@ export default function Home() {
             </div>
 
             {/* Everlasting Beauty */}
-            <div className="bg-white rounded-2xl p-6 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow min-h-[280px]">
+            <div className="bg-[#e8e8e8] rounded-2xl p-6 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow min-h-[280px]">
               <Image 
                 src={`/Why Choose Our Roses/Everlasting Beauty ${locale === 'en' ? 'englihs' : locale === 'de' ? 'german' : locale === 'hr' ? 'croatian' : locale === 'ro' ? 'romanian' : locale === 'bg' ? 'bulgarian' : 'turkish'}.png`}
                 alt={t.whyChooseRoses.everlastingTitle}
@@ -124,7 +124,7 @@ export default function Home() {
             </div>
 
             {/* Premium Materials */}
-            <div className="bg-white rounded-2xl p-6 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow min-h-[280px]">
+            <div className="bg-[#f5f1e8] rounded-2xl p-6 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow min-h-[280px]">
               <Image 
                 src={`/Why Choose Our Roses/Premium Materials ${locale === 'en' ? 'english' : locale === 'de' ? 'german' : locale === 'hr' ? 'croatian' : locale === 'ro' ? 'romanian' : locale === 'bg' ? 'bulgarian' : 'turkish'}.png`}
                 alt={t.whyChooseRoses.premiumTitle}
