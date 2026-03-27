@@ -397,7 +397,7 @@ export default function BuildBouquetPage() {
 
           {/* RIGHT: Product Options */}
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl sm:text-4xl font-serif italic text-gray-800 mb-2" style={{ fontFamily: 'Georgia, serif' }}>
               {t.bouquetBuilder.title}
             </h1>
 
@@ -424,8 +424,8 @@ export default function BuildBouquetPage() {
                 
                 {/* Color Mix Selection */}
                 <div className="mb-6">
-                  <p className="text-sm font-bold text-gray-900 mb-3">
-                    {t.bouquetBuilder.color} <span className="font-normal text-gray-500">Mix colors</span>
+                  <p className="text-base font-semibold text-gray-800 mb-3">
+                    {t.bouquetBuilder.color} <span className="font-normal text-gray-600">Mix colors</span>
                   </p>
                   <div className="space-y-3">
                 {roseColors.map((color) => {
@@ -544,8 +544,8 @@ export default function BuildBouquetPage() {
 
               {/* Ribbon Selection */}
               <div className="mb-6">
-              <p className="text-sm font-bold text-gray-900 mb-1">
-                {t.bouquetBuilder.ribbon} <span className="font-normal text-gray-500">{ribbonOptions.find(r => r.key === selectedRibbon)?.label}</span>
+              <p className="text-base font-semibold text-gray-800 mb-1">
+                {t.bouquetBuilder.ribbon} <span className="font-normal text-gray-600">{ribbonOptions.find(r => r.key === selectedRibbon)?.label}</span>
               </p>
               <p className="text-xs text-gray-400 mb-3">(+{t.common.currency}{RIBBON_PRICE})</p>
               <div className="grid grid-cols-5 gap-2">
@@ -573,9 +573,9 @@ export default function BuildBouquetPage() {
 
               {/* Wrapping Paper */}
               <div className="mb-6">
-              <p className="text-sm font-bold text-gray-900 mb-1">
+              <p className="text-base font-semibold text-gray-800 mb-1">
                 {t.bouquetBuilder.wrappingPaper} <span className="text-rose-500">*</span>{' '}
-                <span className="font-normal text-gray-500">{wrappingOptions.find(w => w.key === wrapping)?.label}</span>
+                <span className="font-normal text-gray-600">{wrappingOptions.find(w => w.key === wrapping)?.label}</span>
               </p>
               <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 mt-3">
                 {wrappingOptions.map((opt, i) => (
@@ -604,7 +604,7 @@ export default function BuildBouquetPage() {
 
               {/* Extra Decoration */}
               <div className="mb-0">
-              <p className="text-sm font-bold text-gray-900 mb-1">{t.bouquetBuilder.extraDecoration}</p>
+              <p className="text-base font-semibold text-gray-800 mb-1">{t.bouquetBuilder.extraDecoration}</p>
               <p className="text-xs text-gray-400 mb-3">{t.bouquetBuilder.extraDecorationNote}</p>
               <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
                 {decorationOptions.map((deco) => (
@@ -636,7 +636,7 @@ export default function BuildBouquetPage() {
           {/* Price + Add to Cart */}
             <div className="border-t border-gray-200 pt-6">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-lg font-bold text-gray-900">{t.bouquetBuilder.totalPrice}</span>
+                <span className="text-xl font-semibold text-gray-800">{t.bouquetBuilder.totalPrice}</span>
                 <span className="text-2xl font-bold text-gray-900">{t.common.currency}{totalPrice.toFixed(2)}</span>
               </div>
               <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
