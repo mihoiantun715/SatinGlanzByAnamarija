@@ -379,7 +379,7 @@ export default function BuildBouquetPage() {
                 return (
                   <img
                     src={ribObj.image}
-                    alt={ribObj.label}
+                    alt={t.bouquetBuilder.ribbonColors[ribObj.translationKey]}
                     className="absolute object-contain drop-shadow-lg"
                     style={{
                       width: '44%',
