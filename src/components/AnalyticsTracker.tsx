@@ -28,7 +28,7 @@ export default function AnalyticsTracker() {
 
           // Don't track if IP matches admin's home IP
           // You can add your home IP here
-          const excludedIPs = [
+          const excludedIPs: string[] = [
             // Add your home IP address here when you know it
             // Example: '123.456.789.012'
           ];
