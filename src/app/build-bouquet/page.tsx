@@ -18,6 +18,7 @@ const getPricePerRose = (count: number): number => {
 const RIBBON_PRICE = 3;
 const DECORATION_PRICE = 2;
 const CARD_PRICE = 2;
+const CUSTOM_TEXT_PRICE_PER_LETTER = 0.10;
 
 const ribbonOptions = [
   { key: 'baby-blue', label: 'Baby Blue', image: '/Ribbons/Baby blue.png' },
@@ -77,6 +78,7 @@ export default function BuildBouquetPage() {
   const [added, setAdded] = useState(false);
   const [activeThumb, setActiveThumb] = useState(0);
   const [customCount, setCustomCount] = useState('');
+  const [customText, setCustomText] = useState('');
 
   const toggleDecoration = (key: string) => {
     if (key === 'noThanks') {
@@ -98,10 +100,11 @@ export default function BuildBouquetPage() {
   const totalPrice = useMemo(() => {
     let price = roseCount * pricePerRose;
     if (selectedRibbon !== 'none') price += RIBBON_PRICE;
+    if (customText.length > 0) price += customText.length * CUSTOM_TEXT_PRICE_PER_LETTER;
     const decoCount = selectedDecorations.filter(d => d !== 'noThanks').length;
     price += decoCount * DECORATION_PRICE;
     return price;
-  }, [roseCount, pricePerRose, selectedRibbon, selectedDecorations]);
+  }, [roseCount, pricePerRose, selectedRibbon, selectedDecorations, customText]);
 
   // Calculate incentive message for next discount tier
   const incentiveMessage = useMemo(() => {
@@ -169,12 +172,12 @@ export default function BuildBouquetPage() {
         tr: `Özel Buket (${roseCount} gül)`,
       },
       description: {
-        en: `${colorDesc}, ${wrapName} wrap${ribbonName ? `, ${ribbonName} ribbon` : ''}`,
-        de: `${colorDesc}, ${wrapName} Verpackung${ribbonName ? `, ${ribbonName} Band` : ''}`,
-        hr: `${colorDesc}, ${wrapName} omot${ribbonName ? `, ${ribbonName} vrpca` : ''}`,
-        ro: `${colorDesc}, ${wrapName} ambalaj${ribbonName ? `, ${ribbonName} panglică` : ''}`,
-        bg: `${colorDesc}, ${wrapName} опаковка${ribbonName ? `, ${ribbonName} лента` : ''}`,
-        tr: `${colorDesc}, ${wrapName} ambalaj${ribbonName ? `, ${ribbonName} kurdele` : ''}`,
+        en: `${colorDesc}, ${wrapName} wrap${ribbonName ? `, ${ribbonName} ribbon` : ''}${customText ? `, Custom text: "${customText}"` : ''}`,
+        de: `${colorDesc}, ${wrapName} Verpackung${ribbonName ? `, ${ribbonName} Band` : ''}${customText ? `, Individueller Text: "${customText}"` : ''}`,
+        hr: `${colorDesc}, ${wrapName} omot${ribbonName ? `, ${ribbonName} vrpca` : ''}${customText ? `, Prilagođeni tekst: "${customText}"` : ''}`,
+        ro: `${colorDesc}, ${wrapName} ambalaj${ribbonName ? `, ${ribbonName} panglică` : ''}${customText ? `, Text personalizat: "${customText}"` : ''}`,
+        bg: `${colorDesc}, ${wrapName} опаковка${ribbonName ? `, ${ribbonName} лента` : ''}${customText ? `, Персонализиран текст: "${customText}"` : ''}`,
+        tr: `${colorDesc}, ${wrapName} ambalaj${ribbonName ? `, ${ribbonName} kurdele` : ''}${customText ? `, Özel metin: "${customText}"` : ''}`,
       },
       shortDescription: {
         en: `Custom ${roseCount}-rose bouquet`,
@@ -192,6 +195,7 @@ export default function BuildBouquetPage() {
       wrappingPaper: wrapName,
       ribbon: selectedRibbon !== 'none' ? ribbonName : undefined,
       decorations: decorationsArray.length > 0 ? decorationsArray : undefined,
+      customText: customText.length > 0 ? customText : undefined,
     });
     
     setAdded(true);
@@ -603,7 +607,7 @@ export default function BuildBouquetPage() {
               </div>
 
               {/* Extra Decoration */}
-              <div className="mb-0">
+              <div className="mb-6">
               <p className="text-base font-semibold text-gray-800 mb-1">{t.bouquetBuilder.extraDecoration}</p>
               <p className="text-xs text-gray-400 mb-3">{t.bouquetBuilder.extraDecorationNote}</p>
               <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
@@ -627,6 +631,28 @@ export default function BuildBouquetPage() {
                     </span>
                   </button>
                   ))}
+                </div>
+              </div>
+
+              {/* Custom Text */}
+              <div className="mb-0">
+                <p className="text-base font-semibold text-gray-800 mb-1">{t.bouquetBuilder.customText}</p>
+                <p className="text-xs text-gray-400 mb-3">{t.bouquetBuilder.customTextNote} (+{t.common.currency}{CUSTOM_TEXT_PRICE_PER_LETTER.toFixed(2)} {t.bouquetBuilder.perLetter})</p>
+                <textarea
+                  value={customText}
+                  onChange={(e) => setCustomText(e.target.value)}
+                  placeholder={t.bouquetBuilder.customTextPlaceholder}
+                  maxLength={100}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-rose-400 resize-none"
+                  rows={3}
+                />
+                <div className="flex justify-between items-center mt-2">
+                  <span className="text-xs text-gray-500">{customText.length} / 100 {t.bouquetBuilder.characters}</span>
+                  {customText.length > 0 && (
+                    <span className="text-sm font-semibold text-rose-600">
+                      +{t.common.currency}{(customText.length * CUSTOM_TEXT_PRICE_PER_LETTER).toFixed(2)}
+                    </span>
+                  )}
                 </div>
               </div>
               

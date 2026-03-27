@@ -155,6 +155,11 @@ export interface Translation {
     pleaseChoose: string;
     yesAdd: string;
     noThanks: string;
+    customText: string;
+    customTextNote: string;
+    customTextPlaceholder: string;
+    perLetter: string;
+    characters: string;
     wrappingPaper: string;
     extraDecoration: string;
     extraDecorationNote: string;
