@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 import { useCart } from '@/context/CartContext';
 import { Product } from '@/lib/types';
-import { ShoppingBag, ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react';
 import ProductQuickView from './ProductQuickView';
 
 interface ProductCardProps {
@@ -154,10 +154,9 @@ export default function ProductCard({ product }: ProductCardProps) {
                   e.stopPropagation();
                   addToCart(product, 1, product.colors[0]);
                 }}
-                className="flex items-center gap-2 bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors"
+                className="bg-rose-500 hover:bg-rose-600 text-white px-5 py-2.5 rounded-full text-sm font-medium tracking-wide transition-colors"
               >
-                <ShoppingBag className="w-4 h-4" />
-                <span className="hidden sm:inline">{t.shop.addToCart}</span>
+                {t.shop.addToCart}
               </motion.button>
             )}
           </div>
