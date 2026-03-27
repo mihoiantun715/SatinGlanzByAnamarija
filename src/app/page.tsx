@@ -25,11 +25,11 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-36">
           <div className="max-w-3xl mx-auto text-center">
             <div className="animate-fade-in">
-              <span className="inline-block bg-rose-100 text-rose-700 text-sm font-semibold px-4 py-1.5 rounded-full mb-6">
+              <span className="inline-block text-rose-600 text-sm font-medium tracking-wide mb-6">
                 {t.common.handcraftedWithLove}
               </span>
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6 animate-fade-in">
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-serif italic text-gray-800 leading-tight mb-6 animate-fade-in" style={{ fontFamily: 'Georgia, serif' }}>
               {t.hero.title}
             </h1>
             <p className="text-lg sm:text-xl text-gray-600 leading-relaxed mb-10 max-w-2xl mx-auto animate-fade-in-delay">
@@ -38,10 +38,9 @@ export default function Home() {
             <div className="animate-fade-in-delay-2">
               <Link
                 href="/shop"
-                className="inline-flex items-center gap-2 bg-rose-500 hover:bg-rose-600 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all hover:shadow-lg hover:shadow-rose-200 hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 bg-rose-500 hover:bg-rose-600 text-white px-10 py-4 rounded-full text-base font-medium tracking-wide transition-all hover:shadow-lg hover:shadow-rose-200 hover:-translate-y-0.5"
               >
                 {t.hero.cta}
-                <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
           </div>
@@ -53,10 +52,10 @@ export default function Home() {
       <section className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-5xl sm:text-6xl font-serif italic text-gray-800 mb-4" style={{ fontFamily: 'Georgia, serif' }}>
               {t.home.featuredTitle}
             </h2>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               {t.home.featuredSubtitle}
             </p>
           </div>
