@@ -320,6 +320,15 @@ export const de: Translation = {
     marketingDesc: 'Werden verwendet, um Besucher über Websites hinweg zu verfolgen und relevante Werbung anzuzeigen. Diese Cookies helfen uns, Ihnen personalisierte Inhalte zu zeigen und die Kampagneneffektivität zu messen.',
     savePreferences: 'Einstellungen speichern',
   },
+  whyChooseRoses: {
+    title: 'Warum unsere Rosen wählen?',
+    handmadeTitle: 'Handgefertigt mit Liebe',
+    handmadeDesc: 'Jede Rose wird individuell von Hand gefertigt, wodurch jedes Stück einzigartig und besonders wird.',
+    everlastingTitle: 'Ewige Schönheit',
+    everlastingDesc: 'Im Gegensatz zu frischen Blumen behalten unsere Satinrosen ihre Schönheit für immer — kein Gießen erforderlich.',
+    premiumTitle: 'Premium-Materialien',
+    premiumDesc: 'Wir verwenden nur die feinsten Satinstoffe, um ein luxuriöses Aussehen und Gefühl zu gewährleisten.',
+  },
   trustBadges: {
     whyShopWithUs: 'Warum bei uns kaufen?',
     securePayment: 'Sichere Zahlung',

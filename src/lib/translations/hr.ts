@@ -320,6 +320,15 @@ export const hr: Translation = {
     marketingDesc: 'Koriste se za praćenje posjetitelja preko web stranica kako bi se prikazale relevantne reklame. Ovi kolačići nam pomažu pokazati vam personalizirani sadržaj i mjeriti učinkovitost kampanja.',
     savePreferences: 'Spremi postavke',
   },
+  whyChooseRoses: {
+    title: 'Zašto odabrati naše ruže?',
+    handmadeTitle: 'Ručno izrađeno s ljubavlju',
+    handmadeDesc: 'Svaka ruža je individualno izrađena ručno, čineći svaki komad jedinstvenim i posebnim.',
+    everlastingTitle: 'Vječna ljepota',
+    everlastingDesc: 'Za razliku od svježeg cvijeća, naše satenske ruže zadržavaju svoju ljepotu zauvijek — nije potrebno zalijevanje.',
+    premiumTitle: 'Premium materijali',
+    premiumDesc: 'Koristimo samo najfinije satenske tkanine kako bismo osigurali luksuzan izgled i osjećaj.',
+  },
   trustBadges: {
     whyShopWithUs: 'Zašto kupovati kod nas?',
     securePayment: 'Sigurna plaćanja',

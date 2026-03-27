@@ -320,6 +320,15 @@ export const ro: Translation = {
     marketingDesc: 'Folosite pentru a urmări vizitatorii pe site-uri web pentru a afișa reclame relevante. Aceste cookie-uri ne ajută să vă arătăm conținut personalizat și să măsurăm eficiența campaniilor.',
     savePreferences: 'Salvați preferințele',
   },
+  whyChooseRoses: {
+    title: 'De ce să alegeți trandafirii noștri?',
+    handmadeTitle: 'Lucrate manual cu dragoste',
+    handmadeDesc: 'Fiecare trandafir este creat individual manual, făcând fiecare piesă unică și specială.',
+    everlastingTitle: 'Frumusețe veșnică',
+    everlastingDesc: 'Spre deosebire de florile proaspete, trandafirii noștri de satin își păstrează frumusețea pentru totdeauna — nu necesită udare.',
+    premiumTitle: 'Materiale premium',
+    premiumDesc: 'Folosim doar cele mai fine țesături de satin pentru a asigura un aspect și o senzație luxoasă.',
+  },
   trustBadges: {
     whyShopWithUs: 'De ce să cumpărați de la noi?',
     securePayment: 'Plată securizată',

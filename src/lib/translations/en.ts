@@ -320,6 +320,15 @@ export const en: Translation = {
     marketingDesc: 'Used to track visitors across websites to display relevant advertisements. These cookies help us show you personalized content and measure campaign effectiveness.',
     savePreferences: 'Save Preferences',
   },
+  whyChooseRoses: {
+    title: 'Why Choose Our Roses?',
+    handmadeTitle: 'Handmade with Love',
+    handmadeDesc: 'Each rose is individually crafted by hand, making every piece unique and special.',
+    everlastingTitle: 'Everlasting Beauty',
+    everlastingDesc: 'Unlike fresh flowers, our satin roses maintain their beauty forever — no watering needed.',
+    premiumTitle: 'Premium Materials',
+    premiumDesc: 'We use only the finest satin fabrics to ensure luxurious look and feel.',
+  },
   trustBadges: {
     whyShopWithUs: 'Why Shop With Us?',
     securePayment: 'Secure Payment',

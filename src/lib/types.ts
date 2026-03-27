@@ -366,4 +366,13 @@ export interface Translation {
     moneyBack: string;
     moneyBackDesc: string;
   };
+  whyChooseRoses: {
+    title: string;
+    handmadeTitle: string;
+    handmadeDesc: string;
+    everlastingTitle: string;
+    everlastingDesc: string;
+    premiumTitle: string;
+    premiumDesc: string;
+  };
 }

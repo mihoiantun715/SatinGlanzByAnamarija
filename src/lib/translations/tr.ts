@@ -320,6 +320,15 @@ export const tr: Translation = {
     marketingDesc: 'İlgili reklamları görüntülemek için ziyaretçileri web siteleri arasında izlemek için kullanılır. Bu çerezler size kişiselleştirilmiş içerik göstermemize ve kampanya etkinliğini ölçmemize yardımcı olur.',
     savePreferences: 'Tercihleri Kaydet',
   },
+  whyChooseRoses: {
+    title: 'Neden Güllerimizi Seçmelisiniz?',
+    handmadeTitle: 'Sevgiyle El Yapımı',
+    handmadeDesc: 'Her gül ayrı ayrı elle üretilir, her parçayı benzersiz ve özel kılar.',
+    everlastingTitle: 'Sonsuz Güzellik',
+    everlastingDesc: 'Taze çiçeklerin aksine, saten güllerimiz güzelliklerini sonsuza kadar korur — sulama gerekmez.',
+    premiumTitle: 'Premium Malzemeler',
+    premiumDesc: 'Lüks bir görünüm ve his sağlamak için sadece en iyi saten kumaşları kullanıyoruz.',
+  },
   trustBadges: {
     whyShopWithUs: 'Neden Bizden Alışveriş Yapmalısınız?',
     securePayment: 'Güvenli Ödeme',
