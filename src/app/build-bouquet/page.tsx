@@ -665,8 +665,3 @@ export default function BuildBouquetPage() {
     </div>
   );
 }
-        </div>
-      </div>
-    </div>
-  );
-}
