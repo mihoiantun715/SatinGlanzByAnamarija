@@ -506,7 +506,7 @@ function CheckoutForm() {
                 <button
                   type="submit"
                   disabled={loading || !stripe || !termsAccepted}
-                  className="w-full bg-rose-500 hover:bg-rose-600 disabled:bg-rose-300 text-white py-4 rounded-full font-semibold text-lg transition-all hover:shadow-lg hover:shadow-rose-200 flex items-center justify-center gap-2"
+                  className="w-full relative group disabled:opacity-50"
                 >
                   {loading ? (
                     <>
@@ -629,9 +629,14 @@ export default function CheckoutPage() {
           <div className="flex gap-3 justify-center">
             <Link
               href="/login"
-              className="px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-semibold text-sm transition-all"
+              className="relative inline-block group"
             >
-              {t.auth.login}
+              <div className="absolute inset-0 bg-gradient-to-br from-rose-300 to-rose-400 rounded-full blur-sm opacity-50 group-hover:opacity-70 transition-opacity"></div>
+              <div className="relative bg-gradient-to-br from-rose-200 via-rose-300 to-rose-400 px-6 py-3 rounded-full shadow-lg border border-rose-400/30">
+                <span className="text-sm font-semibold text-gray-800">
+                  {t.auth.login}
+                </span>
+              </div>
             </Link>
             <Link
               href="/register"

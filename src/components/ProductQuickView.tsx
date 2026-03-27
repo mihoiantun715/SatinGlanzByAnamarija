@@ -5,7 +5,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useCart } from '@/context/CartContext';
 import { Product } from '@/lib/types';
 import { colorTranslations } from '@/lib/products';
-import { X, ChevronLeft, ChevronRight, ShoppingBag, Minus, Plus, AlertCircle } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Minus, Plus, AlertCircle } from 'lucide-react';
 
 const colorMap: Record<string, string> = {
   Red: 'bg-red-500',
@@ -195,14 +195,22 @@ export default function ProductQuickView({ product, onClose }: Props) {
                 <button
                   onClick={handleAdd}
                   disabled={added}
-                  className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-full font-semibold text-sm transition-all ${
-                    added
-                      ? 'bg-green-500 text-white'
-                      : 'bg-rose-500 hover:bg-rose-600 text-white'
-                  }`}
+                  className="flex-1 relative group"
                 >
-                  <ShoppingBag className="w-4 h-4" />
-                  {added ? '✓ Added!' : t.shop.addToCart}
+                  {added ? (
+                    <div className="bg-green-500 text-white py-3 rounded-full font-semibold text-sm">
+                      ✓ Added!
+                    </div>
+                  ) : (
+                    <>
+                      <div className="absolute inset-0 bg-gradient-to-br from-rose-300 to-rose-400 rounded-full blur-sm opacity-50 group-hover:opacity-70 transition-opacity"></div>
+                      <div className="relative bg-gradient-to-br from-rose-200 via-rose-300 to-rose-400 py-3 rounded-full shadow-lg border border-rose-400/30">
+                        <span className="text-sm font-medium text-gray-800">
+                          {t.shop.addToCart}
+                        </span>
+                      </div>
+                    </>
+                  )}
                 </button>
               </div>
             ) : (

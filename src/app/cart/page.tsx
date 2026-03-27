@@ -177,9 +177,14 @@ export default function CartPage() {
 
               <Link
                 href="/checkout"
-                className="block w-full bg-rose-500 hover:bg-rose-600 text-white py-4 rounded-full font-semibold text-lg transition-all hover:shadow-lg hover:shadow-rose-200 text-center"
+                className="block w-full relative group"
               >
-                {t.cart.checkout}
+                <div className="absolute inset-0 bg-gradient-to-br from-rose-300 to-rose-400 rounded-full blur-sm opacity-50 group-hover:opacity-70 transition-opacity"></div>
+                <div className="relative bg-gradient-to-br from-rose-200 via-rose-300 to-rose-400 py-4 rounded-full shadow-xl border border-rose-400/30 text-center">
+                  <span className="text-lg font-semibold text-gray-800">
+                    {t.cart.checkout}
+                  </span>
+                </div>
               </Link>
 
               <Link

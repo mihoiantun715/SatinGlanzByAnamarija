@@ -89,10 +89,14 @@ export default function Home() {
           <div className="text-center mt-12">
             <Link
               href="/shop"
-              className="inline-flex items-center gap-2 border-2 border-rose-500 text-rose-600 hover:bg-rose-500 hover:text-white px-8 py-3 rounded-full font-semibold transition-all"
+              className="relative inline-block group"
             >
-              {t.home.viewAll}
-              <ArrowRight className="w-4 h-4" />
+              <div className="absolute inset-0 bg-gradient-to-br from-rose-300 to-rose-400 rounded-full blur-sm opacity-50 group-hover:opacity-70 transition-opacity"></div>
+              <div className="relative bg-gradient-to-br from-rose-200 via-rose-300 to-rose-400 px-10 py-4 rounded-full shadow-xl border border-rose-400/30">
+                <span className="text-base font-medium text-gray-800 tracking-wide">
+                  {t.home.viewAll}
+                </span>
+              </div>
             </Link>
           </div>
         </div>
