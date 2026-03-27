@@ -30,8 +30,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     // Get language prefix (e.g., 'de-DE' -> 'de', 'hr-HR' -> 'hr')
     const langPrefix = browserLang.split('-')[0];
     
-    // Map Balkan languages (Bosnian, Serbian) to Croatian
-    if (langPrefix === 'bs' || langPrefix === 'sr') {
+    // Map Balkan languages (Bosnian, Serbian, Montenegrin) to Croatian
+    // These languages are mutually intelligible with Croatian
+    if (langPrefix === 'bs' || langPrefix === 'sr' || langPrefix === 'cnr' || langPrefix === 'me') {
       setLocaleState('hr');
       localStorage.setItem('locale', 'hr');
       return;
