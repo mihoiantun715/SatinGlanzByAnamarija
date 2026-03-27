@@ -647,21 +647,21 @@ export default function BuildBouquetPage() {
               </div>
               <button
                 onClick={handleAddToCart}
-                className={`flex items-center justify-center gap-3 w-full py-4 rounded-lg text-base font-semibold transition-all ${
-                  added
-                    ? 'bg-green-500 text-white'
-                    : 'bg-gray-900 hover:bg-gray-800 text-white'
-                }`}
+                className="w-full relative group"
               >
                 {added ? (
-                  <>
+                  <div className="bg-green-500 text-white py-4 rounded-full font-semibold text-base flex items-center justify-center gap-3">
                     <Check className="w-5 h-5" />
                     {t.bouquetBuilder.added}
-                  </>
+                  </div>
                 ) : (
                   <>
-                    <ShoppingBag className="w-5 h-5" />
-                    {t.bouquetBuilder.addToCart}
+                    <div className="absolute inset-0 bg-gradient-to-br from-rose-300 to-rose-400 rounded-full blur-sm opacity-50 group-hover:opacity-70 transition-opacity"></div>
+                    <div className="relative bg-gradient-to-br from-rose-200 via-rose-300 to-rose-400 py-4 rounded-full shadow-xl border border-rose-400/30 flex items-center justify-center gap-3">
+                      <span className="text-base font-semibold text-gray-800">
+                        {t.bouquetBuilder.addToCart}
+                      </span>
+                    </div>
                   </>
                 )}
               </button>
