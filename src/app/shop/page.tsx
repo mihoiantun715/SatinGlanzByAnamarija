@@ -53,7 +53,8 @@ export default function ShopPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4"
+            className="text-5xl sm:text-6xl font-serif italic text-gray-800 mb-4"
+            style={{ fontFamily: 'Georgia, serif' }}
           >
             {t.shop.title}
           </motion.h1>
@@ -74,7 +75,7 @@ export default function ShopPage() {
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-10">
           <div className="flex items-center gap-2 mb-4">
             <SlidersHorizontal className="w-5 h-5 text-gray-500" />
-            <span className="font-semibold text-gray-700">Filters</span>
+            <span className="text-lg font-semibold text-gray-800">Filters</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* Category Filter */}
