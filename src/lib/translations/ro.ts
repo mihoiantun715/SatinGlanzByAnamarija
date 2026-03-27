@@ -132,6 +132,13 @@ export const ro: Translation = {
     customTextPlaceholder: 'Introduceți textul personalizat aici...',
     perLetter: 'pe literă',
     characters: 'caractere',
+    ribbonColors: {
+      babyBlue: 'Albastru Bebă',
+      burgundy: 'Bordo',
+      lightGold: 'Auriu Deschis',
+      softPearl: 'Perla Moale',
+      noThanks: 'Nu, mulțumesc',
+    },
     wrappingPaper: 'Hârtie de ambalare',
     extraDecoration: 'Adaugă decorațiune extra',
     extraDecorationNote: '*Puteți alege mai mult de una',

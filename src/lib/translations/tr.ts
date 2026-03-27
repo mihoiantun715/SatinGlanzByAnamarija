@@ -132,6 +132,13 @@ export const tr: Translation = {
     customTextPlaceholder: 'Özel metninizi buraya girin...',
     perLetter: 'harf başına',
     characters: 'karakter',
+    ribbonColors: {
+      babyBlue: 'Bebek Mavisi',
+      burgundy: 'Bordo',
+      lightGold: 'Açık Altın',
+      softPearl: 'Yumuşak İnci',
+      noThanks: 'Hayır, teşekkürler',
+    },
     wrappingPaper: 'Ambalaj Kağıdı',
     extraDecoration: 'Ekstra Dekorasyon Ekle',
     extraDecorationNote: '*Birden fazla seçebilirsiniz',

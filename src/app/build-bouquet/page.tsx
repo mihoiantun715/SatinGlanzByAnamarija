@@ -21,11 +21,11 @@ const CARD_PRICE = 2;
 const CUSTOM_TEXT_PRICE_PER_LETTER = 0.10;
 
 const ribbonOptions = [
-  { key: 'baby-blue', label: 'Baby Blue', image: '/Ribbons/Baby blue.png' },
-  { key: 'burgundy', label: 'Burgundy', image: '/Ribbons/Burgundy.png' },
-  { key: 'light-gold', label: 'Light Gold', image: '/Ribbons/Light gold.png' },
-  { key: 'soft-pearl', label: 'Soft Pearl', image: '/Ribbons/Soft pearl.png' },
-  { key: 'none', label: 'No Thanks', image: '' },
+  { key: 'baby-blue', translationKey: 'babyBlue' as const, image: '/Ribbons/Baby blue.png' },
+  { key: 'burgundy', translationKey: 'burgundy' as const, image: '/Ribbons/Burgundy.png' },
+  { key: 'light-gold', translationKey: 'lightGold' as const, image: '/Ribbons/Light gold.png' },
+  { key: 'soft-pearl', translationKey: 'softPearl' as const, image: '/Ribbons/Soft pearl.png' },
+  { key: 'none', translationKey: 'noThanks' as const, image: '' },
 ];
 
 const roseColors = [
@@ -134,7 +134,8 @@ export default function BuildBouquetPage() {
 
   const handleAddToCart = () => {
     const wrapName = wrappingOptions.find(w => w.key === wrapping)?.label || wrapping;
-    const ribbonName = ribbonOptions.find(r => r.key === selectedRibbon)?.label || '';
+    const ribbonObj = ribbonOptions.find(r => r.key === selectedRibbon);
+    const ribbonName = ribbonObj ? t.bouquetBuilder.ribbonColors[ribbonObj.translationKey] : '';
     
     // Build color description
     const colorParts = Object.entries(colorMix)
@@ -549,7 +550,10 @@ export default function BuildBouquetPage() {
               {/* Ribbon Selection */}
               <div className="mb-6">
               <p className="text-base font-semibold text-gray-800 mb-1">
-                {t.bouquetBuilder.ribbon} <span className="font-normal text-gray-600">{ribbonOptions.find(r => r.key === selectedRibbon)?.label}</span>
+                {t.bouquetBuilder.ribbon} {selectedRibbon !== 'none' && (() => {
+                  const rib = ribbonOptions.find(r => r.key === selectedRibbon);
+                  return rib ? <span className="font-normal text-gray-600">{t.bouquetBuilder.ribbonColors[rib.translationKey]}</span> : null;
+                })()}
               </p>
               <p className="text-xs text-gray-400 mb-3">(+{t.common.currency}{RIBBON_PRICE})</p>
               <div className="grid grid-cols-5 gap-2">
@@ -560,15 +564,15 @@ export default function BuildBouquetPage() {
                     className={`flex flex-col items-center justify-center rounded-lg border-2 text-xs transition-all duration-300 aspect-square overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 ${
                       selectedRibbon === rib.key ? 'border-rose-400 ring-2 ring-rose-300 shadow-md' : 'border-gray-200 hover:border-rose-200'
                     }`}
-                    title={rib.label}
+                    title={t.bouquetBuilder.ribbonColors[rib.translationKey]}
                   >
                     {rib.image ? (
-                      <img src={rib.image} alt={rib.label} className="w-12 h-12 object-contain mb-0.5" />
+                      <img src={rib.image} alt={t.bouquetBuilder.ribbonColors[rib.translationKey]} className="w-12 h-12 object-contain mb-0.5" />
                     ) : (
                       <span className="text-xl mb-0.5">🚫</span>
                     )}
                     <span className="text-[10px] text-gray-600 leading-tight text-center truncate w-full px-0.5">
-                      {rib.label}
+                      {t.bouquetBuilder.ribbonColors[rib.translationKey]}
                     </span>
                   </button>
                 ))}

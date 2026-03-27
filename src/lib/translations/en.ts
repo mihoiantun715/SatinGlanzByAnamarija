@@ -132,6 +132,13 @@ export const en: Translation = {
     customTextPlaceholder: 'Enter your custom text here...',
     perLetter: 'per letter',
     characters: 'characters',
+    ribbonColors: {
+      babyBlue: 'Baby Blue',
+      burgundy: 'Burgundy',
+      lightGold: 'Light Gold',
+      softPearl: 'Soft Pearl',
+      noThanks: 'No Thanks',
+    },
     wrappingPaper: 'Wrapping Paper',
     extraDecoration: 'Add Extra Decoration',
     extraDecorationNote: '*You can choose more than one',

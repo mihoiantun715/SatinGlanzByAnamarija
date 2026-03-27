@@ -132,6 +132,13 @@ export const bg: Translation = {
     customTextPlaceholder: 'Въведете вашия персонализиран текст тук...',
     perLetter: 'на буква',
     characters: 'знака',
+    ribbonColors: {
+      babyBlue: 'Бебешко Синьо',
+      burgundy: 'Бордо',
+      lightGold: 'Светло Златно',
+      softPearl: 'Мека Перла',
+      noThanks: 'Не, благодаря',
+    },
     wrappingPaper: 'Опаковъчна хартия',
     extraDecoration: 'Добавете допълнителна декорация',
     extraDecorationNote: '*Можете да изберете повече от една',

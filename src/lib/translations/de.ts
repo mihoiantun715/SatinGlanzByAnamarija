@@ -132,6 +132,13 @@ export const de: Translation = {
     customTextPlaceholder: 'Geben Sie hier Ihren individuellen Text ein...',
     perLetter: 'pro Buchstabe',
     characters: 'Zeichen',
+    ribbonColors: {
+      babyBlue: 'Babyblau',
+      burgundy: 'Burgunderrot',
+      lightGold: 'Helles Gold',
+      softPearl: 'Sanfte Perle',
+      noThanks: 'Nein Danke',
+    },
     wrappingPaper: 'Geschenkpapier',
     extraDecoration: 'Extra Dekoration hinzufügen',
     extraDecorationNote: '*Sie können mehrere auswählen',

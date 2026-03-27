@@ -132,6 +132,13 @@ export const hr: Translation = {
     customTextPlaceholder: 'Unesite svoj prilagođeni tekst ovdje...',
     perLetter: 'po slovu',
     characters: 'znakova',
+    ribbonColors: {
+      babyBlue: 'Beba Plava',
+      burgundy: 'Bordo',
+      lightGold: 'Svijetlo Zlato',
+      softPearl: 'Meka Biserna',
+      noThanks: 'Ne, hvala',
+    },
     wrappingPaper: 'Papir za omatanje',
     extraDecoration: 'Dodajte extra dekoraciju',
     extraDecorationNote: '*Možete odabrati više od jedne',

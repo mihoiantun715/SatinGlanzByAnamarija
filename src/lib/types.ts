@@ -161,6 +161,13 @@ export interface Translation {
     customTextPlaceholder: string;
     perLetter: string;
     characters: string;
+    ribbonColors: {
+      babyBlue: string;
+      burgundy: string;
+      lightGold: string;
+      softPearl: string;
+      noThanks: string;
+    };
     wrappingPaper: string;
     extraDecoration: string;
     extraDecorationNote: string;
