@@ -5,10 +5,11 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { ProductsProvider } from "@/context/ProductsContext";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import ErrorBoundary from "@/components/ErrorBoundary";
-import AnalyticsTracker from "@/components/AnalyticsTracker";
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import AnalyticsTracker from '@/components/AnalyticsTracker';
+import CookieConsent from '@/components/CookieConsent';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -56,6 +57,7 @@ export default function RootLayout({
                     <main className="flex-1">{children}</main>
                     <Footer />
                   </div>
+                  <CookieConsent />
                 </CartProvider>
               </ProductsProvider>
             </AuthProvider>

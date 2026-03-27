@@ -11,9 +11,10 @@ import { db, app } from '@/lib/firebase';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
-import { Lock, MapPin, Check, ShoppingBag, ArrowRight, Truck, CreditCard, Shield, AlertCircle, CheckCircle, Package } from 'lucide-react';
+import { Lock, MapPin, Check, ShoppingBag, ArrowRight, Truck, CreditCard, Shield, AlertCircle, CheckCircle, Package, User, Phone, Mail } from 'lucide-react';
 import { calculateCartShipping } from '@/lib/shippingCalculator';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
+import TrustBadges from '@/components/TrustBadges';
 
 const stripePromise = loadStripe('pk_live_51T6HdURxZ5rzXIkdeQqyjWs9mTaYOvCQNeGlgukCgvMNs4MrasTO6Tr9zoIp2Dfcxdcak60DiBQkkAE6iuWGg9fO00OCC5EmrL');
 
@@ -248,6 +249,9 @@ function CheckoutForm() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-10">{t.checkout.title}</h1>
+
+        {/* Trust Badges */}
+        <TrustBadges variant="checkout" />
 
         <form onSubmit={handlePlaceOrder}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">

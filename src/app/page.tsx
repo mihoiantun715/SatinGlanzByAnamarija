@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import { useProducts } from '@/context/ProductsContext';
 import ProductCard from '@/components/ProductCard';
+import TrustBadges from '@/components/TrustBadges';
 import { Heart, Sparkles, Gem, ArrowRight } from 'lucide-react';
 
 export default function Home() {
@@ -91,6 +92,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Trust Badges */}
+      <TrustBadges />
 
       {/* About Preview */}
       <section className="py-20 bg-gradient-to-br from-rose-50 to-pink-50">
