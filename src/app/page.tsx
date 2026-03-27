@@ -38,9 +38,14 @@ export default function Home() {
             <div className="animate-fade-in-delay-2">
               <Link
                 href="/shop"
-                className="inline-flex items-center gap-2 bg-rose-500 hover:bg-rose-600 text-white px-10 py-4 rounded-full text-base font-medium tracking-wide transition-all hover:shadow-lg hover:shadow-rose-200 hover:-translate-y-0.5"
+                className="relative inline-block group"
               >
-                {t.hero.cta}
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-purple-500 rounded-lg transform translate-x-1 translate-y-1 group-hover:translate-x-0.5 group-hover:translate-y-0.5 transition-transform shadow-lg"></div>
+                <div className="relative bg-gradient-to-br from-rose-200 via-rose-300 to-rose-200 px-12 py-6 rounded-lg border-4 border-amber-500 shadow-xl">
+                  <span className="text-3xl font-serif text-gray-700" style={{ fontFamily: 'Georgia, serif' }}>
+                    {t.hero.cta}
+                  </span>
+                </div>
               </Link>
             </div>
           </div>
