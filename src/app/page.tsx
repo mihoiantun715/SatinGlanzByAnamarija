@@ -40,9 +40,9 @@ export default function Home() {
                 href="/shop"
                 className="relative inline-block group"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-purple-500 rounded-lg transform translate-x-1 translate-y-1 group-hover:translate-x-0.5 group-hover:translate-y-0.5 transition-transform shadow-lg"></div>
-                <div className="relative bg-gradient-to-br from-rose-200 via-rose-300 to-rose-200 px-12 py-6 rounded-lg border-4 border-amber-500 shadow-xl">
-                  <span className="text-3xl font-serif text-gray-700" style={{ fontFamily: 'Georgia, serif' }}>
+                <div className="absolute inset-0 bg-gradient-to-br from-rose-300 to-rose-400 rounded-full blur-sm opacity-50 group-hover:opacity-70 transition-opacity"></div>
+                <div className="relative bg-gradient-to-br from-rose-200 via-rose-300 to-rose-400 px-12 py-5 rounded-full shadow-2xl border border-rose-400/30 group-hover:shadow-rose-300/50 transition-all">
+                  <span className="text-2xl font-serif text-gray-800 tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>
                     {t.hero.cta}
                   </span>
                 </div>
