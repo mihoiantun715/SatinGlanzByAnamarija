@@ -99,7 +99,7 @@ export default function Home() {
           <h2 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-12">
             {t.whyChooseRoses.title}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Handmade with Love */}
             <div className="bg-[#f5f1e8] rounded-2xl p-6 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow min-h-[280px]">
               <Image 
@@ -116,17 +116,6 @@ export default function Home() {
               <Image 
                 src={`/Why Choose Our Roses/Everlasting Beauty ${locale === 'en' ? 'englihs' : locale === 'de' ? 'german' : locale === 'hr' ? 'croatian' : locale === 'ro' ? 'romanian' : locale === 'bg' ? 'bulgarian' : 'turkish'}.png`}
                 alt={t.whyChooseRoses.everlastingTitle}
-                width={300}
-                height={300}
-                className="w-full h-auto max-w-[280px]"
-              />
-            </div>
-
-            {/* Premium Materials */}
-            <div className="bg-[#f5f1e8] rounded-2xl p-6 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow min-h-[280px]">
-              <Image 
-                src={`/Why Choose Our Roses/Premium Materials ${locale === 'en' ? 'english' : locale === 'de' ? 'german' : locale === 'hr' ? 'croatian' : locale === 'ro' ? 'romanian' : locale === 'bg' ? 'bulgarian' : 'turkish'}.png`}
-                alt={t.whyChooseRoses.premiumTitle}
                 width={300}
                 height={300}
                 className="w-full h-auto max-w-[280px]"
