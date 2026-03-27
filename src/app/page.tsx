@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
 import { useProducts } from '@/context/ProductsContext';
 import ProductCard from '@/components/ProductCard';
@@ -8,7 +9,7 @@ import TrustBadges from '@/components/TrustBadges';
 import { Heart, Sparkles, Gem, ArrowRight } from 'lucide-react';
 
 export default function Home() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const { products, loading } = useProducts();
   const featured = products.filter(p => p.featured);
 
@@ -89,6 +90,73 @@ export default function Home() {
               {t.home.viewAll}
               <ArrowRight className="w-4 h-4" />
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Our Roses Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-12">
+            {t.whyChooseRoses.title}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Handmade with Love */}
+            <div className="bg-white rounded-2xl p-8 text-center shadow-sm hover:shadow-md transition-shadow">
+              <div className="inline-flex items-center justify-center mb-6">
+                <Image 
+                  src={`/Why Choose Our Roses/${locale === 'en' ? 'English' : locale === 'de' ? 'German' : locale === 'hr' ? 'Croatian' : locale === 'ro' ? 'Romanian' : locale === 'bg' ? 'Bulgarian' : 'Turkish'} Handmade.png`}
+                  alt={t.whyChooseRoses.handmadeTitle}
+                  width={100}
+                  height={100}
+                  className="w-24 h-24"
+                />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                {t.whyChooseRoses.handmadeTitle}
+              </h3>
+              <p className="text-gray-600">
+                {t.whyChooseRoses.handmadeDesc}
+              </p>
+            </div>
+
+            {/* Everlasting Beauty */}
+            <div className="bg-white rounded-2xl p-8 text-center shadow-sm hover:shadow-md transition-shadow">
+              <div className="inline-flex items-center justify-center mb-6">
+                <Image 
+                  src={`/Why Choose Our Roses/Everlasting Beauty ${locale === 'en' ? 'englihs' : locale === 'de' ? 'german' : locale === 'hr' ? 'croatian' : locale === 'ro' ? 'romanian' : locale === 'bg' ? 'bulgarian' : 'turkish'}.png`}
+                  alt={t.whyChooseRoses.everlastingTitle}
+                  width={100}
+                  height={100}
+                  className="w-24 h-24"
+                />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                {t.whyChooseRoses.everlastingTitle}
+              </h3>
+              <p className="text-gray-600">
+                {t.whyChooseRoses.everlastingDesc}
+              </p>
+            </div>
+
+            {/* Premium Materials */}
+            <div className="bg-white rounded-2xl p-8 text-center shadow-sm hover:shadow-md transition-shadow">
+              <div className="inline-flex items-center justify-center mb-6">
+                <Image 
+                  src={`/Why Choose Our Roses/Premium Materials ${locale === 'en' ? 'english' : locale === 'de' ? 'german' : locale === 'hr' ? 'croatian' : locale === 'ro' ? 'romanian' : locale === 'bg' ? 'bulgarian' : 'turkish'}.png`}
+                  alt={t.whyChooseRoses.premiumTitle}
+                  width={100}
+                  height={100}
+                  className="w-24 h-24"
+                />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                {t.whyChooseRoses.premiumTitle}
+              </h3>
+              <p className="text-gray-600">
+                {t.whyChooseRoses.premiumDesc}
+              </p>
+            </div>
           </div>
         </div>
       </section>
