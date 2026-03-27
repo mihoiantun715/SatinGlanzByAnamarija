@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { useCart } from '@/context/CartContext';
 import { colorTranslations } from '@/lib/products';
-import { Check, ShoppingBag } from 'lucide-react';
+import { Check } from 'lucide-react';
 
 // Volume-based pricing tiers
 const getPricePerRose = (count: number): number => {
@@ -660,6 +660,11 @@ export default function BuildBouquetPage() {
               </button>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
         </div>
       </div>
     </div>
