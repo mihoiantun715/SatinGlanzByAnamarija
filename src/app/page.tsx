@@ -105,7 +105,7 @@ export default function Home() {
       {/* Why Choose Our Roses Section */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-12">
+          <h2 className="text-4xl sm:text-5xl font-serif italic text-center text-gray-800 mb-12" style={{ fontFamily: 'Georgia, serif' }}>
             {t.whyChooseRoses.title}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -142,7 +142,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl sm:text-5xl font-serif italic text-gray-800 mb-6" style={{ fontFamily: 'Georgia, serif' }}>
                 {t.home.aboutTitle}
               </h2>
               <p className="text-lg text-gray-600 leading-relaxed mb-8">

@@ -12,7 +12,7 @@ export default function AboutPage() {
       {/* Hero */}
       <div className="bg-gradient-to-br from-rose-50 via-pink-50 to-amber-50 py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">{t.about.title}</h1>
+          <h1 className="text-5xl sm:text-6xl font-serif italic text-gray-800 mb-4" style={{ fontFamily: 'Georgia, serif' }}>{t.about.title}</h1>
           <p className="text-lg text-gray-600">{t.about.subtitle}</p>
         </div>
       </div>
@@ -22,7 +22,7 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl font-serif italic text-gray-800 mb-6" style={{ fontFamily: 'Georgia, serif' }}>
                 {t.about.story}
               </h2>
               <p className="text-gray-600 leading-relaxed mb-6 text-lg">
@@ -39,7 +39,7 @@ export default function AboutPage() {
       {/* Mission */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">{t.about.mission}</h2>
+          <h2 className="text-4xl font-serif italic text-gray-800 mb-6" style={{ fontFamily: 'Georgia, serif' }}>{t.about.mission}</h2>
           <p className="text-xl text-gray-600 leading-relaxed">
             {t.about.missionText}
           </p>
