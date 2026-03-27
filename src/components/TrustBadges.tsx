@@ -75,8 +75,8 @@ export default function TrustBadges({ variant = 'default' }: TrustBadgesProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Secure Payment */}
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-              <Image src="/Secure Payment.png" alt="Secure Payment" width={32} height={32} className="w-8 h-8" />
+            <div className="inline-flex items-center justify-center mb-4">
+              <Image src="/Secure Payment.png" alt="Secure Payment" width={80} height={80} className="w-20 h-20" />
             </div>
             <h4 className="text-lg font-semibold text-gray-900 mb-2">{t.trustBadges.securePayment}</h4>
             <p className="text-sm text-gray-600">
@@ -86,8 +86,8 @@ export default function TrustBadges({ variant = 'default' }: TrustBadgesProps) {
 
           {/* Fast Delivery */}
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-              <Image src="/Delivery.png" alt="Fast Delivery" width={32} height={32} className="w-8 h-8" />
+            <div className="inline-flex items-center justify-center mb-4">
+              <Image src="/Delivery.png" alt="Fast Delivery" width={80} height={80} className="w-20 h-20" />
             </div>
             <h4 className="text-lg font-semibold text-gray-900 mb-2">{t.trustBadges.fastDelivery}</h4>
             <p className="text-sm text-gray-600">
@@ -97,8 +97,8 @@ export default function TrustBadges({ variant = 'default' }: TrustBadgesProps) {
 
           {/* Quality Guarantee */}
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-rose-100 rounded-full mb-4">
-              <Image src="/Premium Roses.png" alt="Premium Quality" width={32} height={32} className="w-8 h-8" />
+            <div className="inline-flex items-center justify-center mb-4">
+              <Image src="/Premium Roses.png" alt="Premium Quality" width={80} height={80} className="w-20 h-20" />
             </div>
             <h4 className="text-lg font-semibold text-gray-900 mb-2">{t.trustBadges.premiumQuality}</h4>
             <p className="text-sm text-gray-600">
@@ -108,8 +108,8 @@ export default function TrustBadges({ variant = 'default' }: TrustBadgesProps) {
 
           {/* Customer Support */}
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
-              <Image src="/Satisfaction.png" alt="Satisfaction" width={32} height={32} className="w-8 h-8" />
+            <div className="inline-flex items-center justify-center mb-4">
+              <Image src="/Satisfaction.png" alt="Satisfaction" width={80} height={80} className="w-20 h-20" />
             </div>
             <h4 className="text-lg font-semibold text-gray-900 mb-2">{t.trustBadges.satisfaction}</h4>
             <p className="text-sm text-gray-600">
