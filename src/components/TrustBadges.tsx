@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Shield, Lock, Package, CreditCard, Award, CheckCircle } from 'lucide-react';
+import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
 
 interface TrustBadgesProps {
@@ -15,15 +15,15 @@ export default function TrustBadges({ variant = 'default' }: TrustBadgesProps) {
     return (
       <div className="flex items-center justify-center gap-4 py-4 border-t border-b border-gray-200 bg-gray-50">
         <div className="flex items-center gap-2 text-sm text-gray-700">
-          <Shield className="w-4 h-4 text-green-600" />
+          <Image src="/Secure Payment.png" alt="Secure Payment" width={16} height={16} className="w-4 h-4" />
           <span className="font-medium">{t.trustBadges.securePayment}</span>
         </div>
         <div className="flex items-center gap-2 text-sm text-gray-700">
-          <Package className="w-4 h-4 text-blue-600" />
+          <Image src="/Delivery.png" alt="Fast Delivery" width={16} height={16} className="w-4 h-4" />
           <span className="font-medium">{t.trustBadges.fastDelivery}</span>
         </div>
         <div className="flex items-center gap-2 text-sm text-gray-700">
-          <Award className="w-4 h-4 text-rose-600" />
+          <Image src="/Premium Roses.png" alt="Premium Quality" width={16} height={16} className="w-4 h-4" />
           <span className="font-medium">{t.trustBadges.premiumQuality}</span>
         </div>
       </div>
@@ -36,7 +36,7 @@ export default function TrustBadges({ variant = 'default' }: TrustBadgesProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="flex items-start gap-3">
             <div className="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-              <Lock className="w-5 h-5 text-green-600" />
+              <Image src="/Secure Payment.png" alt="Secure Payment" width={20} height={20} className="w-5 h-5" />
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 text-sm">{t.trustBadges.sslEncrypted}</h4>
@@ -45,7 +45,7 @@ export default function TrustBadges({ variant = 'default' }: TrustBadgesProps) {
           </div>
           <div className="flex items-start gap-3">
             <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-              <CreditCard className="w-5 h-5 text-blue-600" />
+              <Image src="/Secure Payment.png" alt="Secure Payment" width={20} height={20} className="w-5 h-5" />
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 text-sm">{t.trustBadges.securePaymentBadge}</h4>
@@ -54,7 +54,7 @@ export default function TrustBadges({ variant = 'default' }: TrustBadgesProps) {
           </div>
           <div className="flex items-start gap-3">
             <div className="flex-shrink-0 w-10 h-10 bg-rose-100 rounded-full flex items-center justify-center">
-              <CheckCircle className="w-5 h-5 text-rose-600" />
+              <Image src="/Satisfaction.png" alt="Satisfaction" width={20} height={20} className="w-5 h-5" />
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 text-sm">{t.trustBadges.moneyBack}</h4>
@@ -76,7 +76,7 @@ export default function TrustBadges({ variant = 'default' }: TrustBadgesProps) {
           {/* Secure Payment */}
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-              <Lock className="w-8 h-8 text-green-600" />
+              <Image src="/Secure Payment.png" alt="Secure Payment" width={32} height={32} className="w-8 h-8" />
             </div>
             <h4 className="text-lg font-semibold text-gray-900 mb-2">{t.trustBadges.securePayment}</h4>
             <p className="text-sm text-gray-600">
@@ -87,7 +87,7 @@ export default function TrustBadges({ variant = 'default' }: TrustBadgesProps) {
           {/* Fast Delivery */}
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-              <Package className="w-8 h-8 text-blue-600" />
+              <Image src="/Delivery.png" alt="Fast Delivery" width={32} height={32} className="w-8 h-8" />
             </div>
             <h4 className="text-lg font-semibold text-gray-900 mb-2">{t.trustBadges.fastDelivery}</h4>
             <p className="text-sm text-gray-600">
@@ -98,7 +98,7 @@ export default function TrustBadges({ variant = 'default' }: TrustBadgesProps) {
           {/* Quality Guarantee */}
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-rose-100 rounded-full mb-4">
-              <Award className="w-8 h-8 text-rose-600" />
+              <Image src="/Premium Roses.png" alt="Premium Quality" width={32} height={32} className="w-8 h-8" />
             </div>
             <h4 className="text-lg font-semibold text-gray-900 mb-2">{t.trustBadges.premiumQuality}</h4>
             <p className="text-sm text-gray-600">
@@ -109,7 +109,7 @@ export default function TrustBadges({ variant = 'default' }: TrustBadgesProps) {
           {/* Customer Support */}
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
-              <CheckCircle className="w-8 h-8 text-purple-600" />
+              <Image src="/Satisfaction.png" alt="Satisfaction" width={32} height={32} className="w-8 h-8" />
             </div>
             <h4 className="text-lg font-semibold text-gray-900 mb-2">{t.trustBadges.satisfaction}</h4>
             <p className="text-sm text-gray-600">
@@ -122,17 +122,17 @@ export default function TrustBadges({ variant = 'default' }: TrustBadgesProps) {
         <div className="mt-12 text-center">
           <p className="text-sm text-gray-600 mb-4">{t.trustBadges.weAccept}</p>
           <div className="flex items-center justify-center gap-4 flex-wrap">
-            <div className="px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm">
-              <span className="text-sm font-semibold text-gray-700">💳 Visa</span>
+            <div className="px-4 py-3 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <Image src="/visa.png" alt="Visa" width={60} height={40} className="h-8 w-auto" />
             </div>
-            <div className="px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm">
-              <span className="text-sm font-semibold text-gray-700">💳 Mastercard</span>
+            <div className="px-4 py-3 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <Image src="/masercard.png" alt="Mastercard" width={60} height={40} className="h-8 w-auto" />
             </div>
-            <div className="px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm">
-              <span className="text-sm font-semibold text-gray-700">💳 Amex</span>
+            <div className="px-4 py-3 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <Image src="/American-Express-logo.png" alt="American Express" width={60} height={40} className="h-8 w-auto" />
             </div>
-            <div className="px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm">
-              <span className="text-sm font-semibold text-gray-700">🛍️ Klarna</span>
+            <div className="px-4 py-3 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <Image src="/Klarna.png" alt="Klarna" width={60} height={40} className="h-8 w-auto" />
             </div>
           </div>
         </div>
