@@ -27,6 +27,16 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const browserLang = navigator.language.toLowerCase();
     const supportedLocales: Locale[] = ['en', 'de', 'hr', 'ro', 'bg', 'tr'];
     
+    // Get language prefix (e.g., 'de-DE' -> 'de', 'hr-HR' -> 'hr')
+    const langPrefix = browserLang.split('-')[0];
+    
+    // Map Balkan languages (Bosnian, Serbian) to Croatian
+    if (langPrefix === 'bs' || langPrefix === 'sr') {
+      setLocaleState('hr');
+      localStorage.setItem('locale', 'hr');
+      return;
+    }
+    
     // Check exact match first (e.g., 'de', 'hr')
     if (supportedLocales.includes(browserLang as Locale)) {
       setLocaleState(browserLang as Locale);
@@ -34,10 +44,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       return;
     }
     
-    // Check language prefix (e.g., 'de-DE' -> 'de', 'hr-HR' -> 'hr')
-    const langPrefix = browserLang.split('-')[0] as Locale;
-    if (supportedLocales.includes(langPrefix)) {
-      setLocaleState(langPrefix);
+    // Check language prefix for supported languages
+    if (supportedLocales.includes(langPrefix as Locale)) {
+      setLocaleState(langPrefix as Locale);
       localStorage.setItem('locale', langPrefix);
       return;
     }
