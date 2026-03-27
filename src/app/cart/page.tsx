@@ -57,7 +57,7 @@ export default function CartPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-10">{t.cart.title}</h1>
+        <h1 className="text-4xl sm:text-5xl font-serif italic text-gray-800 mb-10" style={{ fontFamily: 'Georgia, serif' }}>{t.cart.title}</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Cart Items + Shipping */}
@@ -164,7 +164,7 @@ export default function CartPage() {
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 sticky top-24">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">{t.cart.orderSummary}</h2>
+              <h2 className="text-2xl font-serif italic text-gray-800 mb-6" style={{ fontFamily: 'Georgia, serif' }}>{t.cart.orderSummary}</h2>
 
               <div className="relative mb-6">
                 <div className="absolute inset-0 bg-gradient-to-br from-rose-100 to-pink-100 rounded-2xl opacity-40"></div>
