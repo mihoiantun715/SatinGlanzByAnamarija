@@ -417,12 +417,17 @@ export default function BuildBouquetPage() {
               </div>
             )}
 
-            {/* Color Mix Selection */}
-            <div className="mb-8">
-              <p className="text-sm font-bold text-gray-900 mb-3">
-                {t.bouquetBuilder.color} <span className="font-normal text-gray-500">Mix colors</span>
-              </p>
-              <div className="space-y-3">
+            {/* All Options Container with Background */}
+            <div className="relative mb-8">
+              <div className="absolute inset-0 bg-gradient-to-br from-rose-100 to-pink-100 rounded-2xl opacity-40"></div>
+              <div className="relative bg-gradient-to-br from-rose-50 via-pink-50 to-rose-50 rounded-2xl p-6 border border-rose-200/50 shadow-sm">
+                
+                {/* Color Mix Selection */}
+                <div className="mb-6">
+                  <p className="text-sm font-bold text-gray-900 mb-3">
+                    {t.bouquetBuilder.color} <span className="font-normal text-gray-500">Mix colors</span>
+                  </p>
+                  <div className="space-y-3">
                 {roseColors.map((color) => {
                   const count = colorMix[color.key] || 0;
                   return (
@@ -498,12 +503,12 @@ export default function BuildBouquetPage() {
                       </div>
                     </div>
                   );
-                })}
+                  })}
+                </div>
               </div>
-            </div>
 
-            {/* Total Rose Count Display & Special Request */}
-            <div className="mb-8">
+              {/* Total Rose Count Display & Special Request */}
+              <div className="mb-6">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-sm font-bold text-gray-900">
                   {t.bouquetBuilder.roseCount}
@@ -534,11 +539,11 @@ export default function BuildBouquetPage() {
                 >
                   Request Special Order
                 </button>
+                </div>
               </div>
-            </div>
 
-            {/* Ribbon Selection */}
-            <div className="mb-8">
+              {/* Ribbon Selection */}
+              <div className="mb-6">
               <p className="text-sm font-bold text-gray-900 mb-1">
                 {t.bouquetBuilder.ribbon} <span className="font-normal text-gray-500">{ribbonOptions.find(r => r.key === selectedRibbon)?.label}</span>
               </p>
@@ -563,11 +568,11 @@ export default function BuildBouquetPage() {
                     </span>
                   </button>
                 ))}
+                </div>
               </div>
-            </div>
 
-            {/* Wrapping Paper */}
-            <div className="mb-8">
+              {/* Wrapping Paper */}
+              <div className="mb-6">
               <p className="text-sm font-bold text-gray-900 mb-1">
                 {t.bouquetBuilder.wrappingPaper} <span className="text-rose-500">*</span>{' '}
                 <span className="font-normal text-gray-500">{wrappingOptions.find(w => w.key === wrapping)?.label}</span>
@@ -594,11 +599,11 @@ export default function BuildBouquetPage() {
                     </div>
                   </button>
                 ))}
+                </div>
               </div>
-            </div>
 
-            {/* Extra Decoration */}
-            <div className="mb-8">
+              {/* Extra Decoration */}
+              <div className="mb-0">
               <p className="text-sm font-bold text-gray-900 mb-1">{t.bouquetBuilder.extraDecoration}</p>
               <p className="text-xs text-gray-400 mb-3">{t.bouquetBuilder.extraDecorationNote}</p>
               <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
@@ -621,12 +626,14 @@ export default function BuildBouquetPage() {
                       {t.bouquetBuilder.decorations[deco.translationKey]}
                     </span>
                   </button>
-                ))}
+                  ))}
+                </div>
               </div>
+              
             </div>
+          </div>
 
-
-            {/* Price + Add to Cart */}
+          {/* Price + Add to Cart */}
             <div className="border-t border-gray-200 pt-6">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-lg font-bold text-gray-900">{t.bouquetBuilder.totalPrice}</span>
