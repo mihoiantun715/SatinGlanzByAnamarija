@@ -102,60 +102,36 @@ export default function Home() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Handmade with Love */}
-            <div className="bg-white rounded-2xl p-8 text-center shadow-sm hover:shadow-md transition-shadow">
-              <div className="inline-flex items-center justify-center mb-6">
-                <Image 
-                  src={`/Why Choose Our Roses/${locale === 'en' ? 'English' : locale === 'de' ? 'German' : locale === 'hr' ? 'Croatian' : locale === 'ro' ? 'Romanian' : locale === 'bg' ? 'Bulgarian' : 'Turkish'} Handmade.png`}
-                  alt={t.whyChooseRoses.handmadeTitle}
-                  width={100}
-                  height={100}
-                  className="w-24 h-24"
-                />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                {t.whyChooseRoses.handmadeTitle}
-              </h3>
-              <p className="text-gray-600">
-                {t.whyChooseRoses.handmadeDesc}
-              </p>
+            <div className="bg-white rounded-2xl p-6 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow min-h-[280px]">
+              <Image 
+                src={`/Why Choose Our Roses/${locale === 'en' ? 'English' : locale === 'de' ? 'German' : locale === 'hr' ? 'Croatian' : locale === 'ro' ? 'Romanian' : locale === 'bg' ? 'Bulgarian' : 'Turkish'} Handmade.png`}
+                alt={t.whyChooseRoses.handmadeTitle}
+                width={300}
+                height={300}
+                className="w-full h-auto max-w-[280px]"
+              />
             </div>
 
             {/* Everlasting Beauty */}
-            <div className="bg-white rounded-2xl p-8 text-center shadow-sm hover:shadow-md transition-shadow">
-              <div className="inline-flex items-center justify-center mb-6">
-                <Image 
-                  src={`/Why Choose Our Roses/Everlasting Beauty ${locale === 'en' ? 'englihs' : locale === 'de' ? 'german' : locale === 'hr' ? 'croatian' : locale === 'ro' ? 'romanian' : locale === 'bg' ? 'bulgarian' : 'turkish'}.png`}
-                  alt={t.whyChooseRoses.everlastingTitle}
-                  width={100}
-                  height={100}
-                  className="w-24 h-24"
-                />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                {t.whyChooseRoses.everlastingTitle}
-              </h3>
-              <p className="text-gray-600">
-                {t.whyChooseRoses.everlastingDesc}
-              </p>
+            <div className="bg-white rounded-2xl p-6 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow min-h-[280px]">
+              <Image 
+                src={`/Why Choose Our Roses/Everlasting Beauty ${locale === 'en' ? 'englihs' : locale === 'de' ? 'german' : locale === 'hr' ? 'croatian' : locale === 'ro' ? 'romanian' : locale === 'bg' ? 'bulgarian' : 'turkish'}.png`}
+                alt={t.whyChooseRoses.everlastingTitle}
+                width={300}
+                height={300}
+                className="w-full h-auto max-w-[280px]"
+              />
             </div>
 
             {/* Premium Materials */}
-            <div className="bg-white rounded-2xl p-8 text-center shadow-sm hover:shadow-md transition-shadow">
-              <div className="inline-flex items-center justify-center mb-6">
-                <Image 
-                  src={`/Why Choose Our Roses/Premium Materials ${locale === 'en' ? 'english' : locale === 'de' ? 'german' : locale === 'hr' ? 'croatian' : locale === 'ro' ? 'romanian' : locale === 'bg' ? 'bulgarian' : 'turkish'}.png`}
-                  alt={t.whyChooseRoses.premiumTitle}
-                  width={100}
-                  height={100}
-                  className="w-24 h-24"
-                />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                {t.whyChooseRoses.premiumTitle}
-              </h3>
-              <p className="text-gray-600">
-                {t.whyChooseRoses.premiumDesc}
-              </p>
+            <div className="bg-white rounded-2xl p-6 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow min-h-[280px]">
+              <Image 
+                src={`/Why Choose Our Roses/Premium Materials ${locale === 'en' ? 'english' : locale === 'de' ? 'german' : locale === 'hr' ? 'croatian' : locale === 'ro' ? 'romanian' : locale === 'bg' ? 'bulgarian' : 'turkish'}.png`}
+                alt={t.whyChooseRoses.premiumTitle}
+                width={300}
+                height={300}
+                className="w-full h-auto max-w-[280px]"
+              />
             </div>
           </div>
         </div>
