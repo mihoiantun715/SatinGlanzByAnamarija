@@ -327,7 +327,7 @@ export const tr: Translation = {
     fastDelivery: 'Hızlı Teslimat',
     fastDeliveryDesc: '1-3 iş günü teslimat. €70 üzeri siparişlerde ücretsiz kargo.',
     premiumQuality: 'Premium Kalite',
-    premiumQualityDesc: 'Taze, premium güllerle el yapımı buketler. Kalite garantili.',
+    premiumQualityDesc: 'Premium saten güllerle el yapımı buketler. Kalite garantili.',
     satisfaction: '%100 Memnuniyet',
     satisfactionDesc: 'Memnun değil misiniz? 7 gün içinde tam para iadesi. Memnuniyetiniz önceliğimizdir.',
     weAccept: 'Kabul Ediyoruz',

@@ -327,7 +327,7 @@ export const ro: Translation = {
     fastDelivery: 'Livrare rapidă',
     fastDeliveryDesc: 'Livrare în 1-3 zile lucrătoare. Transport gratuit pentru comenzi peste €70.',
     premiumQuality: 'Calitate premium',
-    premiumQualityDesc: 'Buchete lucrate manual cu trandafiri proaspeți, premium. Calitate garantată.',
+    premiumQualityDesc: 'Buchete lucrate manual cu trandafiri de satin premium. Calitate garantată.',
     satisfaction: 'Satisfacție 100%',
     satisfactionDesc: 'Nu sunteți mulțumit? Rambursare completă în 7 zile. Satisfacția dvs. este prioritatea noastră.',
     weAccept: 'Acceptăm',

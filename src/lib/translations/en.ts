@@ -327,7 +327,7 @@ export const en: Translation = {
     fastDelivery: 'Fast Delivery',
     fastDeliveryDesc: '1-3 business days delivery. Free shipping on orders over €70.',
     premiumQuality: 'Premium Quality',
-    premiumQualityDesc: 'Hand-crafted bouquets with fresh, premium roses. Quality guaranteed.',
+    premiumQualityDesc: 'Hand-crafted bouquets with premium satin roses. Quality guaranteed.',
     satisfaction: '100% Satisfaction',
     satisfactionDesc: 'Not happy? Full refund within 7 days. Your satisfaction is our priority.',
     weAccept: 'We Accept',

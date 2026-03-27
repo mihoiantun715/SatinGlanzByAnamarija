@@ -327,7 +327,7 @@ export const de: Translation = {
     fastDelivery: 'Schnelle Lieferung',
     fastDeliveryDesc: '1-3 Werktage Lieferung. Kostenloser Versand ab €70.',
     premiumQuality: 'Premium-Qualität',
-    premiumQualityDesc: 'Handgefertigte Sträuße mit frischen, hochwertigen Rosen. Qualität garantiert.',
+    premiumQualityDesc: 'Handgefertigte Sträuße mit hochwertigen Satinrosen. Qualität garantiert.',
     satisfaction: '100% Zufriedenheit',
     satisfactionDesc: 'Nicht zufrieden? Volle Rückerstattung innerhalb von 7 Tagen. Ihre Zufriedenheit ist unsere Priorität.',
     weAccept: 'Wir akzeptieren',

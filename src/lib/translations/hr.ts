@@ -327,7 +327,7 @@ export const hr: Translation = {
     fastDelivery: 'Brza dostava',
     fastDeliveryDesc: 'Dostava 1-3 radna dana. Besplatna dostava za narudžbe iznad €70.',
     premiumQuality: 'Premium kvaliteta',
-    premiumQualityDesc: 'Ručno izrađeni buketi s svježim, premium ružama. Kvaliteta zajamčena.',
+    premiumQualityDesc: 'Ručno izrađeni buketi s premium satenskim ružama. Kvaliteta zajamčena.',
     satisfaction: '100% zadovoljstvo',
     satisfactionDesc: 'Niste zadovoljni? Puni povrat novca u roku od 7 dana. Vaše zadovoljstvo je naš prioritet.',
     weAccept: 'Prihvaćamo',
