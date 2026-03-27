@@ -6,7 +6,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useProducts } from '@/context/ProductsContext';
 import ProductCard from '@/components/ProductCard';
 import TrustBadges from '@/components/TrustBadges';
-import { Heart, Sparkles, Gem, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export default function Home() {
   const { t, locale } = useLanguage();
@@ -178,37 +178,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Why Choose Us */}
-      <section className="py-20 lg:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 text-center mb-14">
-            {t.home.whyTitle}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div className="text-center p-8 rounded-2xl bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-shadow">
-              <div className="w-16 h-16 bg-rose-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Heart className="w-8 h-8 text-rose-500" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">{t.home.why1Title}</h3>
-              <p className="text-gray-500 leading-relaxed">{t.home.why1Text}</p>
-            </div>
-            <div className="text-center p-8 rounded-2xl bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-shadow">
-              <div className="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Sparkles className="w-8 h-8 text-amber-500" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">{t.home.why2Title}</h3>
-              <p className="text-gray-500 leading-relaxed">{t.home.why2Text}</p>
-            </div>
-            <div className="text-center p-8 rounded-2xl bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-shadow">
-              <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Gem className="w-8 h-8 text-purple-500" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">{t.home.why3Title}</h3>
-              <p className="text-gray-500 leading-relaxed">{t.home.why3Text}</p>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
