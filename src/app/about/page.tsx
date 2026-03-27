@@ -1,10 +1,11 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function AboutPage() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
 
   return (
     <div className="min-h-screen">
@@ -47,29 +48,15 @@ export default function AboutPage() {
 
       {/* Craftsmanship */}
       <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="order-2 lg:order-1">
-              <div className="grid grid-cols-3 gap-4">
-                <div className="bg-rose-50 rounded-2xl p-8 text-center">
-                  <p className="text-sm font-medium text-gray-700">{t.about.cutting}</p>
-                </div>
-                <div className="bg-pink-50 rounded-2xl p-8 text-center">
-                  <p className="text-sm font-medium text-gray-700">{t.about.shaping}</p>
-                </div>
-                <div className="bg-purple-50 rounded-2xl p-8 text-center">
-                  <p className="text-sm font-medium text-gray-700">{t.about.assembly}</p>
-                </div>
-              </div>
-            </div>
-            <div className="order-1 lg:order-2">
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">
-                {t.about.craftsmanship}
-              </h2>
-              <p className="text-gray-600 leading-relaxed text-lg">
-                {t.about.craftsmanshipText}
-              </p>
-            </div>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-3xl shadow-lg p-8 flex items-center justify-center">
+            <Image 
+              src={`/Craftsmanship/Craftsmanship ${locale === 'en' ? 'english' : locale === 'de' ? 'german' : locale === 'hr' ? 'croatian' : locale === 'ro' ? 'romanian' : locale === 'bg' ? 'bulgarian' : 'turkish'}.png`}
+              alt={t.about.craftsmanship}
+              width={800}
+              height={400}
+              className="w-full h-auto"
+            />
           </div>
         </div>
       </section>
