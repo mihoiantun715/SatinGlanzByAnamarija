@@ -65,7 +65,6 @@ const decorationOptions = [
   { key: 'noThanks', image: '', translationKey: 'noThanks' as const },
 ];
 
-
 export default function BuildBouquetPage() {
   const { locale, t } = useLanguage();
   const { addToCart } = useCart();
@@ -79,6 +78,7 @@ export default function BuildBouquetPage() {
   const [activeThumb, setActiveThumb] = useState(0);
   const [customCount, setCustomCount] = useState('');
   const [customText, setCustomText] = useState('');
+  const [animateRose, setAnimateRose] = useState(false);
 
   const toggleDecoration = (key: string) => {
     if (key === 'noThanks') {
@@ -499,6 +499,8 @@ export default function BuildBouquetPage() {
                             if (total <= 101) {
                               setColorMix(newMix);
                               setRoseCount(total);
+                              setAnimateRose(true);
+                              setTimeout(() => setAnimateRose(false), 200);
                             }
                           }}
                           className="w-8 h-8 rounded-lg border-2 border-gray-200 hover:border-gray-400 flex items-center justify-center text-gray-600 font-bold transition-all hover:scale-110 active:scale-95"
