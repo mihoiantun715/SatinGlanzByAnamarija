@@ -127,6 +127,7 @@ export const hr: Translation = {
     subtitle: 'Ručno izrađeno s ljubavlju od strane Anamarije. Svaka ruža je izrađena od satenske vrpce.',
     craftsmanshipMessage: 'Odaberite svoje omiljene boje i količinu. Naši majstori će lijepo urediti vaš buket.',
     previewDisclaimer: 'Pregled je ilustrativan — konačni buket je ručno uređen za najbolji izgled.',
+    handmadeNote: '🌹 Ručno izrađeno & Kupi 2 = BESPLATNA DOSTAVA ✈️',
     colorMix: 'Mješavina Boja Ruža',
     color: 'Boja ruže',
     roseCount: 'Broj ruža',

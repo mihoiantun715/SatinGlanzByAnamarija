@@ -127,6 +127,7 @@ export const tr: Translation = {
     subtitle: 'Anamarija tarafından sevgiyle el yapımı. Her gül saten kurdeleden yapılmıştır.',
     craftsmanshipMessage: 'En sevdiğiniz renkleri ve miktarı seçin. Ustalarımız buketi güzelce düzenleyecek.',
     previewDisclaimer: 'Önizleme gösterimseldir — nihai buket en iyi görünüm için elle düzenlenir.',
+    handmadeNote: '🌹 El Yapımı & 2 Al = ÜCRETSİZ KARGO ✈️',
     colorMix: 'Gül Renk Karışımı',
     color: 'Gül Rengi',
     roseCount: 'Gül Sayısı',
