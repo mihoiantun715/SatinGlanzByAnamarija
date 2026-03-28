@@ -15,6 +15,7 @@ export const hr: Translation = {
     cta: 'Istražite kolekciju',
     newTitle: 'Napravite svoj vlastiti buket satinskih ruža',
     newSubtitle: 'Ruže koje nikada ne venu — baš kao i uspomene koje slave.',
+    newDescription: 'Stvorite prilagođeni buket koji traje zauvijek. Odaberite boje, vrpce i dekoracije.',
     newCta: 'Napravite svoj buket',
   },
   home: {

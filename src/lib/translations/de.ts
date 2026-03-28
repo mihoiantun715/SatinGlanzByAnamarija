@@ -15,6 +15,7 @@ export const de: Translation = {
     cta: 'Kollektion erkunden',
     newTitle: 'Erstellen Sie Ihren eigenen Satinrosen-Strauß',
     newSubtitle: 'Rosen, die niemals verblassen — genau wie die Erinnerungen, die sie feiern.',
+    newDescription: 'Erstellen Sie einen individuellen Strauß, der ewig hält. Wählen Sie Farben, Schleifen und Dekorationen.',
     newCta: 'Strauß erstellen',
   },
   home: {

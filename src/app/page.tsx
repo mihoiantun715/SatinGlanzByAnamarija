@@ -32,6 +32,9 @@ export default function Home() {
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-serif italic text-gray-800 leading-tight mb-6 animate-fade-in" style={{ fontFamily: 'Georgia, serif' }}>
               {t.hero.newTitle}
             </h1>
+            <p className="text-xl sm:text-2xl text-gray-700 font-medium leading-relaxed mb-4 max-w-2xl mx-auto animate-fade-in-delay">
+              {t.hero.newDescription}
+            </p>
             <p className="text-lg sm:text-xl text-gray-600 leading-relaxed mb-10 max-w-2xl mx-auto animate-fade-in-delay">
               {t.hero.newSubtitle}
             </p>

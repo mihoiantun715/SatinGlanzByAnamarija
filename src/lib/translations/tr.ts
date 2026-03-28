@@ -15,6 +15,7 @@ export const tr: Translation = {
     cta: 'Koleksiyonu Keşfet',
     newTitle: 'Kendi Saten Gül Buketi Oluşturun',
     newSubtitle: 'Asla solmayan güller — tıpkı kutladıkları anılar gibi.',
+    newDescription: 'Sonsuza kadar süren özel bir buket oluşturun. Renkleri, kurdeleri ve dekorasyonları seçin.',
     newCta: 'Buketinizi Oluşturun',
   },
   home: {

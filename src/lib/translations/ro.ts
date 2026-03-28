@@ -15,6 +15,7 @@ export const ro: Translation = {
     cta: 'Explorați colecția',
     newTitle: 'Creați propriul buchet de trandafiri de satin',
     newSubtitle: 'Trandafiri care nu se ofilesc niciodată — la fel ca amintirile pe care le celebrează.',
+    newDescription: 'Creați un buchet personalizat care durează pentru totdeauna. Alegeți culori, panglici și decorațiuni.',
     newCta: 'Creați buchetul',
   },
   home: {

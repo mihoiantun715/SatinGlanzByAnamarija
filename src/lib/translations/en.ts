@@ -15,6 +15,7 @@ export const en: Translation = {
     cta: 'Explore Collection',
     newTitle: 'Build Your Own Satin Rose Bouquet',
     newSubtitle: 'Roses that never fade — just like the memories they celebrate.',
+    newDescription: 'Create a custom bouquet that lasts forever. Choose colors, ribbons and decorations.',
     newCta: 'Build Your Bouquet',
   },
   home: {

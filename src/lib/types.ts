@@ -44,6 +44,7 @@ export interface Translation {
     cta: string;
     newTitle: string;
     newSubtitle: string;
+    newDescription: string;
     newCta: string;
   };
   home: {
