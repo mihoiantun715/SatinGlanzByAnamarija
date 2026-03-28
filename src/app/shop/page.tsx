@@ -72,7 +72,11 @@ export default function ShopPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Filters */}
         <AnimatedSection>
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-10">
+          <div className="rounded-2xl shadow-lg border border-white/40 p-6 mb-10" style={{
+            background: 'rgba(255, 255, 255, 0.75)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)'
+          }}>
           <div className="flex items-center gap-2 mb-4">
             <SlidersHorizontal className="w-5 h-5 text-gray-500" />
             <span className="text-lg font-semibold text-gray-800">Filters</span>

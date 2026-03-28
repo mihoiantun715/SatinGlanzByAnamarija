@@ -419,10 +419,13 @@ export default function BuildBouquetPage() {
               </p>
             </div>
 
-            {/* All Options Container with Background */}
+            {/* All Options Container with Glass Effect */}
             <div className="relative mb-8">
-              <div className="absolute inset-0 bg-gradient-to-br from-rose-100 to-pink-100 rounded-2xl opacity-40"></div>
-              <div className="relative bg-gradient-to-br from-rose-50 via-pink-50 to-rose-50 rounded-2xl p-6 border border-rose-200/50 shadow-sm">
+              <div className="relative rounded-2xl p-6 border border-white/40 shadow-lg" style={{ 
+                background: 'rgba(255, 245, 247, 0.75)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)'
+              }}>
                 
                 {/* Color Mix Selection */}
                 <div className="mb-6">
@@ -528,9 +531,25 @@ export default function BuildBouquetPage() {
                 </div>
               )}
               
-              {/* Special Request for 101+ Roses */}
-              <div className="relative p-6 rounded-2xl overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-rose-100 to-pink-100 opacity-60"></div>
+              {/* Volume Discount Message with Glass Effect */}
+              {roseCount >= 3 && roseCount < 101 && (
+                <div className="mt-4 p-4 rounded-xl border border-white/40 shadow-md" style={{
+                  background: 'rgba(240, 253, 244, 0.75)',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)'
+                }}>
+                  <p className="text-sm text-green-800 font-medium">
+                    💰 {t.bouquetBuilder.volumeDiscount}
+                  </p>
+                </div>
+              )}
+              
+              {/* Special Request for 101+ Roses with Glass Effect */}
+              <div className="relative p-6 rounded-2xl overflow-hidden border border-white/40 shadow-lg" style={{
+                background: 'rgba(255, 245, 247, 0.75)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)'
+              }}>
                 <div className="relative">
                   <p className="text-base font-semibold text-gray-800 mb-2">
                     {t.bouquetBuilder.specialOrderTitle}

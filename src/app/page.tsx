@@ -150,7 +150,11 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Romantic Gift */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100">
+            <div className="rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-white/40" style={{
+              background: 'rgba(255, 255, 255, 0.8)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)'
+            }}>
               <div className="mb-4 flex justify-center">
                 <img src="/images/occasions/Express your love.png" alt="Romantic Gift" className="w-20 h-20 object-contain" />
               </div>
@@ -158,7 +162,11 @@ export default function Home() {
               <p className="text-gray-600 text-center text-sm">{t.occasions.romanticDesc}</p>
             </div>
             {/* Birthday Surprise */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100">
+            <div className="rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-white/40" style={{
+              background: 'rgba(255, 255, 255, 0.8)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)'
+            }}>
               <div className="mb-4 flex justify-center">
                 <img src="/images/occasions/Birthday Suprise.png" alt="Birthday Surprise" className="w-20 h-20 object-contain" />
               </div>
@@ -166,7 +174,11 @@ export default function Home() {
               <p className="text-gray-600 text-center text-sm">{t.occasions.birthdayDesc}</p>
             </div>
             {/* Wedding Decoration */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100">
+            <div className="rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-white/40" style={{
+              background: 'rgba(255, 255, 255, 0.8)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)'
+            }}>
               <div className="mb-4 flex justify-center">
                 <img src="/images/occasions/Wedding Decoration.png" alt="Wedding Decoration" className="w-20 h-20 object-contain" />
               </div>
@@ -174,7 +186,11 @@ export default function Home() {
               <p className="text-gray-600 text-center text-sm">{t.occasions.weddingDesc}</p>
             </div>
             {/* Home Decor */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100">
+            <div className="rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-white/40" style={{
+              background: 'rgba(255, 255, 255, 0.8)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)'
+            }}>
               <div className="mb-4 flex justify-center">
                 <img src="/images/occasions/Home Decor.png" alt="Home Decor" className="w-20 h-20 object-contain" />
               </div>
