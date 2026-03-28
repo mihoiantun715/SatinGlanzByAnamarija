@@ -252,6 +252,13 @@ export default function BuildBouquetPage() {
 
             {/* Main Image — Bouquet on Wrapping Paper */}
             <div className="flex-1 relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden" style={{ aspectRatio: '3/4', maxHeight: '420px' }}>
+              {/* Preview Disclaimer - Top Center Overlay */}
+              <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 px-4 py-2 rounded-lg bg-amber-100/90 border border-amber-300 backdrop-blur-sm">
+                <p className="text-xs text-amber-900 text-center font-medium whitespace-nowrap">
+                  {t.bouquetBuilder.previewDisclaimer}
+                </p>
+              </div>
+
               {/* Wrapping paper — fills the container */}
               {(() => {
                 const wrapObj = wrappingOptions.find(w => w.key === wrapping);
@@ -438,7 +445,7 @@ export default function BuildBouquetPage() {
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-1">
-                    <img src="/images/roses/red.png" alt="Rose" className="w-6 h-6" />
+                    <img src={roseColors[0]?.image || '/rose-red.png'} alt="Rose" className="w-6 h-6" />
                     <span className="font-bold text-gray-900">6</span>
                   </div>
                   <p className="text-xs font-semibold text-gray-800">{t.bouquetBuilder.miniSize}</p>
@@ -467,7 +474,7 @@ export default function BuildBouquetPage() {
                     ⭐ {t.bouquetBuilder.mostPopular}
                   </div>
                   <div className="flex items-center gap-2 mb-1">
-                    <img src="/images/roses/red.png" alt="Rose" className="w-6 h-6" />
+                    <img src={roseColors[0]?.image || '/rose-red.png'} alt="Rose" className="w-6 h-6" />
                     <span className="font-bold text-gray-900">12</span>
                   </div>
                   <p className="text-xs font-semibold text-gray-800">{t.bouquetBuilder.classicSize}</p>
@@ -493,7 +500,7 @@ export default function BuildBouquetPage() {
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-1">
-                    <img src="/images/roses/red.png" alt="Rose" className="w-6 h-6" />
+                    <img src={roseColors[0]?.image || '/rose-red.png'} alt="Rose" className="w-6 h-6" />
                     <span className="font-bold text-gray-900">24</span>
                   </div>
                   <p className="text-xs font-semibold text-gray-800">{t.bouquetBuilder.luxurySize}</p>
@@ -519,7 +526,7 @@ export default function BuildBouquetPage() {
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-1">
-                    <img src="/images/roses/red.png" alt="Rose" className="w-6 h-6" />
+                    <img src={roseColors[0]?.image || '/rose-red.png'} alt="Rose" className="w-6 h-6" />
                     <span className="font-bold text-gray-900">50</span>
                   </div>
                   <p className="text-xs font-semibold text-gray-800">{t.bouquetBuilder.grandSize}</p>
