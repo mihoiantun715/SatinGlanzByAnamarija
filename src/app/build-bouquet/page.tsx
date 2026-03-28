@@ -405,18 +405,119 @@ export default function BuildBouquetPage() {
             <h1 className="text-4xl font-serif italic text-gray-800 mb-2" style={{ fontFamily: 'Georgia, serif' }}>
               {t.bouquetBuilder.title}
             </h1>
-            <p className="text-gray-600 mb-8">{t.bouquetBuilder.subtitle}</p>
+            <p className="text-gray-600 mb-6">{t.bouquetBuilder.subtitle}</p>
 
-            {/* Rose Count Display */}
-            <div className="text-center mb-6">
-              <p className="text-sm text-gray-600 mb-2">{t.bouquetBuilder.totalRoses}</p>
-              <p 
-                className={`text-5xl font-bold text-gray-900 transition-all duration-200 ${
-                  animateRose ? 'scale-110 opacity-80' : 'scale-100 opacity-100'
-                }`}
-              >
-                {roseCount}
-              </p>
+            {/* Bouquet Size Guide - Moved to Top */}
+            <div className="mb-8 p-5 rounded-2xl border-2 border-rose-200 bg-gradient-to-br from-rose-50/50 to-pink-50/50">
+              <p className="text-base font-semibold text-gray-800 mb-4 text-center">{t.bouquetBuilder.sizeGuide}</p>
+              <div className="grid grid-cols-2 gap-3">
+                {/* Mini 6 */}
+                <button
+                  onClick={() => {
+                    const newMix: Record<string, number> = {};
+                    const colors = roseColors.slice(0, 2);
+                    colors.forEach((color, i) => {
+                      newMix[color.key] = i === 0 ? 4 : 2;
+                    });
+                    setColorMix(newMix);
+                    setRoseCount(6);
+                    setAnimateRose(true);
+                    setTimeout(() => setAnimateRose(false), 200);
+                  }}
+                  className="p-3 rounded-xl border-2 border-gray-200 hover:border-rose-300 transition-all hover:shadow-md text-left"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-2xl">🌹</span>
+                    <span className="font-bold text-gray-900">6</span>
+                  </div>
+                  <p className="text-xs font-semibold text-gray-800">{t.bouquetBuilder.miniSize}</p>
+                  <p className="text-xs text-gray-500 italic">{t.bouquetBuilder.miniMessage}</p>
+                </button>
+
+                {/* Classic 12 - Most Popular */}
+                <button
+                  onClick={() => {
+                    const newMix: Record<string, number> = {};
+                    const colors = roseColors.slice(0, 3);
+                    colors.forEach((color, i) => {
+                      newMix[color.key] = 4;
+                    });
+                    setColorMix(newMix);
+                    setRoseCount(12);
+                    setAnimateRose(true);
+                    setTimeout(() => setAnimateRose(false), 200);
+                  }}
+                  className="p-3 rounded-xl border-2 border-rose-300 bg-rose-50/50 hover:border-rose-400 transition-all hover:shadow-md text-left relative"
+                >
+                  <div className="absolute -top-2 -right-2 bg-rose-500 text-white text-xs px-2 py-0.5 rounded-full font-semibold">
+                    ⭐ {t.bouquetBuilder.mostPopular}
+                  </div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-2xl">🌹</span>
+                    <span className="font-bold text-gray-900">12</span>
+                  </div>
+                  <p className="text-xs font-semibold text-gray-800">{t.bouquetBuilder.classicSize}</p>
+                  <p className="text-xs text-gray-500 italic">{t.bouquetBuilder.classicMessage}</p>
+                </button>
+
+                {/* Luxury 24 */}
+                <button
+                  onClick={() => {
+                    const newMix: Record<string, number> = {};
+                    const colors = roseColors.slice(0, 4);
+                    colors.forEach((color) => {
+                      newMix[color.key] = 6;
+                    });
+                    setColorMix(newMix);
+                    setRoseCount(24);
+                    setAnimateRose(true);
+                    setTimeout(() => setAnimateRose(false), 200);
+                  }}
+                  className="p-3 rounded-xl border-2 border-gray-200 hover:border-rose-300 transition-all hover:shadow-md text-left"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-2xl">🌹</span>
+                    <span className="font-bold text-gray-900">24</span>
+                  </div>
+                  <p className="text-xs font-semibold text-gray-800">{t.bouquetBuilder.luxurySize}</p>
+                  <p className="text-xs text-gray-500 italic">{t.bouquetBuilder.luxuryMessage}</p>
+                </button>
+
+                {/* Grand 50 */}
+                <button
+                  onClick={() => {
+                    const newMix: Record<string, number> = {};
+                    const colors = roseColors.slice(0, 5);
+                    colors.forEach((color) => {
+                      newMix[color.key] = 10;
+                    });
+                    setColorMix(newMix);
+                    setRoseCount(50);
+                    setAnimateRose(true);
+                    setTimeout(() => setAnimateRose(false), 200);
+                  }}
+                  className="p-3 rounded-xl border-2 border-gray-200 hover:border-rose-300 transition-all hover:shadow-md text-left"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-2xl">🌹</span>
+                    <span className="font-bold text-gray-900">50</span>
+                  </div>
+                  <p className="text-xs font-semibold text-gray-800">{t.bouquetBuilder.grandSize}</p>
+                  <p className="text-xs text-gray-500 italic">{t.bouquetBuilder.grandMessage}</p>
+                </button>
+              </div>
+              
+              {/* Rose Count Display Inside Size Guide */}
+              <div className="text-center mt-6 pt-6 border-t border-rose-200">
+                <p className="text-sm text-gray-600 mb-2">{t.bouquetBuilder.totalRoses}</p>
+                <p 
+                  className={`text-5xl font-bold text-rose-600 transition-all duration-200 ${
+                    animateRose ? 'scale-110 opacity-80' : 'scale-100 opacity-100'
+                  }`}
+                >
+                  {roseCount}
+                </p>
+              </div>
             </div>
 
             {/* All Options Container with Glass Effect */}
