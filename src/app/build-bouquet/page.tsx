@@ -397,6 +397,27 @@ export default function BuildBouquetPage() {
                   +{roseCount - 37} more
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* RIGHT: Configuration */}
+          <div>
+            <h1 className="text-4xl font-serif italic text-gray-800 mb-2" style={{ fontFamily: 'Georgia, serif' }}>
+              {t.bouquetBuilder.title}
+            </h1>
+            <p className="text-gray-600 mb-8">{t.bouquetBuilder.subtitle}</p>
+
+            {/* Rose Count Display */}
+            <div className="text-center mb-6">
+              <p className="text-sm text-gray-600 mb-2">{t.bouquetBuilder.totalRoses}</p>
+              <p 
+                className={`text-5xl font-bold text-gray-900 transition-all duration-200 ${
+                  animateRose ? 'scale-110 opacity-80' : 'scale-100 opacity-100'
+                }`}
+              >
+                {roseCount}
+              </p>
+            </div>
 
             {/* All Options Container with Background */}
             <div className="relative mb-8">
