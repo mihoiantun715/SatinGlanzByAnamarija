@@ -156,7 +156,11 @@ export interface Translation {
     subtitle: string;
     craftsmanshipMessage: string;
     previewDisclaimer: string;
+    handmadeNote: string;
+    color: string;
     colorMix: string;
+    roseCount: string;
+    roseCountNote: string;
     totalRoses: string;
     sizeGuide: string;
     miniSize: string;
