@@ -445,7 +445,7 @@ export default function BuildBouquetPage() {
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-2xl">🌹</span>
+                    <img src="/images/roses/red.png" alt="Rose" className="w-6 h-6" />
                     <span className="font-bold text-gray-900">6</span>
                   </div>
                   <p className="text-xs font-semibold text-gray-800">{t.bouquetBuilder.miniSize}</p>
@@ -474,7 +474,7 @@ export default function BuildBouquetPage() {
                     ⭐ {t.bouquetBuilder.mostPopular}
                   </div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-2xl">🌹</span>
+                    <img src="/images/roses/red.png" alt="Rose" className="w-6 h-6" />
                     <span className="font-bold text-gray-900">12</span>
                   </div>
                   <p className="text-xs font-semibold text-gray-800">{t.bouquetBuilder.classicSize}</p>
@@ -500,7 +500,7 @@ export default function BuildBouquetPage() {
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-2xl">🌹</span>
+                    <img src="/images/roses/red.png" alt="Rose" className="w-6 h-6" />
                     <span className="font-bold text-gray-900">24</span>
                   </div>
                   <p className="text-xs font-semibold text-gray-800">{t.bouquetBuilder.luxurySize}</p>
@@ -526,7 +526,7 @@ export default function BuildBouquetPage() {
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-2xl">🌹</span>
+                    <img src="/images/roses/red.png" alt="Rose" className="w-6 h-6" />
                     <span className="font-bold text-gray-900">50</span>
                   </div>
                   <p className="text-xs font-semibold text-gray-800">{t.bouquetBuilder.grandSize}</p>
@@ -751,7 +751,19 @@ export default function BuildBouquetPage() {
                       activeThumb === i ? 'border-rose-400 ring-2 ring-rose-300 shadow-md' : 'border-gray-200 hover:border-rose-200'
                     }`}
                   >
-                    <div className="relative w-full h-full bg-gradient-to-br from-rose-50 to-pink-50">
+                    <div className="relative bg-gradient-to-br from-rose-50 to-pink-100 rounded-3xl p-8 shadow-xl overflow-hidden" style={{ minHeight: '500px' }}>
+                      {/* Preview Disclaimer - Top Center Overlay */}
+                      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 px-4 py-2 rounded-lg bg-amber-100/90 border border-amber-300 backdrop-blur-sm">
+                        <p className="text-xs text-amber-900 text-center font-medium whitespace-nowrap">
+                          💐 {t.bouquetBuilder.previewDisclaimer}
+                        </p>
+                      </div>
+
+                      {/* Background decoration */}
+                      <div className="absolute inset-0 opacity-10">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-rose-300 rounded-full blur-3xl"></div>
+                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-pink-300 rounded-full blur-3xl"></div>
+                      </div>
                       <img
                         src={opt.image}
                         alt={opt.label}
