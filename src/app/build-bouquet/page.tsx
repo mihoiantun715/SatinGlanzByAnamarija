@@ -744,26 +744,12 @@ export default function BuildBouquetPage() {
                       activeThumb === i ? 'border-rose-400 ring-2 ring-rose-300 shadow-md' : 'border-gray-200 hover:border-rose-200'
                     }`}
                   >
-                    <div className="relative bg-gradient-to-br from-rose-50 to-pink-100 rounded-3xl p-8 shadow-xl overflow-hidden" style={{ minHeight: '500px' }}>
-                      {/* Preview Disclaimer - Top Center Overlay */}
-                      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 px-4 py-2 rounded-lg bg-amber-100/90 border border-amber-300 backdrop-blur-sm">
-                        <p className="text-xs text-amber-900 text-center font-medium whitespace-nowrap">
-                          💐 {t.bouquetBuilder.previewDisclaimer}
-                        </p>
-                      </div>
-
-                      {/* Background decoration */}
-                      <div className="absolute inset-0 opacity-10">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-rose-300 rounded-full blur-3xl"></div>
-                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-pink-300 rounded-full blur-3xl"></div>
-                      </div>
-                      <img
-                        src={opt.image}
-                        alt={opt.label}
-                        className="absolute inset-0 w-full h-full object-contain p-1"
-                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                      />
-                    </div>
+                    <img
+                      src={opt.image}
+                      alt={opt.label}
+                      className="w-full h-full object-cover"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
                   </button>
                 ))}
                 </div>
