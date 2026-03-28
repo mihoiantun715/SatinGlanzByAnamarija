@@ -125,7 +125,7 @@ export const ro: Translation = {
   bouquetBuilder: {
     title: 'Trandafiri Eterni — Făcuți manual din panglică de satin',
     subtitle: 'Realizat manual cu dragoste de Anamarija. Fiecare trandafir este făcut din panglică de satin.',
-    craftsmanshipMessage: 'Alegeți culorile și cantitatea preferate. Artizanii noștri vă vor aranja buchetul frumos.',
+    craftsmanshipMessage: 'Alegeți culorile și cantitatea preferate. Echipa noastră vă va aranja buchetul frumos.',
     previewDisclaimer: 'Previzualizarea este ilustrativă — buchetul final este aranjat manual pentru cel mai bun aspect.',
     colorMix: 'Mix de Culori Trandafiri',
     handmadeNote: '🌹 Lucrat manual & Cumpără 2 = LIVRARE GRATUITĂ ✈️',
