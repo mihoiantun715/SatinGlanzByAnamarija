@@ -397,30 +397,6 @@ export default function BuildBouquetPage() {
                   +{roseCount - 37} more
                 </div>
               )}
-            </div>
-          </div>
-
-          {/* RIGHT: Product Options */}
-          <div>
-            <h1 className="text-3xl sm:text-4xl font-serif italic text-gray-800 mb-2" style={{ fontFamily: 'Georgia, serif' }}>
-              {t.bouquetBuilder.title}
-            </h1>
-
-            <div className="text-2xl font-bold text-gray-900 mb-3">
-              {t.common.currency}{totalPrice.toFixed(2)}
-            </div>
-
-            {/* Volume Discount Incentive - Moved to top for visibility */}
-            {incentiveMessage && (
-              <div className="mb-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-xl shadow-sm">
-                <p className="text-sm font-bold text-green-800">
-                  💰 {t.bouquetBuilder.unlockDiscount} {incentiveMessage.needed} {t.bouquetBuilder.moreRoses} {incentiveMessage.needed === 1 ? t.bouquetBuilder.rose : t.bouquetBuilder.roses} {t.bouquetBuilder.toUnlock} {t.common.currency}{incentiveMessage.newPrice}/{t.bouquetBuilder.rose}!
-                </p>
-                <p className="text-xs text-green-700 mt-1 font-medium">
-                  {t.bouquetBuilder.saveOn} {t.common.currency}{incentiveMessage.savings.toFixed(2)} {t.bouquetBuilder.onYourSelection}
-                </p>
-              </div>
-            )}
 
             {/* All Options Container with Background */}
             <div className="relative mb-8">
