@@ -154,10 +154,9 @@ export interface Translation {
   bouquetBuilder: {
     title: string;
     subtitle: string;
-    handmadeNote: string;
-    color: string;
-    roseCount: string;
-    roseCountNote: string;
+    craftsmanshipMessage: string;
+    previewDisclaimer: string;
+    colorMix: string;
     totalRoses: string;
     sizeGuide: string;
     miniSize: string;

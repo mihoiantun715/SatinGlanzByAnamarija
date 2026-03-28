@@ -406,7 +406,14 @@ export default function BuildBouquetPage() {
             <h1 className="text-4xl font-serif italic text-gray-800 mb-2" style={{ fontFamily: 'Georgia, serif' }}>
               {t.bouquetBuilder.title}
             </h1>
-            <p className="text-gray-600 mb-6">{t.bouquetBuilder.subtitle}</p>
+            <p className="text-gray-600 mb-3">{t.bouquetBuilder.subtitle}</p>
+            
+            {/* Craftsmanship Message */}
+            <div className="mb-6 p-4 rounded-xl bg-gradient-to-r from-rose-50 to-pink-50 border border-rose-200">
+              <p className="text-sm text-gray-700 text-center italic">
+                ✨ {t.bouquetBuilder.craftsmanshipMessage}
+              </p>
+            </div>
 
             {/* Bouquet Size Guide - Moved to Top */}
             <div className="mb-8 p-5 rounded-2xl border-2 border-rose-200 bg-gradient-to-br from-rose-50/50 to-pink-50/50">
@@ -422,10 +429,13 @@ export default function BuildBouquetPage() {
                     });
                     setColorMix(newMix);
                     setRoseCount(6);
+                    setSelectedPreset(6);
                     setAnimateRose(true);
                     setTimeout(() => setAnimateRose(false), 200);
                   }}
-                  className="p-3 rounded-xl border-2 border-gray-200 hover:border-rose-300 transition-all hover:shadow-md text-left"
+                  className={`p-3 rounded-xl border-2 transition-all hover:shadow-md text-left ${
+                    selectedPreset === 6 ? 'border-rose-500 bg-rose-100 shadow-md ring-2 ring-rose-300' : 'border-gray-200 hover:border-rose-300'
+                  }`}
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-2xl">🌹</span>
@@ -445,10 +455,13 @@ export default function BuildBouquetPage() {
                     });
                     setColorMix(newMix);
                     setRoseCount(12);
+                    setSelectedPreset(12);
                     setAnimateRose(true);
                     setTimeout(() => setAnimateRose(false), 200);
                   }}
-                  className="p-3 rounded-xl border-2 border-rose-300 bg-rose-50/50 hover:border-rose-400 transition-all hover:shadow-md text-left relative"
+                  className={`p-3 rounded-xl border-2 transition-all hover:shadow-md text-left relative ${
+                    selectedPreset === 12 ? 'border-rose-500 bg-rose-100 shadow-md ring-2 ring-rose-300' : 'border-rose-300 bg-rose-50/50 hover:border-rose-400'
+                  }`}
                 >
                   <div className="absolute -top-2 -right-2 bg-rose-500 text-white text-xs px-2 py-0.5 rounded-full font-semibold">
                     ⭐ {t.bouquetBuilder.mostPopular}
@@ -471,10 +484,13 @@ export default function BuildBouquetPage() {
                     });
                     setColorMix(newMix);
                     setRoseCount(24);
+                    setSelectedPreset(24);
                     setAnimateRose(true);
                     setTimeout(() => setAnimateRose(false), 200);
                   }}
-                  className="p-3 rounded-xl border-2 border-gray-200 hover:border-rose-300 transition-all hover:shadow-md text-left"
+                  className={`p-3 rounded-xl border-2 transition-all hover:shadow-md text-left ${
+                    selectedPreset === 24 ? 'border-rose-500 bg-rose-100 shadow-md ring-2 ring-rose-300' : 'border-gray-200 hover:border-rose-300'
+                  }`}
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-2xl">🌹</span>
@@ -494,10 +510,13 @@ export default function BuildBouquetPage() {
                     });
                     setColorMix(newMix);
                     setRoseCount(50);
+                    setSelectedPreset(50);
                     setAnimateRose(true);
                     setTimeout(() => setAnimateRose(false), 200);
                   }}
-                  className="p-3 rounded-xl border-2 border-gray-200 hover:border-rose-300 transition-all hover:shadow-md text-left"
+                  className={`p-3 rounded-xl border-2 transition-all hover:shadow-md text-left ${
+                    selectedPreset === 50 ? 'border-rose-500 bg-rose-100 shadow-md ring-2 ring-rose-300' : 'border-gray-200 hover:border-rose-300'
+                  }`}
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-2xl">🌹</span>

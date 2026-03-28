@@ -125,6 +125,9 @@ export const de: Translation = {
   bouquetBuilder: {
     title: 'Ewige Rosen — Handgefertigt aus Satinband',
     subtitle: 'Mit Liebe handgefertigt von Anamarija. Jede Rose wird aus hochwertigem Satinband hergestellt.',
+    craftsmanshipMessage: 'Wählen Sie Ihre Lieblingsfarben und Menge. Unsere Kunsthandwerker arrangieren Ihren Strauß wunderschön.',
+    previewDisclaimer: 'Vorschau ist illustrativ — der endgültige Strauß wird von Hand für das beste Aussehen arrangiert.',
+    colorMix: 'Rosenfarbmischung',
     handmadeNote: '🌹 Handgemacht & 2 kaufen = GRATIS VERSAND ✈️',
     color: 'Rosenfarbe',
     roseCount: 'Anzahl der Rosen',

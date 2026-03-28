@@ -123,9 +123,11 @@ export const tr: Translation = {
     madeWith: 'Anamarija tarafından ♥ ile yapılmıştır — SatinGlanz',
   },
   bouquetBuilder: {
-    title: 'Ebedi Güller — Saten Kurdeleden El Yapımı',
+    title: 'Sonsuz Güller — Saten Kurdele ile El Yapımı',
     subtitle: 'Anamarija tarafından sevgiyle el yapımı. Her gül premium saten kurdeleden yapılmıştır.',
-    handmadeNote: '🌹 El Yapımı & 2 Al = ÜCRETSİZ KARGO ✈️',
+    craftsmanshipMessage: 'En sevdiğiniz renkleri ve miktarı seçin. Ustalarımız buketi güzelce düzenleyecek.',
+    previewDisclaimer: 'Önizleme gösterimseldir — nihai buket en iyi görünüm için elle düzenlenir.',
+    colorMix: 'Gül Renk Karışımı',
     color: 'Gül Rengi',
     roseCount: 'Gül Sayısı',
     roseCountNote: 'Bukette kaç gül istediğinizi seçin',
