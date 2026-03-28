@@ -159,6 +159,16 @@ export interface Translation {
     roseCount: string;
     roseCountNote: string;
     totalRoses: string;
+    sizeGuide: string;
+    miniSize: string;
+    miniMessage: string;
+    classicSize: string;
+    classicMessage: string;
+    mostPopular: string;
+    luxurySize: string;
+    luxuryMessage: string;
+    grandSize: string;
+    grandMessage: string;
     ribbon: string;
     blessingRibbon: string;
     pleaseChoose: string;
