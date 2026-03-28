@@ -65,11 +65,11 @@ export default function ProductCard({ product }: ProductCardProps) {
         whileHover={{ y: -8, scale: 1.02 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
         onClick={() => setShowQuickView(true)}
-        className="group relative rounded-2xl shadow-lg border border-white/40 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+        className="group relative rounded-2xl shadow-lg border border-white/50 overflow-hidden transition-all duration-300 hover:shadow-2xl cursor-pointer"
         style={{
-          background: 'rgba(255, 255, 255, 0.8)',
-          backdropFilter: 'blur(8px)',
-          WebkitBackdropFilter: 'blur(8px)'
+          background: 'rgba(255, 255, 255, 0.7)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)'
         }}
       >
         <div

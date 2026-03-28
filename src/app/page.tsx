@@ -57,7 +57,7 @@ export default function Home() {
       </section>
 
       {/* Featured Products */}
-      <section className="py-20 lg:py-28">
+      <section className="py-20 lg:py-28 bg-gradient-to-br from-rose-50 via-pink-50 to-amber-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <h2 className="text-5xl sm:text-6xl font-serif italic text-gray-800 mb-4" style={{ fontFamily: 'Georgia, serif' }}>
