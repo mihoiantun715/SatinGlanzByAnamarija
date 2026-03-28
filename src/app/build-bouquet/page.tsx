@@ -467,7 +467,7 @@ export default function BuildBouquetPage() {
                               }
                             }
                           }}
-                          className="w-8 h-8 rounded-lg border-2 border-gray-200 hover:border-gray-400 flex items-center justify-center text-gray-600 font-bold transition-all"
+                          className="w-8 h-8 rounded-lg border-2 border-gray-200 hover:border-gray-400 flex items-center justify-center text-gray-600 font-bold transition-all hover:scale-110 active:scale-95"
                         >
                           -
                         </button>
@@ -501,7 +501,7 @@ export default function BuildBouquetPage() {
                               setRoseCount(total);
                             }
                           }}
-                          className="w-8 h-8 rounded-lg border-2 border-gray-200 hover:border-gray-400 flex items-center justify-center text-gray-600 font-bold transition-all"
+                          className="w-8 h-8 rounded-lg border-2 border-gray-200 hover:border-gray-400 flex items-center justify-center text-gray-600 font-bold transition-all hover:scale-110 active:scale-95"
                         >
                           +
                         </button>
@@ -530,20 +530,28 @@ export default function BuildBouquetPage() {
               )}
               
               {/* Special Request for 101+ Roses */}
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                <p className="text-sm font-semibold text-blue-900 mb-2">
-                  🌹 Need more than 101 roses?
-                </p>
-                <p className="text-xs text-blue-700 mb-3">
-                  For special orders with more than 101 roses, please contact Anamarija directly. We'll create a custom quote for your special bouquet!
-                </p>
-                <button
-                  type="button"
-                  onClick={() => window.location.href = '/special-request'}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 px-4 rounded-lg transition-colors"
-                >
-                  Request Special Order
-                </button>
+              <div className="relative p-6 rounded-2xl overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-rose-100 to-pink-100 opacity-60"></div>
+                <div className="relative">
+                  <p className="text-base font-semibold text-gray-800 mb-2">
+                    {t.bouquetBuilder.specialOrderTitle}
+                  </p>
+                  <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                    {t.bouquetBuilder.specialOrderDesc}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => window.location.href = '/special-request'}
+                    className="w-full relative group"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-rose-300 to-rose-400 rounded-full blur-sm opacity-50 group-hover:opacity-70 transition-opacity"></div>
+                    <div className="relative bg-gradient-to-br from-rose-200 via-rose-300 to-rose-400 py-3 rounded-full shadow-lg border border-rose-400/30">
+                      <span className="text-sm font-semibold text-gray-800">
+                        {t.bouquetBuilder.specialOrderButton}
+                      </span>
+                    </div>
+                  </button>
+                </div>
                 </div>
               </div>
 

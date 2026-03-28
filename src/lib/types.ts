@@ -42,6 +42,9 @@ export interface Translation {
     title: string;
     subtitle: string;
     cta: string;
+    newTitle: string;
+    newSubtitle: string;
+    newCta: string;
   };
   home: {
     featuredTitle: string;
@@ -56,6 +59,9 @@ export interface Translation {
     why3Title: string;
     why3Text: string;
     viewAll: string;
+    madeInGermany: string;
+    occasionsTitle: string;
+    occasionsSubtitle: string;
   };
   shop: {
     title: string;
@@ -155,6 +161,9 @@ export interface Translation {
     blessingRibbon: string;
     pleaseChoose: string;
     yesAdd: string;
+    specialOrderTitle: string;
+    specialOrderDesc: string;
+    specialOrderButton: string;
     noThanks: string;
     customText: string;
     customTextNote: string;
@@ -378,6 +387,16 @@ export interface Translation {
     securePaymentBadgeDesc: string;
     moneyBack: string;
     moneyBackDesc: string;
+  };
+  occasions: {
+    romantic: string;
+    romanticDesc: string;
+    birthday: string;
+    birthdayDesc: string;
+    wedding: string;
+    weddingDesc: string;
+    homeDecor: string;
+    homeDecorDesc: string;
   };
   whyChooseRoses: {
     title: string;

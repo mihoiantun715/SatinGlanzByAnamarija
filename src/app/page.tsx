@@ -26,24 +26,24 @@ export default function Home() {
           <div className="max-w-3xl mx-auto text-center">
             <div className="animate-fade-in">
               <span className="inline-block text-rose-600 text-sm font-medium tracking-wide mb-6">
-                {t.common.handcraftedWithLove}
+                {t.home.madeInGermany}
               </span>
             </div>
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-serif italic text-gray-800 leading-tight mb-6 animate-fade-in" style={{ fontFamily: 'Georgia, serif' }}>
-              {t.hero.title}
+              {t.hero.newTitle}
             </h1>
             <p className="text-lg sm:text-xl text-gray-600 leading-relaxed mb-10 max-w-2xl mx-auto animate-fade-in-delay">
-              {t.hero.subtitle}
+              {t.hero.newSubtitle}
             </p>
             <div className="animate-fade-in-delay-2">
               <Link
-                href="/shop"
+                href="/build-bouquet"
                 className="relative inline-block group"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-rose-300 to-rose-400 rounded-full blur-sm opacity-50 group-hover:opacity-70 transition-opacity"></div>
                 <div className="relative bg-gradient-to-br from-rose-200 via-rose-300 to-rose-400 px-12 py-5 rounded-full shadow-2xl border border-rose-400/30 group-hover:shadow-rose-300/50 transition-all">
                   <span className="text-2xl font-serif text-gray-800 tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>
-                    {t.hero.cta}
+                    {t.hero.newCta}
                   </span>
                 </div>
               </Link>
@@ -134,8 +134,48 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Perfect For Every Occasion */}
+      <section className="py-20 lg:py-28 bg-gradient-to-br from-rose-50 via-pink-50 to-amber-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-14">
+            <h2 className="text-4xl sm:text-5xl font-serif italic text-gray-800 mb-4" style={{ fontFamily: 'Georgia, serif' }}>
+              {t.home.occasionsTitle}
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              {t.home.occasionsSubtitle}
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Romantic Gift */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100">
+              <div className="text-5xl mb-4 text-center">❤️</div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-3 text-center">{t.occasions.romantic}</h3>
+              <p className="text-gray-600 text-center text-sm">{t.occasions.romanticDesc}</p>
+            </div>
+            {/* Birthday Surprise */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100">
+              <div className="text-5xl mb-4 text-center">🎂</div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-3 text-center">{t.occasions.birthday}</h3>
+              <p className="text-gray-600 text-center text-sm">{t.occasions.birthdayDesc}</p>
+            </div>
+            {/* Wedding Decoration */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100">
+              <div className="text-5xl mb-4 text-center">💍</div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-3 text-center">{t.occasions.wedding}</h3>
+              <p className="text-gray-600 text-center text-sm">{t.occasions.weddingDesc}</p>
+            </div>
+            {/* Home Decor */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100">
+              <div className="text-5xl mb-4 text-center">🏠</div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-3 text-center">{t.occasions.homeDecor}</h3>
+              <p className="text-gray-600 text-center text-sm">{t.occasions.homeDecorDesc}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Trust Badges */}
-      <TrustBadges />
+      <TrustBadges variant="default" />
 
       {/* About Preview */}
       <section className="py-20 bg-gradient-to-br from-rose-50 to-pink-50">
