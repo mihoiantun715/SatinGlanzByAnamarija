@@ -68,8 +68,12 @@ export default function ProductQuickView({ product, onClose }: Props) {
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
-      {/* Modal */}
-      <div className="relative bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
+      {/* Modal with Glass Effect */}
+      <div className="relative rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200 border border-white/50" style={{
+        background: 'rgba(255, 255, 255, 0.85)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)'
+      }}>
         {/* Close button */}
         <button
           onClick={onClose}
