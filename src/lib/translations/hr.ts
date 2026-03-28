@@ -124,7 +124,7 @@ export const hr: Translation = {
   },
   bouquetBuilder: {
     title: 'Vječne Ruže — Ručno Izrađene od Satenske Vrpce',
-    subtitle: 'Ručno izrađeno s ljubavlju od strane Anamarije. Svaka ruža je izrađena od premium satenske vrpce.',
+    subtitle: 'Ručno izrađeno s ljubavlju od strane Anamarije. Svaka ruža je izrađena od satenske vrpce.',
     craftsmanshipMessage: 'Odaberite svoje omiljene boje i količinu. Naši majstori će lijepo urediti vaš buket.',
     previewDisclaimer: 'Pregled je ilustrativan — konačni buket je ručno uređen za najbolji izgled.',
     colorMix: 'Mješavina Boja Ruža',

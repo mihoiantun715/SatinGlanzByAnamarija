@@ -124,7 +124,7 @@ export const en: Translation = {
   },
   bouquetBuilder: {
     title: 'Eternal Roses — HandMade From Satin Ribbon',
-    subtitle: 'Handcrafted with love by Anamarija. Each rose is made from premium satin ribbon.',
+    subtitle: 'Handcrafted with love by Anamarija. Each rose is made from satin ribbon.',
     craftsmanshipMessage: 'Choose your favorite colors and quantity. Our artisans will arrange your bouquet beautifully.',
     previewDisclaimer: 'Preview is illustrative — final bouquet is hand-arranged for the best look.',
     colorMix: 'Rose Color Mix',
