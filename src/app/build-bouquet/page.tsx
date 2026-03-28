@@ -79,6 +79,7 @@ export default function BuildBouquetPage() {
   const [customCount, setCustomCount] = useState('');
   const [customText, setCustomText] = useState('');
   const [animateRose, setAnimateRose] = useState(false);
+  const [selectedPreset, setSelectedPreset] = useState<number | null>(null);
 
   const toggleDecoration = (key: string) => {
     if (key === 'noThanks') {
