@@ -239,14 +239,16 @@ export default function AdminPage() {
 
     setCreatingCustomOrder(true);
     try {
-      // Find customer userId by email
-      const usersSnap = await getDocs(
-        query(collection(db, 'users'), where('email', '==', customOrderForm.customerEmail))
-      );
+      // Find customer userId by email - users collection stores email in document data
+      const usersSnap = await getDocs(collection(db, 'users'));
       
       let userId = null;
-      if (!usersSnap.empty) {
-        userId = usersSnap.docs[0].id;
+      for (const doc of usersSnap.docs) {
+        const userData = doc.data();
+        if (userData.email === customOrderForm.customerEmail) {
+          userId = doc.id;
+          break;
+        }
       }
 
       if (!userId) {
