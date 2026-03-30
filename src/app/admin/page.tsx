@@ -150,14 +150,6 @@ export default function AdminPage() {
     notes: '',
   });
   const [creatingCustomOrder, setCreatingCustomOrder] = useState(false);
-  
-  // Import Stripe order state
-  const [showImportOrderForm, setShowImportOrderForm] = useState(false);
-  const [importOrderForm, setImportOrderForm] = useState({
-    stripePaymentIntentId: '',
-    customerEmail: '',
-  });
-  const [importingOrder, setImportingOrder] = useState(false);
 
   useEffect(() => {
     if (!authLoading && user && isAdmin) {
@@ -293,76 +285,6 @@ export default function AdminPage() {
         i === index ? { ...item, [field]: value } : item
       ),
     }));
-  };
-
-  const importStripeOrder = async () => {
-    if (!importOrderForm.stripePaymentIntentId || !importOrderForm.customerEmail) {
-      setModalNotification({ message: 'Payment Intent ID and customer email are required', type: 'error' });
-      return;
-    }
-
-    setImportingOrder(true);
-    try {
-      // Fetch payment intent from Stripe to get order details
-      const response = await fetch('/api/get-stripe-payment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          paymentIntentId: importOrderForm.stripePaymentIntentId,
-        }),
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to fetch payment');
-      }
-
-      // Create order from Stripe payment data
-      const orderData = {
-        userEmail: importOrderForm.customerEmail,
-        createdAt: new Date(data.created * 1000).toISOString(),
-        status: 'paid',
-        total: data.amount / 100, // Convert from cents
-        subtotal: data.amount / 100,
-        shippingCost: 0,
-        shippingCarrier: 'dhl',
-        stripePaymentIntentId: data.id,
-        items: data.metadata?.items ? JSON.parse(data.metadata.items) : [
-          {
-            name: data.description || 'Custom Order',
-            quantity: 1,
-            price: data.amount / 100,
-          }
-        ],
-        shippingAddress: {
-          firstName: data.metadata?.customerName?.split(' ')[0] || 'Customer',
-          lastName: data.metadata?.customerName?.split(' ').slice(1).join(' ') || '',
-          street: data.metadata?.address || 'N/A',
-          city: 'N/A',
-          postalCode: 'N/A',
-          country: 'N/A',
-          phone: 'N/A',
-        },
-        isImportedOrder: true,
-      };
-
-      await addDoc(collection(db, 'orders'), orderData);
-      
-      await fetchOrders();
-      setShowImportOrderForm(false);
-      setImportOrderForm({
-        stripePaymentIntentId: '',
-        customerEmail: '',
-      });
-      
-      setModalNotification({ message: 'Stripe order imported successfully!', type: 'success' });
-    } catch (err: any) {
-      console.error('Failed to import Stripe order:', err);
-      setModalNotification({ message: err.message || 'Failed to import order', type: 'error' });
-    } finally {
-      setImportingOrder(false);
-    }
   };
 
 
@@ -799,22 +721,13 @@ export default function AdminPage() {
             Orders ({adminOrders.length})
           </button>
           {activeTab === 'orders' && (
-            <>
-              <button
-                onClick={() => setShowCustomOrderForm(true)}
-                className="flex items-center gap-2 px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-semibold text-sm transition-all ml-auto"
-              >
-                <FileText className="w-4 h-4" />
-                Create Invoice
-              </button>
-              <button
-                onClick={() => setShowImportOrderForm(true)}
-                className="flex items-center gap-2 px-5 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold text-sm transition-all"
-              >
-                <Plus className="w-4 h-4" />
-                Import Stripe Order
-              </button>
-            </>
+            <button
+              onClick={() => setShowCustomOrderForm(true)}
+              className="flex items-center gap-2 px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-semibold text-sm transition-all ml-auto"
+            >
+              <FileText className="w-4 h-4" />
+              Create Invoice
+            </button>
           )}
           <button
             onClick={() => setActiveTab('products')}
@@ -1849,6 +1762,68 @@ export default function AdminPage() {
                   className="px-6 py-3 border-2 border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl font-semibold transition-all"
                 >
                   Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Import Stripe Order Modal */}
+      {showImportOrderForm && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center pt-10 px-4 bg-black/40 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 w-full max-w-lg p-8 mb-10">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-gray-900">Import Stripe Order</h2>
+              <button onClick={() => setShowImportOrderForm(false)} className="text-gray-400 hover:text-gray-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Stripe Payment Intent ID *</label>
+                <input
+                  type="text"
+                  value={importOrderForm.stripePaymentIntentId}
+                  onChange={(e) => setImportOrderForm({ ...importOrderForm, stripePaymentIntentId: e.target.value })}
+                  placeholder="pi_xxxxxxxxxxxxx"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-300"
+                />
+                <p className="text-xs text-gray-500 mt-1">Find this in your Stripe Dashboard → Payments</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Customer Email *</label>
+                <input
+                  type="email"
+                  value={importOrderForm.customerEmail}
+                  onChange={(e) => setImportOrderForm({ ...importOrderForm, customerEmail: e.target.value })}
+                  placeholder="customer@example.com"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-green-300"
+                />
+              </div>
+
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                <p className="text-sm text-blue-800">
+                  <strong>How it works:</strong> Enter the Stripe Payment Intent ID from a payment link order. 
+                  We'll fetch the payment details and add it to this customer's order history.
+                </p>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={() => setShowImportOrderForm(false)}
+                  className="flex-1 px-5 py-3 border border-gray-200 text-gray-700 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={importStripeOrder}
+                  disabled={importingOrder}
+                  className="flex-1 px-5 py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold text-sm transition-all disabled:opacity-50"
+                >
+                  {importingOrder ? 'Importing...' : 'Import Order'}
                 </button>
               </div>
             </div>
