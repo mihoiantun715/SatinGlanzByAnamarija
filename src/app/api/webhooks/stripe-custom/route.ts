@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
-  let event: Stripe.Event;
+  let event: any;
 
   try {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
   // Handle payment success
   if (event.type === 'payment_intent.succeeded') {
-    const paymentIntent = event.data.object as Stripe.PaymentIntent;
+    const paymentIntent = event.data.object as any;
     const orderId = paymentIntent.metadata.orderId;
 
     if (orderId && paymentIntent.metadata.orderType === 'custom_order') {
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
 
   // Handle payment failure
   if (event.type === 'payment_intent.payment_failed') {
-    const paymentIntent = event.data.object as Stripe.PaymentIntent;
+    const paymentIntent = event.data.object as any;
     const orderId = paymentIntent.metadata.orderId;
 
     if (orderId && paymentIntent.metadata.orderType === 'custom_order') {
