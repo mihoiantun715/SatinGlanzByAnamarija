@@ -157,6 +157,7 @@ export default function AdminPage() {
       fetchProducts();
       fetchOrders();
       fetchMessages();
+      fetchCustomers();
     }
   }, [authLoading, user, isAdmin]);
 
@@ -167,25 +168,32 @@ export default function AdminPage() {
       data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       setAdminOrders(data);
       setOrderStatusFilter('all');
-      
-      // Extract unique customers
-      const customersMap = new Map<string, {email: string, name: string}>();
-      data.forEach(order => {
-        if (order.userEmail && !customersMap.has(order.userEmail)) {
-          customersMap.set(order.userEmail, {
-            email: order.userEmail,
-            name: order.shippingAddress?.firstName && order.shippingAddress?.lastName 
-              ? `${order.shippingAddress.firstName} ${order.shippingAddress.lastName}`
-              : order.userEmail
-          });
-        }
-      });
-      setExistingCustomers(Array.from(customersMap.values()));
     } catch (err) {
       console.error('Failed to fetch orders:', err);
       setAdminOrders([]);
     } finally {
       setLoadingOrders(false);
+    }
+  };
+
+  const fetchCustomers = async () => {
+    try {
+      const snap = await getDocs(collection(db, 'users'));
+      const customers = snap.docs.map(d => {
+        const data = d.data();
+        return {
+          email: data.email || d.id,
+          name: data.displayName || data.firstName && data.lastName 
+            ? `${data.firstName} ${data.lastName}` 
+            : data.email || d.id
+        };
+      });
+      // Sort by name
+      customers.sort((a, b) => a.name.localeCompare(b.name));
+      setExistingCustomers(customers);
+    } catch (err) {
+      console.error('Failed to fetch customers:', err);
+      setExistingCustomers([]);
     }
   };
 
@@ -1796,6 +1804,32 @@ export default function AdminPage() {
             </div>
 
             <div className="space-y-5">
+              {existingCustomers.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Select Existing Customer</label>
+                  <select
+                    onChange={(e) => {
+                      const customer = existingCustomers.find(c => c.email === e.target.value);
+                      if (customer) {
+                        setCustomOrderForm({
+                          ...customOrderForm,
+                          customerEmail: customer.email,
+                          customerName: customer.name
+                        });
+                      }
+                    }}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                  >
+                    <option value="">-- Choose existing customer or enter new below --</option>
+                    {existingCustomers.map((customer, idx) => (
+                      <option key={idx} value={customer.email}>
+                        {customer.name} ({customer.email})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5">Customer Name *</label>
