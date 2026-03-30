@@ -243,15 +243,17 @@ export default function AdminPage() {
       const usersSnap = await getDocs(collection(db, 'users'));
       
       let userId = null;
+      let customerData = null;
       for (const doc of usersSnap.docs) {
         const userData = doc.data();
         if (userData.email === customOrderForm.customerEmail) {
           userId = doc.id;
+          customerData = userData;
           break;
         }
       }
 
-      if (!userId) {
+      if (!userId || !customerData) {
         setModalNotification({ 
           message: 'Customer not found in database. Please make sure they have an account.', 
           type: 'error' 
@@ -259,6 +261,16 @@ export default function AdminPage() {
         setCreatingCustomOrder(false);
         return;
       }
+
+      // Get customer's saved address or use fallback
+      const savedAddress = customerData.savedAddress;
+      const firstName = savedAddress?.firstName || customOrderForm.customerName.split(' ')[0] || customOrderForm.customerName;
+      const lastName = savedAddress?.lastName || customOrderForm.customerName.split(' ').slice(1).join(' ') || '';
+      const street = savedAddress?.street || customOrderForm.notes || 'N/A';
+      const city = savedAddress?.city || 'N/A';
+      const postalCode = savedAddress?.postalCode || 'N/A';
+      const country = savedAddress?.country || 'Germany';
+      const phone = savedAddress?.phone || 'N/A';
 
       const total = validItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       
@@ -278,13 +290,13 @@ export default function AdminPage() {
           price: item.price,
         })),
         shippingAddress: {
-          firstName: customOrderForm.customerName.split(' ')[0] || customOrderForm.customerName,
-          lastName: customOrderForm.customerName.split(' ').slice(1).join(' ') || '',
-          street: customOrderForm.notes || 'N/A',
-          city: 'N/A',
-          postalCode: 'N/A',
-          country: 'N/A',
-          phone: 'N/A',
+          firstName,
+          lastName,
+          street,
+          city,
+          postalCode,
+          country,
+          phone,
         },
         isCustomOrder: true,
       };
