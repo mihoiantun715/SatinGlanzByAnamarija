@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
@@ -239,10 +239,30 @@ export default function AdminPage() {
 
     setCreatingCustomOrder(true);
     try {
+      // Find customer userId by email
+      const usersSnap = await getDocs(
+        query(collection(db, 'users'), where('email', '==', customOrderForm.customerEmail))
+      );
+      
+      let userId = null;
+      if (!usersSnap.empty) {
+        userId = usersSnap.docs[0].id;
+      }
+
+      if (!userId) {
+        setModalNotification({ 
+          message: 'Customer not found in database. Please make sure they have an account.', 
+          type: 'error' 
+        });
+        setCreatingCustomOrder(false);
+        return;
+      }
+
       const total = validItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       
       // Create order directly in orders collection (same as regular orders)
       const orderData = {
+        userId, // Link to customer account
         userEmail: customOrderForm.customerEmail,
         createdAt: new Date().toISOString(),
         status: 'paid', // Mark as paid since payment handled externally via Stripe
