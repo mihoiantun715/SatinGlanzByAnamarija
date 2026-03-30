@@ -180,17 +180,23 @@ export default function AdminPage() {
   const fetchCustomers = async () => {
     try {
       const snap = await getDocs(collection(db, 'users'));
+      console.log('Total users fetched from Firebase:', snap.docs.length);
+      
       const customers = snap.docs.map(d => {
         const data = d.data();
-        return {
+        const customer = {
           email: data.email || d.id,
-          name: data.displayName || data.firstName && data.lastName 
+          name: data.displayName || (data.firstName && data.lastName 
             ? `${data.firstName} ${data.lastName}` 
-            : data.email || d.id
+            : data.email || d.id)
         };
+        console.log('Customer:', customer);
+        return customer;
       });
+      
       // Sort by name
       customers.sort((a, b) => a.name.localeCompare(b.name));
+      console.log('Total customers after processing:', customers.length);
       setExistingCustomers(customers);
     } catch (err) {
       console.error('Failed to fetch customers:', err);
@@ -1890,27 +1896,57 @@ export default function AdminPage() {
             <div className="space-y-5">
               {existingCustomers.length > 0 && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Select Existing Customer</label>
-                  <select
-                    onChange={(e) => {
-                      const customer = existingCustomers.find(c => c.email === e.target.value);
-                      if (customer) {
-                        setCustomOrderForm({
-                          ...customOrderForm,
-                          customerEmail: customer.email,
-                          customerName: customer.name
-                        });
-                      }
-                    }}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  >
-                    <option value="">-- Choose existing customer or enter new below --</option>
-                    {existingCustomers.map((customer, idx) => (
-                      <option key={idx} value={customer.email}>
-                        {customer.name} ({customer.email})
-                      </option>
-                    ))}
-                  </select>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Search & Select Existing Customer
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={customerSearch}
+                      onChange={(e) => setCustomerSearch(e.target.value)}
+                      placeholder="Search by name or email..."
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    />
+                    {customerSearch && (
+                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                        {existingCustomers
+                          .filter(c => 
+                            c.name.toLowerCase().includes(customerSearch.toLowerCase()) ||
+                            c.email.toLowerCase().includes(customerSearch.toLowerCase())
+                          )
+                          .slice(0, 50)
+                          .map((customer, idx) => (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => {
+                                setCustomOrderForm({
+                                  ...customOrderForm,
+                                  customerEmail: customer.email,
+                                  customerName: customer.name
+                                });
+                                setCustomerSearch('');
+                              }}
+                              className="w-full px-4 py-3 text-left hover:bg-blue-50 border-b border-gray-100 last:border-b-0 transition-colors"
+                            >
+                              <div className="font-medium text-gray-900">{customer.name}</div>
+                              <div className="text-sm text-gray-500">{customer.email}</div>
+                            </button>
+                          ))}
+                        {existingCustomers.filter(c => 
+                          c.name.toLowerCase().includes(customerSearch.toLowerCase()) ||
+                          c.email.toLowerCase().includes(customerSearch.toLowerCase())
+                        ).length === 0 && (
+                          <div className="px-4 py-3 text-sm text-gray-500">
+                            No customers found matching "{customerSearch}"
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {existingCustomers.length} total customers • Type to search
+                  </p>
                 </div>
               )}
 
