@@ -3,6 +3,9 @@ import Stripe from 'stripe';
 import { doc, updateDoc, getFirestore } from 'firebase/firestore';
 import { initializeApp, getApps } from 'firebase/app';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 // Initialize Firebase only if not already initialized
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
