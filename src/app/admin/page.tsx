@@ -1615,7 +1615,7 @@ export default function AdminPage() {
 
         {/* Analytics Tab */}
         {activeTab === 'analytics' && (
-          <AnalyticsDashboard orders={adminOrders} products={firestoreProducts} />
+          <AnalyticsDashboard />
         )}
 
         {/* Custom Orders Tab */}
