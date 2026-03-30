@@ -151,6 +151,7 @@ export default function AdminPage() {
   });
   const [creatingCustomOrder, setCreatingCustomOrder] = useState(false);
   const [existingCustomers, setExistingCustomers] = useState<Array<{email: string, name: string}>>([]);
+  const [customerSearch, setCustomerSearch] = useState('');
 
   useEffect(() => {
     if (!authLoading && user && isAdmin) {
