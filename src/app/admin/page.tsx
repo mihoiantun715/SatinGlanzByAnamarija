@@ -150,6 +150,7 @@ export default function AdminPage() {
     notes: '',
   });
   const [creatingCustomOrder, setCreatingCustomOrder] = useState(false);
+  const [existingCustomers, setExistingCustomers] = useState<Array<{email: string, name: string}>>([]);
 
   useEffect(() => {
     if (!authLoading && user && isAdmin) {
@@ -166,6 +167,20 @@ export default function AdminPage() {
       data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       setAdminOrders(data);
       setOrderStatusFilter('all');
+      
+      // Extract unique customers
+      const customersMap = new Map<string, {email: string, name: string}>();
+      data.forEach(order => {
+        if (order.userEmail && !customersMap.has(order.userEmail)) {
+          customersMap.set(order.userEmail, {
+            email: order.userEmail,
+            name: order.shippingAddress?.firstName && order.shippingAddress?.lastName 
+              ? `${order.shippingAddress.firstName} ${order.shippingAddress.lastName}`
+              : order.userEmail
+          });
+        }
+      });
+      setExistingCustomers(Array.from(customersMap.values()));
     } catch (err) {
       console.error('Failed to fetch orders:', err);
       setAdminOrders([]);
