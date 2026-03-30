@@ -510,7 +510,15 @@ export default function AdminPage() {
       const functions = getFunctions(app, 'us-central1');
       const sendTracking = httpsCallable(functions, 'sendTrackingEmail');
       
-      await sendTracking({
+      console.log('Sending tracking email with data:', {
+        orderId: order.id,
+        trackingNumber: order.trackingNumber,
+        shippingCarrier: order.shippingCarrier,
+        customerEmail: order.userEmail,
+        customerName: `${order.shippingAddress.firstName} ${order.shippingAddress.lastName}`
+      });
+      
+      const result = await sendTracking({
         orderId: order.id,
         trackingNumber: order.trackingNumber,
         shippingCarrier: order.shippingCarrier,
@@ -518,10 +526,17 @@ export default function AdminPage() {
         customerName: `${order.shippingAddress.firstName} ${order.shippingAddress.lastName}`
       });
 
+      console.log('Tracking email result:', result);
       setModalNotification({ message: 'Tracking email sent to customer!', type: 'success' });
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to send tracking email:', err);
-      setModalNotification({ message: 'Failed to send tracking email.', type: 'error' });
+      console.error('Error code:', err?.code);
+      console.error('Error message:', err?.message);
+      console.error('Error details:', err?.details);
+      setModalNotification({ 
+        message: `Failed to send tracking email: ${err?.message || 'Unknown error'}`, 
+        type: 'error' 
+      });
     } finally {
       setSendingTracking(null);
     }
