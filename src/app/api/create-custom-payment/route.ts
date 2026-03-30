@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-03-25.dahlia',
-});
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,7 +14,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Create Stripe Payment Intent
+    // Initialize Stripe inside the function to avoid build-time execution
+    const Stripe = (await import('stripe')).default;
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+      apiVersion: '2026-03-25.dahlia',
+    });
+
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Convert to cents
       currency: 'eur',
