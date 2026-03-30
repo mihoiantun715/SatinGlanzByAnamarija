@@ -152,6 +152,7 @@ export default function AdminPage() {
   const [creatingCustomOrder, setCreatingCustomOrder] = useState(false);
   const [existingCustomers, setExistingCustomers] = useState<Array<{email: string, name: string}>>([]);
   const [customerSearch, setCustomerSearch] = useState('');
+  const [loadingCustomers, setLoadingCustomers] = useState(false);
 
   useEffect(() => {
     if (!authLoading && user && isAdmin) {
@@ -178,6 +179,7 @@ export default function AdminPage() {
   };
 
   const fetchCustomers = async () => {
+    setLoadingCustomers(true);
     try {
       const snap = await getDocs(collection(db, 'users'));
       console.log('Total users fetched from Firebase:', snap.docs.length);
@@ -201,6 +203,8 @@ export default function AdminPage() {
     } catch (err) {
       console.error('Failed to fetch customers:', err);
       setExistingCustomers([]);
+    } finally {
+      setLoadingCustomers(false);
     }
   };
 
