@@ -1769,6 +1769,129 @@ export default function AdminPage() {
         </div>
       )}
 
+      {/* Create Invoice Form Modal */}
+      {showCustomOrderForm && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center pt-10 px-4 bg-black/40 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 w-full max-w-2xl p-8 mb-10">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-gray-900">Create Invoice</h2>
+              <button onClick={() => setShowCustomOrderForm(false)} className="text-gray-400 hover:text-gray-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-5">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Customer Name *</label>
+                  <input
+                    type="text"
+                    value={customOrderForm.customerName}
+                    onChange={(e) => setCustomOrderForm({ ...customOrderForm, customerName: e.target.value })}
+                    placeholder="John Doe"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Customer Email *</label>
+                  <input
+                    type="email"
+                    value={customOrderForm.customerEmail}
+                    onChange={(e) => setCustomOrderForm({ ...customOrderForm, customerEmail: e.target.value })}
+                    placeholder="customer@example.com"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-sm font-medium text-gray-700">Order Items *</label>
+                  <button
+                    onClick={addCustomOrderItem}
+                    className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-semibold"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Item
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {customOrderForm.items.map((item, idx) => (
+                    <div key={idx} className="flex gap-2">
+                      <input
+                        type="text"
+                        value={item.description}
+                        onChange={(e) => updateCustomOrderItem(idx, 'description', e.target.value)}
+                        placeholder="Item description"
+                        className="flex-1 px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                      />
+                      <input
+                        type="number"
+                        min="1"
+                        value={item.quantity}
+                        onChange={(e) => updateCustomOrderItem(idx, 'quantity', parseInt(e.target.value) || 1)}
+                        placeholder="Qty"
+                        className="w-20 px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                      />
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={item.price}
+                        onChange={(e) => updateCustomOrderItem(idx, 'price', parseFloat(e.target.value) || 0)}
+                        placeholder="Price €"
+                        className="w-28 px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                      />
+                      {customOrderForm.items.length > 1 && (
+                        <button
+                          onClick={() => removeCustomOrderItem(idx)}
+                          className="p-3 text-gray-400 hover:text-red-500 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 p-3 bg-gray-50 rounded-lg flex justify-between items-center">
+                  <span className="text-sm font-semibold text-gray-700">Total Amount</span>
+                  <span className="text-lg font-bold text-blue-600">
+                    €{customOrderForm.items.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Notes (optional)</label>
+                <textarea
+                  value={customOrderForm.notes}
+                  onChange={(e) => setCustomOrderForm({ ...customOrderForm, notes: e.target.value })}
+                  placeholder="Shipping address, special instructions, etc..."
+                  rows={3}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={() => setShowCustomOrderForm(false)}
+                  className="flex-1 px-5 py-3 border border-gray-200 text-gray-700 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={createCustomOrder}
+                  disabled={creatingCustomOrder}
+                  className="flex-1 px-5 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-semibold text-sm transition-all disabled:opacity-50"
+                >
+                  {creatingCustomOrder ? 'Creating...' : 'Create Invoice'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal Notification */}
       {modalNotification && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
