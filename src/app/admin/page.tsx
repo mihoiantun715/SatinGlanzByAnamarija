@@ -150,6 +150,14 @@ export default function AdminPage() {
     notes: '',
   });
   const [creatingCustomOrder, setCreatingCustomOrder] = useState(false);
+  
+  // Import Stripe order state
+  const [showImportOrderForm, setShowImportOrderForm] = useState(false);
+  const [importOrderForm, setImportOrderForm] = useState({
+    stripePaymentIntentId: '',
+    customerEmail: '',
+  });
+  const [importingOrder, setImportingOrder] = useState(false);
 
   useEffect(() => {
     if (!authLoading && user && isAdmin) {
@@ -285,6 +293,76 @@ export default function AdminPage() {
         i === index ? { ...item, [field]: value } : item
       ),
     }));
+  };
+
+  const importStripeOrder = async () => {
+    if (!importOrderForm.stripePaymentIntentId || !importOrderForm.customerEmail) {
+      setModalNotification({ message: 'Payment Intent ID and customer email are required', type: 'error' });
+      return;
+    }
+
+    setImportingOrder(true);
+    try {
+      // Fetch payment intent from Stripe to get order details
+      const response = await fetch('/api/get-stripe-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          paymentIntentId: importOrderForm.stripePaymentIntentId,
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch payment');
+      }
+
+      // Create order from Stripe payment data
+      const orderData = {
+        userEmail: importOrderForm.customerEmail,
+        createdAt: new Date(data.created * 1000).toISOString(),
+        status: 'paid',
+        total: data.amount / 100, // Convert from cents
+        subtotal: data.amount / 100,
+        shippingCost: 0,
+        shippingCarrier: 'dhl',
+        stripePaymentIntentId: data.id,
+        items: data.metadata?.items ? JSON.parse(data.metadata.items) : [
+          {
+            name: data.description || 'Custom Order',
+            quantity: 1,
+            price: data.amount / 100,
+          }
+        ],
+        shippingAddress: {
+          firstName: data.metadata?.customerName?.split(' ')[0] || 'Customer',
+          lastName: data.metadata?.customerName?.split(' ').slice(1).join(' ') || '',
+          street: data.metadata?.address || 'N/A',
+          city: 'N/A',
+          postalCode: 'N/A',
+          country: 'N/A',
+          phone: 'N/A',
+        },
+        isImportedOrder: true,
+      };
+
+      await addDoc(collection(db, 'orders'), orderData);
+      
+      await fetchOrders();
+      setShowImportOrderForm(false);
+      setImportOrderForm({
+        stripePaymentIntentId: '',
+        customerEmail: '',
+      });
+      
+      setModalNotification({ message: 'Stripe order imported successfully!', type: 'success' });
+    } catch (err: any) {
+      console.error('Failed to import Stripe order:', err);
+      setModalNotification({ message: err.message || 'Failed to import order', type: 'error' });
+    } finally {
+      setImportingOrder(false);
+    }
   };
 
 
@@ -721,13 +799,22 @@ export default function AdminPage() {
             Orders ({adminOrders.length})
           </button>
           {activeTab === 'orders' && (
-            <button
-              onClick={() => setShowCustomOrderForm(true)}
-              className="flex items-center gap-2 px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-semibold text-sm transition-all ml-auto"
-            >
-              <FileText className="w-4 h-4" />
-              Create Invoice
-            </button>
+            <>
+              <button
+                onClick={() => setShowCustomOrderForm(true)}
+                className="flex items-center gap-2 px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-semibold text-sm transition-all ml-auto"
+              >
+                <FileText className="w-4 h-4" />
+                Create Invoice
+              </button>
+              <button
+                onClick={() => setShowImportOrderForm(true)}
+                className="flex items-center gap-2 px-5 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold text-sm transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                Import Stripe Order
+              </button>
+            </>
           )}
           <button
             onClick={() => setActiveTab('products')}
