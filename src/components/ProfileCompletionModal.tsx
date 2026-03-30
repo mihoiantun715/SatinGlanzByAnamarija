@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { X } from 'lucide-react';
 
@@ -32,7 +32,8 @@ export default function ProfileCompletionModal({ userId, userEmail, onComplete }
 
     setLoading(true);
     try {
-      await updateDoc(doc(db, 'users', userId), {
+      await setDoc(doc(db, 'users', userId), {
+        email: userEmail,
         firstName,
         lastName,
         savedAddress: {
@@ -45,11 +46,12 @@ export default function ProfileCompletionModal({ userId, userEmail, onComplete }
           phone,
         },
         profileCompleted: true,
-      });
+        createdAt: new Date().toISOString(),
+      }, { merge: true });
 
       onComplete();
     } catch (err) {
-      console.error('Failed to update profile:', err);
+      console.error('Failed to save profile:', err);
       setError('Failed to save profile. Please try again.');
     } finally {
       setLoading(false);

@@ -1900,16 +1900,27 @@ export default function AdminPage() {
             <div className="space-y-5">
               {existingCustomers.length > 0 && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Search & Select Existing Customer
-                  </label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Search & Select Existing Customer
+                    </label>
+                    <button
+                      type="button"
+                      onClick={fetchCustomers}
+                      disabled={loadingCustomers}
+                      className="text-xs text-blue-600 hover:text-blue-700 font-medium disabled:opacity-50"
+                    >
+                      {loadingCustomers ? 'Refreshing...' : '🔄 Refresh'}
+                    </button>
+                  </div>
                   <div className="relative">
                     <input
                       type="text"
                       value={customerSearch}
                       onChange={(e) => setCustomerSearch(e.target.value)}
                       placeholder="Search by name or email..."
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                      disabled={loadingCustomers}
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:opacity-50"
                     />
                     {customerSearch && (
                       <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
