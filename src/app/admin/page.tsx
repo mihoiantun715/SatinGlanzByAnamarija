@@ -8,7 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useProducts } from '@/context/ProductsContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { Product, Locale } from '@/lib/types';
-import { Plus, Trash2, Edit3, Save, X, ShieldCheck, Package, Upload, Image as ImageIcon, ClipboardList, Truck, ExternalLink, DollarSign, TrendingUp, FileText, Send, Download, MessageCircle, Mail, BarChart3 } from 'lucide-react';
+import { Plus, Trash2, Edit3, Save, X, ShieldCheck, Package, Upload, Image as ImageIcon, ClipboardList, Truck, ExternalLink, DollarSign, TrendingUp, FileText, Send, Download, MessageCircle, Mail, BarChart3, Link as LinkIcon, Copy } from 'lucide-react';
 import FinancialDashboard from '@/components/FinancialDashboard';
 import AnalyticsDashboard from '@/components/AnalyticsDashboard';
 
@@ -121,7 +121,7 @@ export default function AdminPage() {
   // Orders state
   const [adminOrders, setAdminOrders] = useState<AdminOrder[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
-  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'finances' | 'messages' | 'analytics'>('orders');
+  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'finances' | 'messages' | 'analytics' | 'custom-orders'>('orders');
   const [orderStatusFilter, setOrderStatusFilter] = useState<'all' | 'paid' | 'pending_payment' | 'payment_failed'>('all');
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
   const [deleteOrderConfirm, setDeleteOrderConfirm] = useState<string | null>(null);
@@ -140,12 +140,25 @@ export default function AdminPage() {
   const [sendingTracking, setSendingTracking] = useState<string | null>(null);
   const [customerMessages, setCustomerMessages] = useState<any[]>([]);
   const [loadingMessages, setLoadingMessages] = useState(true);
+  
+  // Custom Orders state
+  const [customOrders, setCustomOrders] = useState<any[]>([]);
+  const [loadingCustomOrders, setLoadingCustomOrders] = useState(true);
+  const [showCustomOrderForm, setShowCustomOrderForm] = useState(false);
+  const [customOrderForm, setCustomOrderForm] = useState({
+    customerName: '',
+    customerEmail: '',
+    items: [{ description: '', quantity: 1, price: 0 }],
+    notes: '',
+  });
+  const [creatingCustomOrder, setCreatingCustomOrder] = useState(false);
 
   useEffect(() => {
     if (!authLoading && user && isAdmin) {
       fetchProducts();
       fetchOrders();
       fetchMessages();
+      fetchCustomOrders();
     }
   }, [authLoading, user, isAdmin]);
 
@@ -188,6 +201,112 @@ export default function AdminPage() {
       setCustomerMessages(prev => prev.map(m => m.id === messageId ? { ...m, status: 'read' } : m));
     } catch (err) {
       console.error('Failed to mark message as read:', err);
+    }
+  };
+
+  const fetchCustomOrders = async () => {
+    try {
+      const snap = await getDocs(collection(db, 'customOrders'));
+      const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      data.sort((a: any, b: any) => {
+        const aTime = a.createdAt || '';
+        const bTime = b.createdAt || '';
+        return bTime.localeCompare(aTime);
+      });
+      setCustomOrders(data);
+    } catch (err) {
+      console.error('Failed to fetch custom orders:', err);
+      setCustomOrders([]);
+    } finally {
+      setLoadingCustomOrders(false);
+    }
+  };
+
+  const createCustomOrder = async () => {
+    if (!customOrderForm.customerEmail || !customOrderForm.customerName) {
+      setModalNotification({ message: 'Customer name and email are required', type: 'error' });
+      return;
+    }
+    
+    const validItems = customOrderForm.items.filter(item => item.description && item.price > 0);
+    if (validItems.length === 0) {
+      setModalNotification({ message: 'Add at least one valid item', type: 'error' });
+      return;
+    }
+
+    setCreatingCustomOrder(true);
+    try {
+      const total = validItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const orderData = {
+        customerName: customOrderForm.customerName,
+        customerEmail: customOrderForm.customerEmail,
+        items: validItems,
+        notes: customOrderForm.notes,
+        total,
+        status: 'pending_payment',
+        createdAt: new Date().toISOString(),
+        paymentLink: '', // Will be generated
+      };
+
+      const docRef = await addDoc(collection(db, 'customOrders'), orderData);
+      const paymentLink = `${window.location.origin}/pay/${docRef.id}`;
+      
+      await updateDoc(doc(db, 'customOrders', docRef.id), { paymentLink });
+      
+      await fetchCustomOrders();
+      setShowCustomOrderForm(false);
+      setCustomOrderForm({
+        customerName: '',
+        customerEmail: '',
+        items: [{ description: '', quantity: 1, price: 0 }],
+        notes: '',
+      });
+      
+      setModalNotification({ message: 'Custom order created! Payment link ready to share.', type: 'success' });
+    } catch (err) {
+      console.error('Failed to create custom order:', err);
+      setModalNotification({ message: 'Failed to create custom order', type: 'error' });
+    } finally {
+      setCreatingCustomOrder(false);
+    }
+  };
+
+  const addCustomOrderItem = () => {
+    setCustomOrderForm(prev => ({
+      ...prev,
+      items: [...prev.items, { description: '', quantity: 1, price: 0 }],
+    }));
+  };
+
+  const removeCustomOrderItem = (index: number) => {
+    setCustomOrderForm(prev => ({
+      ...prev,
+      items: prev.items.filter((_, i) => i !== index),
+    }));
+  };
+
+  const updateCustomOrderItem = (index: number, field: string, value: any) => {
+    setCustomOrderForm(prev => ({
+      ...prev,
+      items: prev.items.map((item, i) => 
+        i === index ? { ...item, [field]: value } : item
+      ),
+    }));
+  };
+
+  const copyPaymentLink = (link: string) => {
+    navigator.clipboard.writeText(link);
+    setModalNotification({ message: 'Payment link copied to clipboard!', type: 'success' });
+  };
+
+  const deleteCustomOrder = async (orderId: string) => {
+    try {
+      await deleteDoc(doc(db, 'customOrders', orderId));
+      setCustomOrders(prev => prev.filter(o => o.id !== orderId));
+      setModalNotification({ message: 'Custom order deleted', type: 'success' });
+    } catch (err) {
+      console.error('Failed to delete custom order:', err);
+      setModalNotification({ message: 'Failed to delete custom order', type: 'error' });
     }
   };
 
@@ -666,6 +785,17 @@ export default function AdminPage() {
           >
             <BarChart3 className="w-4 h-4" />
             Analytics
+          </button>
+          <button
+            onClick={() => setActiveTab('custom-orders')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+              activeTab === 'custom-orders'
+                ? 'bg-gray-900 text-white'
+                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <LinkIcon className="w-4 h-4" />
+            Custom Orders ({customOrders.length})
           </button>
         </div>
 
@@ -1483,8 +1613,122 @@ export default function AdminPage() {
         {/* Financial Dashboard */}
         {activeTab === 'finances' && <FinancialDashboard />}
 
-        {/* Analytics Dashboard */}
-        {activeTab === 'analytics' && <AnalyticsDashboard />}
+        {/* Analytics Tab */}
+        {activeTab === 'analytics' && (
+          <AnalyticsDashboard orders={adminOrders} products={firestoreProducts} />
+        )}
+
+        {/* Custom Orders Tab */}
+        {activeTab === 'custom-orders' && (
+          <div>
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 mb-1">Custom Orders & Payment Links</h2>
+                <p className="text-sm text-gray-500">Create custom invoices for external customers (Facebook, Instagram, etc.)</p>
+              </div>
+              <button
+                onClick={() => setShowCustomOrderForm(true)}
+                className="flex items-center gap-2 px-5 py-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-semibold text-sm transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                Create Custom Order
+              </button>
+            </div>
+
+            {loadingCustomOrders ? (
+              <div className="text-center py-12 text-gray-400">Loading custom orders...</div>
+            ) : customOrders.length === 0 ? (
+              <div className="text-center py-12">
+                <LinkIcon className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-500 mb-2">No custom orders yet</p>
+                <p className="text-sm text-gray-400">Create your first custom order to generate a payment link</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {customOrders.map((order: any) => (
+                  <div key={order.id} className="bg-white rounded-xl border border-gray-200 p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{order.customerName}</h3>
+                        <p className="text-sm text-gray-500">{order.customerEmail}</p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          Created: {new Date(order.createdAt).toLocaleDateString()} at {new Date(order.createdAt).toLocaleTimeString()}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          order.status === 'paid' ? 'bg-green-100 text-green-800' :
+                          order.status === 'pending_payment' ? 'bg-orange-100 text-orange-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {order.status === 'paid' ? '✓ Paid' : 
+                           order.status === 'pending_payment' ? 'Pending Payment' : 
+                           'Payment Failed'}
+                        </span>
+                        <button
+                          onClick={() => deleteCustomOrder(order.id)}
+                          className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="mb-4">
+                      <p className="text-xs font-semibold text-gray-500 mb-2">ORDER ITEMS</p>
+                      <div className="space-y-1">
+                        {order.items.map((item: any, idx: number) => (
+                          <div key={idx} className="flex justify-between text-sm">
+                            <span className="text-gray-700">{item.quantity}x {item.description}</span>
+                            <span className="font-semibold text-gray-900">€{(item.price * item.quantity).toFixed(2)}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="border-t border-gray-200 mt-2 pt-2 flex justify-between font-bold">
+                        <span>Total</span>
+                        <span className="text-lg font-bold text-rose-600">
+                          €{order.total.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {order.notes && (
+                      <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                        <p className="text-xs font-semibold text-gray-500 mb-1">NOTES</p>
+                        <p className="text-sm text-gray-700">{order.notes}</p>
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={order.paymentLink}
+                        readOnly
+                        className="flex-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-mono text-gray-600"
+                      />
+                      <button
+                        onClick={() => copyPaymentLink(order.paymentLink)}
+                        className="flex items-center gap-2 px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-lg font-semibold text-sm transition-all"
+                      >
+                        <Copy className="w-4 h-4" />
+                        Copy Link
+                      </button>
+                      <a
+                        href={order.paymentLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold text-sm transition-all"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        Open
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Customer Messages */}
         {activeTab === 'messages' && (
