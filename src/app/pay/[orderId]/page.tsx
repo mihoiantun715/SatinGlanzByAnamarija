@@ -107,7 +107,7 @@ export default function PaymentPage() {
           return;
         }
 
-        const orderData = { id: orderDoc.id, ...orderDoc.data() };
+        const orderData = { id: orderDoc.id, ...orderDoc.data() } as any;
         setOrder(orderData);
 
         // If already paid, redirect to success
