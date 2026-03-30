@@ -287,7 +287,22 @@ export default function AdminPage() {
         isCustomOrder: true,
       };
 
-      await addDoc(collection(db, 'orders'), orderData);
+      const docRef = await addDoc(collection(db, 'orders'), orderData);
+      
+      // Send order confirmation email
+      try {
+        const { getFunctions, httpsCallable } = await import('firebase/functions');
+        const { app } = await import('@/lib/firebase');
+        const functions = getFunctions(app, 'us-central1');
+        const sendOrderEmail = httpsCallable(functions, 'sendOrderEmail');
+        
+        await sendOrderEmail({ 
+          orderData: { ...orderData, status: 'paid' }, 
+          orderId: docRef.id 
+        });
+      } catch (emailErr) {
+        console.error('Email send failed (invoice still created):', emailErr);
+      }
       
       await fetchOrders(); // Refresh orders list
       setShowCustomOrderForm(false);
@@ -298,7 +313,7 @@ export default function AdminPage() {
         notes: '',
       });
       
-      setModalNotification({ message: 'Invoice created and added to customer order history!', type: 'success' });
+      setModalNotification({ message: 'Invoice created and email sent to customer!', type: 'success' });
     } catch (err) {
       console.error('Failed to create invoice:', err);
       setModalNotification({ message: 'Failed to create invoice', type: 'error' });
