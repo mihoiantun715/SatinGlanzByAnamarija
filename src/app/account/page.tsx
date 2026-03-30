@@ -9,6 +9,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
 import { User, Package, LogOut, ShoppingBag, ArrowRight, Truck, ExternalLink, Plus, Key, MessageCircle } from 'lucide-react';
 import ContactSellerModal from '@/components/ContactSellerModal';
+import ProfileCompletionModal from '@/components/ProfileCompletionModal';
 
 interface OrderItem {
   name: string;
@@ -57,6 +58,8 @@ export default function AccountPage() {
   const [claimingOrder, setClaimingOrder] = useState(false);
   const [claimMessage, setClaimMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [contactOrderId, setContactOrderId] = useState<string | null>(null);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [profileCompleted, setProfileCompleted] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -66,6 +69,36 @@ export default function AccountPage() {
 
   useEffect(() => {
     if (!user) return;
+    
+    // Check if profile is complete
+    const checkProfile = async () => {
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          const isComplete = userData.profileCompleted === true && 
+                           userData.firstName && 
+                           userData.lastName && 
+                           userData.savedAddress?.street;
+          
+          setProfileCompleted(isComplete);
+          if (!isComplete) {
+            setShowProfileModal(true);
+          }
+        } else {
+          // User document doesn't exist, show modal
+          setShowProfileModal(true);
+        }
+      } catch (err) {
+        console.error('Failed to check profile:', err);
+      }
+    };
+
+    checkProfile();
+  }, [user]);
+
+  useEffect(() => {
+    if (!user || !profileCompleted) return;
     const fetchOrders = async () => {
       try {
         const q = query(
@@ -84,7 +117,7 @@ export default function AccountPage() {
       }
     };
     fetchOrders();
-  }, [user]);
+  }, [user, profileCompleted]);
 
   const handleLogout = async () => {
     await logout();
@@ -361,5 +394,6 @@ export default function AccountPage() {
         )}
       </div>
     </div>
+    </>
   );
 }
