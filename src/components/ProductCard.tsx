@@ -120,7 +120,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               {t.common.featured}
             </div>
           )}
-          {!product.inStock && (
+          {((product as any).stockQuantity ?? 0) <= 0 && (
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-10">
               <span className="bg-white text-gray-900 font-semibold px-4 py-2 rounded-full text-sm">
                 {t.shop.outOfStock}
@@ -156,7 +156,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </span>
               </div>
             </div>
-            {product.inStock && (
+            {((product as any).stockQuantity ?? 0) > 0 && (
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

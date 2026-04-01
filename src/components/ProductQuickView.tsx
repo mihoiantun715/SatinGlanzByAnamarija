@@ -179,7 +179,7 @@ export default function ProductQuickView({ product, onClose }: Props) {
             )}
 
             {/* Quantity + Add to Cart */}
-            {product.inStock ? (
+            {((product as any).stockQuantity ?? 0) > 0 ? (
               <div className="flex items-center gap-3 mt-auto pt-4 border-t border-gray-100">
                 <div className="flex items-center border-2 border-gray-200 rounded-full">
                   <button
