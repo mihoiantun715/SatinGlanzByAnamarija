@@ -414,6 +414,50 @@ const createTransporter = () => {
 const GMAIL_FROM = `SatinGlanz by Anamarija <${process.env.GMAIL_USER || 'satinglanzbyanamarija@gmail.com'}>`;
 const GMAIL_TO = process.env.GMAIL_USER || 'satinglanzbyanamarija@gmail.com';
 
+// Helper function to determine the primary category of an order
+function getOrderCategory(items: any[]): string {
+  if (!items || items.length === 0) return 'Single Roses';
+  
+  // Count items by category
+  const categoryCounts: Record<string, number> = {};
+  
+  for (const item of items) {
+    // Check if item has category info
+    const category = item.category || 'Single Roses';
+    categoryCounts[category] = (categoryCounts[category] || 0) + item.quantity;
+  }
+  
+  // Return the category with the most items
+  let maxCategory = 'Single Roses';
+  let maxCount = 0;
+  
+  for (const [category, count] of Object.entries(categoryCounts)) {
+    if (count > maxCount) {
+      maxCount = count;
+      maxCategory = category;
+    }
+  }
+  
+  return maxCategory;
+}
+
+// Category-specific welcome messages
+function getCategoryWelcomeMessage(category: string): string {
+  switch (category) {
+    case 'Gift Sets':
+      return 'Vielen Dank für Ihre Bestellung! Wir haben sie erhalten und werden Ihr handgefertigtes Geschenkset mit Sorgfalt vorbereiten.';
+    case 'Arrangements':
+      return 'Vielen Dank für Ihre Bestellung! Wir haben sie erhalten und werden Ihr handgefertigtes Arrangement mit Sorgfalt vorbereiten.';
+    case 'Wedding':
+      return 'Vielen Dank für Ihre Bestellung! Wir haben sie erhalten und werden Ihre handgefertigten Hochzeitsdekorationen mit Sorgfalt vorbereiten.';
+    case 'Bouquets':
+      return 'Vielen Dank für Ihre Bestellung! Wir haben sie erhalten und werden Ihren handgefertigten Satinrosen-Strauß mit Sorgfalt vorbereiten.';
+    case 'Single Roses':
+    default:
+      return 'Vielen Dank für Ihre Bestellung! Wir haben sie erhalten und werden Ihre handgefertigten Satinrosen mit Sorgfalt vorbereiten.';
+  }
+}
+
 // Send order confirmation email to customer
 export const sendOrderEmail = functions.https.onCall(async (data: any, context) => {
   // Auth check: only authenticated users can trigger order emails
@@ -431,6 +475,10 @@ export const sendOrderEmail = functions.https.onCall(async (data: any, context) 
     }
 
     const orderNumber = sanitize(orderId.slice(0, 8).toUpperCase());
+    
+    // Determine order category for personalized messaging
+    const orderCategory = getOrderCategory(orderData.items);
+    const welcomeMessage = getCategoryWelcomeMessage(orderCategory);
 
     // Build items HTML (sanitized) with detailed product information
     const itemsHtml = orderData.items.map((item: any) => {
@@ -500,7 +548,7 @@ export const sendOrderEmail = functions.https.onCall(async (data: any, context) 
             Liebe/r <strong>${sanitize(addr.firstName)} ${sanitize(addr.lastName)}</strong>,
           </p>
           <p style="color: #6b7280; line-height: 1.6;">
-            Vielen Dank für Ihre Bestellung! Wir haben sie erhalten und werden Ihre handgefertigten Satinrosen mit Sorgfalt vorbereiten.
+            ${welcomeMessage}
           </p>
           
           <div style="background: #fdf2f8; padding: 16px 20px; border-radius: 12px; margin: 20px 0; text-align: center;">

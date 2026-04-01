@@ -69,16 +69,13 @@ export const stripeWebhook = functions.https.onRequest(async (req, res) => {
         const orderData = orderDoc.data();
         
         if (orderData) {
-          // Trigger email function
-          const sendOrderEmail = functions.httpsCallable('sendOrderEmail');
-          await sendOrderEmail({ 
-            orderData: { ...orderData, status: 'paid' }, 
-            orderId: orderId 
-          });
+          // Note: Email will be sent by the client after successful checkout
+          // This webhook just updates the order status
+          console.log(`Order ${orderId} ready for email notification`);
         }
       } catch (emailErr) {
-        console.error('Failed to send order email:', emailErr);
-        // Don't fail the webhook if email fails
+        console.error('Failed to fetch order data:', emailErr);
+        // Don't fail the webhook if this fails
       }
 
       res.json({ received: true, orderId });
