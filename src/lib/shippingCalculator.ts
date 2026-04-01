@@ -1,11 +1,11 @@
 // Simplified shipping calculation
 // - Shop products: €5.19
-// - Bouquets ≤10 roses: €3.19
+// - Bouquets ≤10 roses: €5.19
 // - Bouquets >10 roses: €5.19
 // - Orders above €70: FREE shipping
 
 const SHOP_PRODUCT_SHIPPING = 5.19;
-const BOUQUET_SMALL_SHIPPING = 3.19; // ≤10 roses
+const BOUQUET_SMALL_SHIPPING = 5.19; // ≤10 roses
 const BOUQUET_LARGE_SHIPPING = 5.19; // >10 roses
 const FREE_SHIPPING_THRESHOLD = 70.00;
 
