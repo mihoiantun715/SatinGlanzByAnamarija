@@ -43,6 +43,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta name="trustpilot-one-time-domain-verification-id" content="ea836ae3-2e63-4394-a49c-566a1fe24c48"/>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
