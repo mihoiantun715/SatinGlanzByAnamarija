@@ -76,6 +76,13 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Trustpilot Review Collector */}
+        <div className="mt-12 flex justify-center">
+          <div className="trustpilot-widget" data-locale="de-DE" data-template-id="56278e9abfbbba0bdcd568bc" data-businessunit-id="69d97ca9eeb4f67d08e13061" data-style-height="52px" data-style-width="100%" data-token="8472bc32-1619-4f31-9064-4c55b25fcef2">
+            <a href="https://de.trustpilot.com/review/satinglanzbyanamarija.com" target="_blank" rel="noopener">Trustpilot</a>
+          </div>
+        </div>
+
         <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-gray-500">
             © {new Date().getFullYear()} SatinGlanz by Anamarija. {t.footer.rights}
