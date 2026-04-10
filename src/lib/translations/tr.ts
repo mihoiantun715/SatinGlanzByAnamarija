@@ -85,6 +85,9 @@ export const tr: Translation = {
     orderSummary: 'Sipariş Özeti',
     freeShippingNote: 'Ücretsiz kargo için minimum',
     recommended: 'Önerilen',
+    giftMessage: 'Hediye Mesajı (İsteğe bağlı)',
+    giftMessagePlaceholder: 'örn. Doğum günün kutlu olsun Anna ❤️',
+    giftMessageNote: 'Bunu kutunun içindeki bir karta yazdıracağız',
   },
   about: {
     title: 'SatinGlanz by Anamarija Hakkında',

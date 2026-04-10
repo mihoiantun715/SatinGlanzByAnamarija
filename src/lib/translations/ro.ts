@@ -85,6 +85,9 @@ export const ro: Translation = {
     orderSummary: 'Rezumatul comenzii',
     freeShippingNote: 'Transport gratuit pentru comenzi peste',
     recommended: 'Recomandat',
+    giftMessage: 'Mesaj cadou (Opțional)',
+    giftMessagePlaceholder: 'ex. La mulți ani Anna ❤️',
+    giftMessageNote: 'Vom imprima acest mesaj pe un card în cutie',
   },
   about: {
     title: 'Despre SatinGlanz by Anamarija',

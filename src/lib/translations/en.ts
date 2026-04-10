@@ -85,6 +85,9 @@ export const en: Translation = {
     orderSummary: 'Order Summary',
     freeShippingNote: 'Free shipping on orders over',
     recommended: 'Recommended',
+    giftMessage: 'Gift Message (Optional)',
+    giftMessagePlaceholder: 'e.g., Happy Birthday Anna ❤️',
+    giftMessageNote: 'We\'ll print this on a card inside the box',
   },
   about: {
     title: 'About SatinGlanz by Anamarija',

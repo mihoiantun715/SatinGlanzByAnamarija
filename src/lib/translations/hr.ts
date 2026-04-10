@@ -85,6 +85,9 @@ export const hr: Translation = {
     orderSummary: 'Sažetak narudžbe',
     freeShippingNote: 'Besplatna dostava za narudžbe iznad',
     recommended: 'Preporučeno',
+    giftMessage: 'Poklon poruka (Opcionalno)',
+    giftMessagePlaceholder: 'npr. Sretan rođendan Anna ❤️',
+    giftMessageNote: 'Ispisati ćemo ovo na kartici u kutiji',
   },
   about: {
     title: 'O SatinGlanz by Anamarija',

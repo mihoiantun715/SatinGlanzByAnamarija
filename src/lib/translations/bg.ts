@@ -85,6 +85,9 @@ export const bg: Translation = {
     orderSummary: 'Обобщение на поръчката',
     freeShippingNote: 'Безплатна доставка за поръчки над',
     recommended: 'Препоръчано',
+    giftMessage: 'Съобщение за подарък (По избор)',
+    giftMessagePlaceholder: 'напр. Честит рожден ден Anna ❤️',
+    giftMessageNote: 'Ще отпечатаме това на картичка в кутията',
   },
   about: {
     title: 'За SatinGlanz by Anamarija',

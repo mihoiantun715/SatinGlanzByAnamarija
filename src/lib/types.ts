@@ -115,6 +115,9 @@ export interface Translation {
     orderSummary: string;
     freeShippingNote: string;
     recommended: string;
+    giftMessage: string;
+    giftMessagePlaceholder: string;
+    giftMessageNote: string;
   };
   about: {
     title: string;

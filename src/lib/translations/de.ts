@@ -85,6 +85,9 @@ export const de: Translation = {
     orderSummary: 'Bestellübersicht',
     freeShippingNote: 'Kostenloser Versand ab',
     recommended: 'Empfohlen',
+    giftMessage: 'Geschenknachricht (Optional)',
+    giftMessagePlaceholder: 'z.B. Alles Gute zum Geburtstag Anna ❤️',
+    giftMessageNote: 'Wir drucken dies auf eine Karte in der Box',
   },
   about: {
     title: 'Über SatinGlanz by Anamarija',
