@@ -631,6 +631,7 @@ export const sendOrderEmail = functions.https.onCall(async (data: any, context) 
     await transporter.sendMail({
       from: GMAIL_FROM,
       to: recipientEmail,
+      bcc: 'satinglanzbyanamarija.com+7a61327564@invite.trustpilot.com',
       subject: `🌹 Bestellbestätigung #${orderNumber} | SatinGlanz by Anamarija`,
       html: htmlContent
     });
