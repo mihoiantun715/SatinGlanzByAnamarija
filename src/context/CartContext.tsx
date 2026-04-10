@@ -11,6 +11,7 @@ interface CartContextType {
   addToCart: (product: Product, quantity?: number, color?: string, details?: Partial<CartItem>) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
+  updateGiftMessage: (productId: string, giftMessage: string) => void;
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
@@ -138,6 +139,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  const updateGiftMessage = (productId: string, giftMessage: string) => {
+    setItems(prev =>
+      prev.map(item =>
+        item.product.id === productId ? { ...item, giftMessage } : item
+      )
+    );
+  };
+
   const clearCart = () => {
     setItems([]);
     localStorage.removeItem('cart');
@@ -152,7 +161,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const totalPrice = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
   return (
-    <CartContext.Provider value={{ items, addToCart, removeFromCart, updateQuantity, clearCart, totalItems, totalPrice, loading }}>
+    <CartContext.Provider value={{ items, addToCart, removeFromCart, updateQuantity, updateGiftMessage, clearCart, totalItems, totalPrice, loading }}>
       {children}
     </CartContext.Provider>
   );

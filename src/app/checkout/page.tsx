@@ -139,6 +139,7 @@ function CheckoutForm() {
           ribbon: item.ribbon || '',
           decorations: item.decorations || [],
           customization: item.customization || '',
+          giftMessage: item.giftMessage || '',
         })),
       };
 

@@ -9,7 +9,7 @@ import { calculateCartShipping } from '@/lib/shippingCalculator';
 
 export default function CartPage() {
   const { locale, t } = useLanguage();
-  const { items, removeFromCart, updateQuantity, totalPrice, loading } = useCart();
+  const { items, removeFromCart, updateQuantity, updateGiftMessage, totalPrice, loading } = useCart();
 
   // Calculate shipping cost - must be called unconditionally (React hooks rule)
   const shippingCost = useMemo(() => {
@@ -110,6 +110,24 @@ export default function CartPage() {
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
+                    </div>
+                    
+                    {/* Gift Message */}
+                    <div className="mt-4 pt-4 border-t border-gray-100">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        💌 Gift Message (Optional)
+                      </label>
+                      <textarea
+                        value={item.giftMessage || ''}
+                        onChange={(e) => updateGiftMessage(item.product.id, e.target.value)}
+                        placeholder="e.g., Happy Birthday Anna ❤️"
+                        maxLength={200}
+                        rows={2}
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 resize-none"
+                      />
+                      <p className="text-xs text-gray-400 mt-1">
+                        We'll print this on a card inside the box
+                      </p>
                     </div>
                   </div>
                 </div>

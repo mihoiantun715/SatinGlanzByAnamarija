@@ -27,6 +27,7 @@ export interface CartItem {
   customText?: string;
   // General product details
   customization?: string;
+  giftMessage?: string;
 }
 
 export interface Translation {

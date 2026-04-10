@@ -518,6 +518,11 @@ export const sendOrderEmail = functions.https.onCall(async (data: any, context) 
         detailsHtml += `<br><span style="color: #9ca3af; font-size: 13px;">📝 Notes: ${sanitize(item.customization)}</span>`;
       }
       
+      // Add gift message
+      if (item.giftMessage) {
+        detailsHtml += `<br><span style="color: #ec4899; font-size: 13px; font-weight: 600;">💌 Gift Message: "${sanitize(item.giftMessage)}"</span>`;
+      }
+      
       return `
         <tr>
           <td style="padding: 12px; border-bottom: 1px solid #f3f4f6;">

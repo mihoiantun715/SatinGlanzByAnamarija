@@ -31,6 +31,7 @@ export default function ProductQuickView({ product, onClose }: Props) {
   const [activeImg, setActiveImg] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState<string>(product.colors[0] || '');
+  const [giftMessage, setGiftMessage] = useState('');
   const [added, setAdded] = useState(false);
   const backdropRef = useRef<HTMLDivElement>(null);
 
@@ -54,7 +55,7 @@ export default function ProductQuickView({ product, onClose }: Props) {
   }, [onClose]);
 
   const handleAdd = () => {
-    addToCart(product, quantity, selectedColor);
+    addToCart(product, quantity, selectedColor, { giftMessage: giftMessage || undefined });
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   };
@@ -177,6 +178,24 @@ export default function ProductQuickView({ product, onClose }: Props) {
                 <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">{description}</p>
               </div>
             )}
+
+            {/* Gift Message */}
+            <div className="mb-4 pb-4 border-b border-gray-100">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                💌 Gift Message (Optional)
+              </label>
+              <textarea
+                value={giftMessage}
+                onChange={(e) => setGiftMessage(e.target.value)}
+                placeholder="e.g., Happy Birthday Anna ❤️"
+                maxLength={200}
+                rows={2}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 resize-none"
+              />
+              <p className="text-xs text-gray-400 mt-1">
+                We'll print this on a card inside the box
+              </p>
+            </div>
 
             {/* Quantity + Add to Cart */}
             {((product as any).stockQuantity ?? 0) > 0 ? (

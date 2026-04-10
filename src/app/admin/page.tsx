@@ -1327,6 +1327,9 @@ export default function AdminPage() {
                             {item.customization && (
                               <div className="text-xs text-gray-600">📝 Notes: {item.customization}</div>
                             )}
+                            {(item as any).giftMessage && (
+                              <div className="text-xs text-rose-600 font-semibold">💌 Gift Message: "{(item as any).giftMessage}"</div>
+                            )}
                           </div>
                         </div>
                       ))}
