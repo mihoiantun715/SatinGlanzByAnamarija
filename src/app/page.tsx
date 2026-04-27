@@ -60,9 +60,14 @@ export default function Home() {
                 </p>
                 <Link
                   href="/shop"
-                  className="inline-flex items-center gap-2 text-rose-600 font-semibold hover:text-rose-700 transition-colors text-lg"
+                  className="relative inline-block group"
                 >
-                  {t.home.shopNow} →
+                  <div className="absolute inset-0 bg-gradient-to-br from-rose-300 to-rose-400 rounded-full blur-sm opacity-50 group-hover:opacity-70 transition-opacity"></div>
+                  <div className="relative bg-gradient-to-br from-rose-200 via-rose-300 to-rose-400 px-10 py-4 rounded-full shadow-xl border border-rose-400/30 group-hover:shadow-rose-300/50 transition-all">
+                    <span className="text-lg font-serif text-gray-800 tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>
+                      {t.home.shopNow}
+                    </span>
+                  </div>
                 </Link>
               </div>
             </div>
