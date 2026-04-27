@@ -34,8 +34,8 @@ export const de: Translation = {
     madeInGermany: 'Handgefertigt in Deutschland 🇩🇪',
     occasionsTitle: 'Perfekt für jeden Anlass',
     occasionsSubtitle: 'Finden Sie den perfekten Satinrosen-Strauß für jeden Moment',
-    readyToShipTitle: 'Sofort lieferbar',
-    readyToShipSubtitle: 'Entdecken Sie unsere bereits gefertigten Produkte im Shop — sofort versandbereit!',
+    readyToShipTitle: 'Sofort lieferbar — Schnelle Lieferung',
+    readyToShipSubtitle: 'Entdecken Sie unsere bereits gefertigten Produkte im Shop',
     shopNow: 'Jetzt einkaufen',
   },
   shop: {

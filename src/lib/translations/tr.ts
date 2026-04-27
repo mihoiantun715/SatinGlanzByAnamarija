@@ -34,8 +34,8 @@ export const tr: Translation = {
     madeInGermany: 'Almanya\'da el yapımı 🇩🇪',
     occasionsTitle: 'Her an için mükemmel',
     occasionsSubtitle: 'Her an için mükemmel saten gül buketi bulun',
-    readyToShipTitle: 'Hemen gönderime hazır',
-    readyToShipSubtitle: 'Mağazamızdaki hazır ürünlerimize göz atın — hemen gönderime hazır!',
+    readyToShipTitle: 'Hemen gönderime hazır — Hızlı teslimat',
+    readyToShipSubtitle: 'Mağazamızdaki hazır ürünlerimize göz atın',
     shopNow: 'Şimdi alışveriş yap',
   },
   shop: {

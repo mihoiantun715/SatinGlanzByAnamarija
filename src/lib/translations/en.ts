@@ -34,8 +34,8 @@ export const en: Translation = {
     madeInGermany: 'Handmade in Germany 🇩🇪',
     occasionsTitle: 'Perfect For Every Occasion',
     occasionsSubtitle: 'Find the perfect satin rose bouquet for any moment',
-    readyToShipTitle: 'Ready to Ship',
-    readyToShipSubtitle: 'Check out our already made products in shop — ready to be shipped right away!',
+    readyToShipTitle: 'Ready to Ship — Fast Delivery',
+    readyToShipSubtitle: 'Check out our already made products in shop',
     shopNow: 'Shop Now',
   },
   shop: {

@@ -34,8 +34,8 @@ export const ro: Translation = {
     madeInGermany: 'Făcut manual în Germania 🇩🇪',
     occasionsTitle: 'Perfect pentru orice ocazie',
     occasionsSubtitle: 'Găsiți buchetul perfect de trandafiri din satin pentru orice moment',
-    readyToShipTitle: 'Gata de expediere',
-    readyToShipSubtitle: 'Verificați produsele noastre deja realizate în magazin — gata să fie expediate imediat!',
+    readyToShipTitle: 'Gata de expediere — Livrare rapidă',
+    readyToShipSubtitle: 'Verificați produsele noastre deja realizate în magazin',
     shopNow: 'Cumpără acum',
   },
   shop: {

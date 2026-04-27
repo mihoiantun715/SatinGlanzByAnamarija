@@ -38,7 +38,7 @@ export default function Home() {
             <p className="text-lg sm:text-xl text-gray-600 leading-relaxed mb-10 max-w-2xl mx-auto animate-fade-in-delay">
               {t.hero.newSubtitle}
             </p>
-            <div className="animate-fade-in-delay-2">
+            <div className="animate-fade-in-delay-2 space-y-6">
               <Link
                 href="/build-bouquet"
                 className="relative inline-block group"
@@ -50,30 +50,25 @@ export default function Home() {
                   </span>
                 </div>
               </Link>
+              
+              <div className="text-center">
+                <p className="text-lg font-semibold text-gray-700 mb-3">
+                  {t.home.readyToShipTitle}
+                </p>
+                <p className="text-base text-gray-600 mb-4">
+                  {t.home.readyToShipSubtitle}
+                </p>
+                <Link
+                  href="/shop"
+                  className="inline-flex items-center gap-2 text-rose-600 font-semibold hover:text-rose-700 transition-colors text-lg"
+                >
+                  {t.home.shopNow} →
+                </Link>
+              </div>
             </div>
           </div>
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
-      </section>
-
-      {/* Ready to Ship Banner */}
-      <section className="py-12 bg-gradient-to-r from-rose-500 via-pink-500 to-rose-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-3xl sm:text-4xl font-serif italic text-white mb-3" style={{ fontFamily: 'Georgia, serif' }}>
-              {t.home.readyToShipTitle}
-            </h2>
-            <p className="text-lg sm:text-xl text-white/90 mb-6 max-w-3xl mx-auto">
-              {t.home.readyToShipSubtitle}
-            </p>
-            <Link
-              href="/shop"
-              className="inline-block bg-white text-rose-600 px-8 py-3 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
-            >
-              {t.home.shopNow} →
-            </Link>
-          </div>
-        </div>
       </section>
 
       {/* Featured Products */}
