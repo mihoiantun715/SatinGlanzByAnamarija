@@ -64,6 +64,9 @@ export interface Translation {
     madeInGermany: string;
     occasionsTitle: string;
     occasionsSubtitle: string;
+    readyToShipTitle: string;
+    readyToShipSubtitle: string;
+    shopNow: string;
   };
   shop: {
     title: string;

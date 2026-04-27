@@ -34,6 +34,9 @@ export const hr: Translation = {
     madeInGermany: 'Ručno izrađeno u Njemačkoj 🇩🇪',
     occasionsTitle: 'Savršeno za svaku priliku',
     occasionsSubtitle: 'Pronađite savršeni buket satinskih ruža za svaki trenutak',
+    readyToShipTitle: 'Spremno za slanje',
+    readyToShipSubtitle: 'Pogledajte naše već izrađene proizvode u trgovini — spremni za odmah slanje!',
+    shopNow: 'Kupi sada',
   },
   shop: {
     title: 'Naša kolekcija',

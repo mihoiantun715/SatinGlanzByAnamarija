@@ -56,6 +56,26 @@ export default function Home() {
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
       </section>
 
+      {/* Ready to Ship Banner */}
+      <section className="py-12 bg-gradient-to-r from-rose-500 via-pink-500 to-rose-500">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl sm:text-4xl font-serif italic text-white mb-3" style={{ fontFamily: 'Georgia, serif' }}>
+              {t.home.readyToShipTitle}
+            </h2>
+            <p className="text-lg sm:text-xl text-white/90 mb-6 max-w-3xl mx-auto">
+              {t.home.readyToShipSubtitle}
+            </p>
+            <Link
+              href="/shop"
+              className="inline-block bg-white text-rose-600 px-8 py-3 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+            >
+              {t.home.shopNow} →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Featured Products */}
       <section className="py-20 lg:py-28 bg-gradient-to-br from-rose-50 via-pink-50 to-amber-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

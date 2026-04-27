@@ -34,6 +34,9 @@ export const bg: Translation = {
     madeInGermany: 'Ръчно изработено в Германия 🇩🇪',
     occasionsTitle: 'Перфектно за всеки повод',
     occasionsSubtitle: 'Намерете перфектния букет от сатенени рози за всеки момент',
+    readyToShipTitle: 'Готови за изпращане',
+    readyToShipSubtitle: 'Разгледайте вече готовите ни продукти в магазина — готови за незабавно изпращане!',
+    shopNow: 'Пазарувай сега',
   },
   shop: {
     title: 'Нашата колекция',
