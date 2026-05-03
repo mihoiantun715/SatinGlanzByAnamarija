@@ -121,12 +121,36 @@ export const hr: Translation = {
     followUs: 'Pratite nas',
   },
   footer: {
-    description: 'Ručno izrađene satenske ruže napravljene s ljubavlju i strašću. Svaki komad je jedinstveno umjetničko djelo.',
+    description: 'Ručno izrađene satenske ruže koje traju zauvijek. Napravljeno s ljubavlju u Njemačkoj.',
     quickLinks: 'Brze poveznice',
     contactUs: 'Kontaktirajte nas',
     followUs: 'Pratite nas',
     rights: 'Sva prava pridržana.',
-    madeWith: 'Izrađeno s ♥ od Anamarija — SatinGlanz',
+    madeWith: 'Napravljeno s ❤️ u Njemačkoj',
+  },
+  popup: {
+    mothersDay: {
+      title: "Dan majki posebna ponuda",
+      subtitle: "Pokažite svoju ljubav ručno izrađenim satenskim ružama",
+    },
+    fathersDay: {
+      title: "Dan očeva kolekcija",
+      subtitle: "Elegantni pokloni za posebnog tatu",
+    },
+    valentines: {
+      title: "Valentinovo posebna ponuda",
+      subtitle: "Izrazite svoju ljubav vječnim ružama",
+    },
+    christmas: {
+      title: "Božićna kolekcija",
+      subtitle: "Savršeni pokloni za blagdansku sezonu",
+    },
+    easter: {
+      title: "Uskrs posebna ponuda",
+      subtitle: "Proljece u ljepoti s našom kolekcijom",
+    },
+    featuredProducts: "Istaknutiproizvodi",
+    shopAll: "Pogledaj sve",
   },
   bouquetBuilder: {
     title: 'Vječne Ruže — Ručno Izrađene od Satenske Vrpce',

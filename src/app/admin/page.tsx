@@ -121,7 +121,7 @@ export default function AdminPage() {
   // Orders state
   const [adminOrders, setAdminOrders] = useState<AdminOrder[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
-  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'finances' | 'messages' | 'analytics'>('orders');
+  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'finances' | 'messages' | 'analytics' | 'popup'>('orders');
   const [orderStatusFilter, setOrderStatusFilter] = useState<'all' | 'paid' | 'pending_payment' | 'payment_failed'>('all');
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
   const [deleteOrderConfirm, setDeleteOrderConfirm] = useState<string | null>(null);
@@ -140,6 +140,14 @@ export default function AdminPage() {
   const [sendingTracking, setSendingTracking] = useState<string | null>(null);
   const [customerMessages, setCustomerMessages] = useState<any[]>([]);
   const [loadingMessages, setLoadingMessages] = useState(true);
+  
+  // Holiday Popup state
+  const [popupConfig, setPopupConfig] = useState({
+    isActive: false,
+    holidayType: null as 'mothers-day' | 'fathers-day' | 'valentines' | 'christmas' | 'easter' | null,
+    featuredProductIds: [] as string[],
+  });
+  const [savingPopup, setSavingPopup] = useState(false);
   
   // Invoice creation state
   const [showCustomOrderForm, setShowCustomOrderForm] = useState(false);
@@ -160,8 +168,38 @@ export default function AdminPage() {
       fetchOrders();
       fetchMessages();
       fetchCustomers();
+      fetchPopupConfig();
     }
   }, [authLoading, user, isAdmin]);
+
+  const fetchPopupConfig = async () => {
+    try {
+      const popupDoc = await getDocs(query(collection(db, 'settings'), where('__name__', '==', 'holidayPopup')));
+      if (!popupDoc.empty) {
+        const data = popupDoc.docs[0].data();
+        setPopupConfig({
+          isActive: data.isActive || false,
+          holidayType: data.holidayType || null,
+          featuredProductIds: data.featuredProductIds || [],
+        });
+      }
+    } catch (err) {
+      console.error('Failed to fetch popup config:', err);
+    }
+  };
+
+  const savePopupConfig = async () => {
+    setSavingPopup(true);
+    try {
+      await updateDoc(doc(db, 'settings', 'holidayPopup'), popupConfig);
+      setModalNotification({ message: 'Popup settings saved successfully!', type: 'success' });
+    } catch (err) {
+      console.error('Failed to save popup config:', err);
+      setModalNotification({ message: 'Failed to save popup settings', type: 'error' });
+    } finally {
+      setSavingPopup(false);
+    }
+  };
 
   const fetchOrders = async () => {
     try {
@@ -889,6 +927,17 @@ export default function AdminPage() {
           >
             <BarChart3 className="w-4 h-4" />
             Analytics
+          </button>
+          <button
+            onClick={() => setActiveTab('popup')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+              activeTab === 'popup'
+                ? 'bg-gray-900 text-white'
+                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <MessageCircle className="w-4 h-4" />
+            Holiday Popup
           </button>
         </div>
 

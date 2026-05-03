@@ -121,12 +121,36 @@ export const de: Translation = {
     followUs: 'Folgen Sie uns',
   },
   footer: {
-    description: 'Handgefertigte Satinrosen, mit Liebe und Leidenschaft gemacht. Jedes Stück ist ein einzigartiges Kunstwerk.',
+    description: 'Handgefertigte Satinrosen, die ewig halten. Mit Liebe in Deutschland gemacht.',
     quickLinks: 'Schnelllinks',
-    contactUs: 'Kontakt',
-    followUs: 'Folgen Sie uns',
+    contactUs: 'Kontaktiere uns',
+    followUs: 'Folge uns',
     rights: 'Alle Rechte vorbehalten.',
-    madeWith: 'Hergestellt mit ♥ von Anamarija — SatinGlanz',
+    madeWith: 'Gemacht mit ❤️ in Deutschland',
+  },
+  popup: {
+    mothersDay: {
+      title: "Muttertag Spezial",
+      subtitle: "Zeigen Sie Ihre Liebe mit handgefertigten Satinrosen",
+    },
+    fathersDay: {
+      title: "Vatertag Kollektion",
+      subtitle: "Elegante Geschenke für den besonderen Papa",
+    },
+    valentines: {
+      title: "Valentinstag Spezial",
+      subtitle: "Drücken Sie Ihre Liebe mit ewigen Rosen aus",
+    },
+    christmas: {
+      title: "Weihnachtskollektion",
+      subtitle: "Perfekte Geschenke für die Feiertage",
+    },
+    easter: {
+      title: "Oster Spezial",
+      subtitle: "Frühling in Schönheit mit unserer Kollektion",
+    },
+    featuredProducts: "Empfohlene Produkte",
+    shopAll: "Alle ansehen",
   },
   bouquetBuilder: {
     title: 'Ewige Rosen — Handgefertigt aus Satinband',

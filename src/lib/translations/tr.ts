@@ -121,12 +121,36 @@ export const tr: Translation = {
     followUs: 'Bizi Takip Edin',
   },
   footer: {
-    description: 'Sevgi ve tutkuyla üretilen el yapımı saten güller. Her parça benzersiz bir sanat eseridir.',
+    description: 'Sevgi ve tutkuyla üretilen el yapımı saten güller. Almanya\'da sevgiyle yapılmıştır.',
     quickLinks: 'Hızlı Bağlantılar',
     contactUs: 'Bize Ulaşın',
     followUs: 'Bizi Takip Edin',
     rights: 'Tüm hakları saklıdır.',
-    madeWith: 'Anamarija tarafından ♥ ile yapılmıştır — SatinGlanz',
+    madeWith: 'Almanya\'da ❤️ ile yapılmıştır — SatinGlanz',
+  },
+  popup: {
+    mothersDay: {
+      title: "Anneler Günü Özel",
+      subtitle: "El yapımı saten güllerle sevginizi gösterin",
+    },
+    fathersDay: {
+      title: "Babalar Günü Koleksiyonu",
+      subtitle: "Özel baba için zarif hediyeler",
+    },
+    valentines: {
+      title: "Sevgililer Günü Özel",
+      subtitle: "Sevginizi sonsuz güllerle ifade edin",
+    },
+    christmas: {
+      title: "Noel Koleksiyonu",
+      subtitle: "Tatil sezonu için mükemmel hediyeler",
+    },
+    easter: {
+      title: "Paskalya Özel",
+      subtitle: "Koleksiyonumuzla baharın güzelliklerine dalanın",
+    },
+    featuredProducts: "Öne Çıkan Ürünler",
+    shopAll: "Tümünü gör",
   },
   bouquetBuilder: {
     title: 'Sonsuz Güller — Saten Kurdele ile El Yapımı',

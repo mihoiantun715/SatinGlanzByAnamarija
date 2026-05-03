@@ -6,6 +6,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useProducts } from '@/context/ProductsContext';
 import ProductCard from '@/components/ProductCard';
 import TrustBadges from '@/components/TrustBadges';
+import HolidayPopup from '@/components/HolidayPopup';
 import { ArrowRight } from 'lucide-react';
 
 export default function Home() {
@@ -15,6 +16,8 @@ export default function Home() {
 
   return (
     <div>
+      <HolidayPopup />
+      
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-rose-50 via-pink-50 to-amber-50">
         <div className="absolute inset-0 opacity-10">

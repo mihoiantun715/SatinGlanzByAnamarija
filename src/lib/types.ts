@@ -158,6 +158,30 @@ export interface Translation {
     rights: string;
     madeWith: string;
   };
+  popup: {
+    mothersDay: {
+      title: string;
+      subtitle: string;
+    };
+    fathersDay: {
+      title: string;
+      subtitle: string;
+    };
+    valentines: {
+      title: string;
+      subtitle: string;
+    };
+    christmas: {
+      title: string;
+      subtitle: string;
+    };
+    easter: {
+      title: string;
+      subtitle: string;
+    };
+    featuredProducts: string;
+    shopAll: string;
+  };
   bouquetBuilder: {
     title: string;
     subtitle: string;

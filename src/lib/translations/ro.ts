@@ -121,12 +121,36 @@ export const ro: Translation = {
     followUs: 'Urmăriți-ne',
   },
   footer: {
-    description: 'Trandafiri din satin lucrați manual cu dragoste și pasiune. Fiecare piesă este o operă de artă unică.',
-    quickLinks: 'Linkuri rapide',
-    contactUs: 'Contactați-ne',
-    followUs: 'Urmăriți-ne',
+    description: 'Trandafiri din satin lucrați manual care țin pentru totdeauna. Făcut cu dragoste în Germania.',
+    quickLinks: 'Legături rapide',
+    contactUs: 'Contactează-ne',
+    followUs: 'Urmărește-ne',
     rights: 'Toate drepturile rezervate.',
-    madeWith: 'Realizat cu ♥ de Anamarija — SatinGlanz',
+    madeWith: 'Făcut cu ❤️ în Germania',
+  },
+  popup: {
+    mothersDay: {
+      title: "Special Ziua Mamei",
+      subtitle: "Arată-ți dragostea cu trandafiri din satin lucrați manual",
+    },
+    fathersDay: {
+      title: "Colecția Ziua Tatălui",
+      subtitle: "Cadouri elegante pentru tatăl special",
+    },
+    valentines: {
+      title: "Special Ziua Îndrăgostiților",
+      subtitle: "Exprimă-ți dragostea cu trandafiri veșnici",
+    },
+    christmas: {
+      title: "Colecția de Crăciun",
+      subtitle: "Cadouri perfecte pentru sezonul sărbătorilor",
+    },
+    easter: {
+      title: "Special de Paște",
+      subtitle: "Primăvara în frumusețe cu colecția noastră",
+    },
+    featuredProducts: "Produse recomandate",
+    shopAll: "Vezi toate",
   },
   bouquetBuilder: {
     title: 'Trandafiri Eterni — Făcuți manual din panglică de satin',

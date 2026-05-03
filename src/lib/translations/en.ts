@@ -121,12 +121,36 @@ export const en: Translation = {
     followUs: 'Follow Us',
   },
   footer: {
-    description: 'Handcrafted satin roses made with love and passion. Each piece is a unique work of art that brings everlasting beauty to your home.',
+    description: 'Handcrafted satin roses that last forever. Made with love in Germany.',
     quickLinks: 'Quick Links',
     contactUs: 'Contact Us',
     followUs: 'Follow Us',
     rights: 'All rights reserved.',
-    madeWith: 'Made with ♥ by Anamarija — SatinGlanz',
+    madeWith: 'Made with ❤️ in Germany',
+  },
+  popup: {
+    mothersDay: {
+      title: "Mother's Day Special",
+      subtitle: "Show your love with handcrafted satin roses",
+    },
+    fathersDay: {
+      title: "Father's Day Collection",
+      subtitle: "Elegant gifts for the special dad",
+    },
+    valentines: {
+      title: "Valentine's Day Special",
+      subtitle: "Express your love with everlasting roses",
+    },
+    christmas: {
+      title: "Christmas Collection",
+      subtitle: "Perfect gifts for the holiday season",
+    },
+    easter: {
+      title: "Easter Special",
+      subtitle: "Spring into beauty with our collection",
+    },
+    featuredProducts: "Featured Products",
+    shopAll: "Shop All",
   },
   bouquetBuilder: {
     title: 'Eternal Roses — HandMade From Satin Ribbon',
