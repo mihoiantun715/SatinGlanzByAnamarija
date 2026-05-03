@@ -57,38 +57,33 @@ export default function HolidayPopup() {
     switch (config.holidayType) {
       case 'mothers-day':
         return {
-          title: t.popup?.mothersDay?.title || "Mother's Day Special",
-          subtitle: t.popup?.mothersDay?.subtitle || "Show your love with handcrafted satin roses",
+          title: t.popup.mothersDay.title,
+          subtitle: t.popup.mothersDay.subtitle,
           bgGradient: 'from-pink-100 via-rose-100 to-pink-100',
-          accentColor: 'rose',
         };
       case 'fathers-day':
         return {
-          title: t.popup?.fathersDay?.title || "Father's Day Collection",
-          subtitle: t.popup?.fathersDay?.subtitle || "Elegant gifts for the special dad",
+          title: t.popup.fathersDay.title,
+          subtitle: t.popup.fathersDay.subtitle,
           bgGradient: 'from-blue-100 via-gray-100 to-blue-100',
-          accentColor: 'blue',
         };
       case 'valentines':
         return {
-          title: t.popup?.valentines?.title || "Valentine's Day Special",
-          subtitle: t.popup?.valentines?.subtitle || "Express your love with everlasting roses",
+          title: t.popup.valentines.title,
+          subtitle: t.popup.valentines.subtitle,
           bgGradient: 'from-red-100 via-pink-100 to-red-100',
-          accentColor: 'red',
         };
       case 'christmas':
         return {
-          title: t.popup?.christmas?.title || "Christmas Collection",
-          subtitle: t.popup?.christmas?.subtitle || "Perfect gifts for the holiday season",
+          title: t.popup.christmas.title,
+          subtitle: t.popup.christmas.subtitle,
           bgGradient: 'from-green-100 via-red-100 to-green-100',
-          accentColor: 'green',
         };
       case 'easter':
         return {
-          title: t.popup?.easter?.title || "Easter Special",
-          subtitle: t.popup?.easter?.subtitle || "Spring into beauty with our collection",
+          title: t.popup.easter.title,
+          subtitle: t.popup.easter.subtitle,
           bgGradient: 'from-yellow-100 via-pink-100 to-purple-100',
-          accentColor: 'purple',
         };
       default:
         return null;
@@ -134,7 +129,7 @@ export default function HolidayPopup() {
           {featuredProducts.length > 0 && (
             <div className="p-4 sm:p-6 md:p-8">
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6 text-center">
-                {t.popup?.featuredProducts || "Featured Products"}
+                {t.popup.featuredProducts}
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
                 {featuredProducts.map((product) => (
@@ -176,7 +171,7 @@ export default function HolidayPopup() {
                   <div className="absolute inset-0 bg-gradient-to-br from-rose-300 to-rose-400 rounded-full blur-sm opacity-50 group-hover:opacity-70 transition-opacity"></div>
                   <div className="relative bg-gradient-to-br from-rose-200 via-rose-300 to-rose-400 px-6 py-3 sm:px-8 sm:py-3 md:px-10 md:py-4 rounded-full shadow-xl border border-rose-400/30 group-hover:shadow-rose-300/50 transition-all">
                     <span className="text-base sm:text-lg font-serif text-gray-800 tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>
-                      {t.popup?.shopAll || "Shop All"}
+                      {t.popup.shopAll}
                     </span>
                   </div>
                 </Link>

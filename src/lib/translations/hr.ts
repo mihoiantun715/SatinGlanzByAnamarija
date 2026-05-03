@@ -149,7 +149,7 @@ export const hr: Translation = {
       title: "Uskrs posebna ponuda",
       subtitle: "Proljece u ljepoti s našom kolekcijom",
     },
-    featuredProducts: "Istaknutiproizvodi",
+    featuredProducts: "Istaknuti proizvodi",
     shopAll: "Pogledaj sve",
   },
   bouquetBuilder: {
