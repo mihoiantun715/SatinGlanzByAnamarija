@@ -37,7 +37,9 @@ export default function HolidayPopup() {
           }
         }
       } catch (error) {
-        console.error('Error fetching popup config:', error);
+        // Silently fail if document doesn't exist or permissions are missing
+        // This is expected behavior when the popup hasn't been configured yet
+        return;
       }
     };
 
