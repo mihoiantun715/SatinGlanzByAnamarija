@@ -30,9 +30,8 @@ export default function HolidayPopup() {
           const data = popupDoc.data() as PopupConfig;
           setConfig(data);
           
-          // Check if popup should be shown (not shown in this session)
-          const hasSeenPopup = sessionStorage.getItem('holidayPopupSeen');
-          if (data.isActive && !hasSeenPopup && data.holidayType) {
+          // Show popup if active and holiday type is set
+          if (data.isActive && data.holidayType) {
             setTimeout(() => setIsOpen(true), 1000); // Show after 1 second
           }
         }
@@ -48,7 +47,6 @@ export default function HolidayPopup() {
 
   const handleClose = () => {
     setIsOpen(false);
-    sessionStorage.setItem('holidayPopupSeen', 'true');
   };
 
   if (!isOpen || !config || !config.holidayType) return null;
@@ -109,36 +107,36 @@ export default function HolidayPopup() {
       />
       
       {/* Popup */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 pointer-events-none">
         <div 
-          className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto pointer-events-auto animate-scale-in"
+          className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto pointer-events-auto animate-scale-in"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Close Button */}
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-100 transition-colors z-10"
+            className="absolute top-2 right-2 sm:top-4 sm:right-4 w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-100 transition-colors z-10"
           >
-            <X className="w-5 h-5 text-gray-600" />
+            <X className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
           </button>
 
           {/* Header */}
-          <div className={`bg-gradient-to-r ${content.bgGradient} p-8 text-center`}>
-            <h2 className="text-4xl sm:text-5xl font-serif italic text-gray-800 mb-3" style={{ fontFamily: 'Georgia, serif' }}>
+          <div className={`bg-gradient-to-r ${content.bgGradient} p-4 sm:p-6 md:p-8 text-center`}>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif italic text-gray-800 mb-2 sm:mb-3" style={{ fontFamily: 'Georgia, serif' }}>
               {content.title}
             </h2>
-            <p className="text-lg text-gray-700">
+            <p className="text-sm sm:text-base md:text-lg text-gray-700">
               {content.subtitle}
             </p>
           </div>
 
           {/* Featured Products */}
           {featuredProducts.length > 0 && (
-            <div className="p-8">
-              <h3 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
+            <div className="p-4 sm:p-6 md:p-8">
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6 text-center">
                 {t.popup?.featuredProducts || "Featured Products"}
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
                 {featuredProducts.map((product) => (
                   <Link
                     key={product.id}
@@ -146,7 +144,7 @@ export default function HolidayPopup() {
                     onClick={handleClose}
                     className="group"
                   >
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <div className="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                       <div className="aspect-square relative bg-gradient-to-br from-rose-50 to-pink-50">
                         <Image
                           src={product.images[0]}
@@ -155,11 +153,11 @@ export default function HolidayPopup() {
                           className="object-cover"
                         />
                       </div>
-                      <div className="p-4">
-                        <h4 className="font-semibold text-gray-800 mb-2 group-hover:text-rose-600 transition-colors">
+                      <div className="p-2 sm:p-3 md:p-4">
+                        <h4 className="font-semibold text-xs sm:text-sm md:text-base text-gray-800 mb-1 sm:mb-2 group-hover:text-rose-600 transition-colors line-clamp-2">
                           {typeof product.name === 'string' ? product.name : product.name[locale]}
                         </h4>
-                        <p className="text-lg font-bold text-rose-600">
+                        <p className="text-sm sm:text-base md:text-lg font-bold text-rose-600">
                           €{product.price.toFixed(2)}
                         </p>
                       </div>
@@ -169,15 +167,15 @@ export default function HolidayPopup() {
               </div>
 
               {/* Shop All Button */}
-              <div className="text-center mt-8">
+              <div className="text-center mt-6 sm:mt-8">
                 <Link
                   href="/shop"
                   onClick={handleClose}
                   className="relative inline-block group"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-rose-300 to-rose-400 rounded-full blur-sm opacity-50 group-hover:opacity-70 transition-opacity"></div>
-                  <div className="relative bg-gradient-to-br from-rose-200 via-rose-300 to-rose-400 px-10 py-4 rounded-full shadow-xl border border-rose-400/30 group-hover:shadow-rose-300/50 transition-all">
-                    <span className="text-lg font-serif text-gray-800 tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>
+                  <div className="relative bg-gradient-to-br from-rose-200 via-rose-300 to-rose-400 px-6 py-3 sm:px-8 sm:py-3 md:px-10 md:py-4 rounded-full shadow-xl border border-rose-400/30 group-hover:shadow-rose-300/50 transition-all">
+                    <span className="text-base sm:text-lg font-serif text-gray-800 tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>
                       {t.popup?.shopAll || "Shop All"}
                     </span>
                   </div>
