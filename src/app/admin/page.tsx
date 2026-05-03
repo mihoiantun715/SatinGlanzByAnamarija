@@ -1763,6 +1763,127 @@ export default function AdminPage() {
           <AnalyticsDashboard />
         )}
 
+        {/* Holiday Popup Tab */}
+        {activeTab === 'popup' && (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Holiday Popup Manager</h2>
+            
+            {/* Popup Activation */}
+            <div className="mb-8 p-6 bg-gradient-to-r from-rose-50 to-pink-50 rounded-xl border border-rose-200">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800">Popup Status</h3>
+                  <p className="text-sm text-gray-600">Enable or disable the holiday popup on home page</p>
+                </div>
+                <button
+                  onClick={() => setPopupConfig({ ...popupConfig, isActive: !popupConfig.isActive })}
+                  className={`px-6 py-3 rounded-full font-semibold transition-all ${
+                    popupConfig.isActive
+                      ? 'bg-green-500 text-white hover:bg-green-600'
+                      : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+                  }`}
+                >
+                  {popupConfig.isActive ? '✓ Active' : '✗ Inactive'}
+                </button>
+              </div>
+            </div>
+
+            {/* Holiday Type Selection */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Select Holiday Type</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                {[
+                  { value: 'mothers-day', label: "Mother's Day", color: 'from-pink-100 to-rose-100' },
+                  { value: 'fathers-day', label: "Father's Day", color: 'from-blue-100 to-gray-100' },
+                  { value: 'valentines', label: "Valentine's Day", color: 'from-red-100 to-pink-100' },
+                  { value: 'christmas', label: 'Christmas', color: 'from-green-100 to-red-100' },
+                  { value: 'easter', label: 'Easter', color: 'from-yellow-100 to-purple-100' },
+                ].map((holiday) => (
+                  <button
+                    key={holiday.value}
+                    onClick={() => setPopupConfig({ ...popupConfig, holidayType: holiday.value as any })}
+                    className={`p-4 rounded-xl border-2 transition-all ${
+                      popupConfig.holidayType === holiday.value
+                        ? 'border-rose-500 bg-gradient-to-br ' + holiday.color
+                        : 'border-gray-200 bg-white hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="text-center">
+                      <p className="font-semibold text-gray-800">{holiday.label}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Featured Products Selection */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Featured Products ({popupConfig.featuredProductIds.length} selected)
+              </h3>
+              <p className="text-sm text-gray-600 mb-4">Select products to feature in the popup</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-h-96 overflow-y-auto p-4 bg-gray-50 rounded-xl">
+                {allProducts.map((product: Product) => {
+                  const isSelected = popupConfig.featuredProductIds.includes(product.id);
+                  return (
+                    <div
+                      key={product.id}
+                      onClick={() => {
+                        if (isSelected) {
+                          setPopupConfig({
+                            ...popupConfig,
+                            featuredProductIds: popupConfig.featuredProductIds.filter(id => id !== product.id),
+                          });
+                        } else {
+                          setPopupConfig({
+                            ...popupConfig,
+                            featuredProductIds: [...popupConfig.featuredProductIds, product.id],
+                          });
+                        }
+                      }}
+                      className={`cursor-pointer rounded-xl border-2 overflow-hidden transition-all ${
+                        isSelected
+                          ? 'border-rose-500 bg-rose-50'
+                          : 'border-gray-200 bg-white hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="aspect-square relative bg-gradient-to-br from-rose-50 to-pink-50">
+                        <img
+                          src={product.images[0]}
+                          alt={typeof product.name === 'string' ? product.name : product.name.en}
+                          className="w-full h-full object-cover"
+                        />
+                        {isSelected && (
+                          <div className="absolute top-2 right-2 w-8 h-8 bg-rose-500 rounded-full flex items-center justify-center">
+                            <span className="text-white font-bold">✓</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-3">
+                        <p className="font-semibold text-sm text-gray-800 truncate">
+                          {typeof product.name === 'string' ? product.name : product.name.en}
+                        </p>
+                        <p className="text-rose-600 font-bold">€{product.price.toFixed(2)}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Save Button */}
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={savePopupConfig}
+                disabled={savingPopup}
+                className="px-8 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-full font-semibold hover:from-rose-600 hover:to-pink-600 transition-all disabled:opacity-50"
+              >
+                {savingPopup ? 'Saving...' : 'Save Popup Settings'}
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Customer Messages */}
         {activeTab === 'messages' && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
