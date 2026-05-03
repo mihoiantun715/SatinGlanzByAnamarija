@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, where, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
@@ -191,7 +191,7 @@ export default function AdminPage() {
   const savePopupConfig = async () => {
     setSavingPopup(true);
     try {
-      await updateDoc(doc(db, 'settings', 'holidayPopup'), popupConfig);
+      await setDoc(doc(db, 'settings', 'holidayPopup'), popupConfig, { merge: true });
       setModalNotification({ message: 'Popup settings saved successfully!', type: 'success' });
     } catch (err) {
       console.error('Failed to save popup config:', err);
