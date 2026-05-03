@@ -1823,7 +1823,7 @@ export default function AdminPage() {
               </h3>
               <p className="text-sm text-gray-600 mb-4">Select products to feature in the popup</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-h-96 overflow-y-auto p-4 bg-gray-50 rounded-xl">
-                {allProducts.map((product: Product) => {
+                {dbProducts.map((product: Product) => {
                   const isSelected = popupConfig.featuredProductIds.includes(product.id);
                   return (
                     <div
