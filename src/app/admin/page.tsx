@@ -1731,7 +1731,15 @@ export default function AdminPage() {
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-gray-900 truncate">{product.name?.[locale] || product.name?.en || '—'}</p>
                     <div className="flex items-center gap-3 mt-1 flex-wrap">
-                      <span className="text-sm font-bold text-rose-500">€{product.price?.toFixed(2)}</span>
+                      {product.discount && product.discount > 0 ? (
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-bold text-green-600">€{(product.price * (1 - product.discount / 100)).toFixed(2)}</span>
+                          <span className="text-xs text-gray-400 line-through">€{product.price?.toFixed(2)}</span>
+                          <span className="text-[10px] font-bold bg-red-100 text-red-600 px-2 py-0.5 rounded-full">-{product.discount}%</span>
+                        </div>
+                      ) : (
+                        <span className="text-sm font-bold text-rose-500">€{product.price?.toFixed(2)}</span>
+                      )}
                       <span className="text-xs text-gray-400">{product.category}</span>
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                         (product.stockQuantity ?? 0) > 0 ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
