@@ -183,8 +183,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                 className="relative group"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-rose-300 to-rose-400 rounded-full blur-sm opacity-50 group-hover:opacity-70 transition-opacity"></div>
-                <div className="relative bg-gradient-to-br from-rose-200 via-rose-300 to-rose-400 px-5 py-2 rounded-full shadow-lg border border-rose-400/30">
-                  <span className="text-sm font-medium text-gray-800">
+                <div className="relative bg-gradient-to-br from-rose-200 via-rose-300 to-rose-400 px-3 py-1.5 rounded-full shadow-lg border border-rose-400/30">
+                  <span className="text-xs font-medium text-gray-800">
                     {t.shop.addToCart}
                   </span>
                 </div>
