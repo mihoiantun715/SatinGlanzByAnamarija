@@ -66,6 +66,7 @@ const getTrackingUrl = (carrier: string, trackingNumber: string): string => {
 interface ProductForm {
   slug: string;
   price: number;
+  discount: number;
   stockQuantity: number;
   imageUrls: string[];
   category: string;
@@ -85,6 +86,7 @@ interface ProductForm {
 const emptyForm = (): ProductForm => ({
   slug: '',
   price: 0,
+  discount: 0,
   stockQuantity: 0,
   imageUrls: [],
   category: 'Single Roses',
@@ -683,6 +685,7 @@ export default function AdminPage() {
     setForm({
       slug: product.slug,
       price: product.price,
+      discount: product.discount ?? 0,
       stockQuantity: product.stockQuantity ?? 0,
       imageUrls: existingImages,
       category: product.category,
@@ -765,6 +768,7 @@ export default function AdminPage() {
       const productData = {
         slug: form.slug.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
         price: form.price,
+        discount: form.discount || 0,
         stockQuantity: form.stockQuantity,
         imageUrl: form.imageUrls[0] || '',
         images: form.imageUrls,
@@ -1035,6 +1039,29 @@ export default function AdminPage() {
                       onChange={(e) => setForm({ ...form, price: parseFloat(e.target.value) || 0 })}
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
                     />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Discount (%)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="1"
+                      value={form.discount}
+                      onChange={(e) => {
+                        const val = Math.min(100, Math.max(0, parseFloat(e.target.value) || 0));
+                        setForm({ ...form, discount: val });
+                      }}
+                      placeholder="0"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+                    />
+                    {form.discount > 0 && (
+                      <p className="mt-2 text-sm font-semibold">
+                        <span className="text-green-600">New: €{(form.price * (1 - form.discount / 100)).toFixed(2)}</span>
+                        <span className="text-gray-400 line-through ml-2">€{form.price.toFixed(2)}</span>
+                        <span className="ml-2 text-rose-600">-{form.discount}%</span>
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1.5">Stock Qty</label>
