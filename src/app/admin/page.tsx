@@ -8,8 +8,9 @@ import { useAuth } from '@/context/AuthContext';
 import { useProducts } from '@/context/ProductsContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { Product, Locale } from '@/lib/types';
-import { Plus, Trash2, Edit3, Save, X, ShieldCheck, Package, Upload, Image as ImageIcon, ClipboardList, Truck, ExternalLink, DollarSign, TrendingUp, FileText, Send, Download, MessageCircle, Mail, BarChart3, Link as LinkIcon, Copy } from 'lucide-react';
-import FinancialDashboard from '@/components/FinancialDashboard';
+import { Plus, Trash2, Edit3, Save, X, ShieldCheck, Package, Upload, Image as ImageIcon, ClipboardList, Truck, ExternalLink, DollarSign, TrendingUp, FileText, Send, Download, MessageCircle, Mail, BarChart3, Link as LinkIcon, Copy, Calendar } from 'lucide-react';
+import FinancialDashboard from '@\/components\/FinancialDashboard';
+import AdminVacationSettings from '@\/components\/AdminVacationSettings';
 import AnalyticsDashboard from '@/components/AnalyticsDashboard';
 
 const LOCALES: Locale[] = ['en', 'de', 'hr', 'ro', 'bg', 'tr'];
