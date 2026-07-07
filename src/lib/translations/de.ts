@@ -405,6 +405,16 @@ export const de: Translation = {
     premiumTitle: 'Premium-Materialien',
     premiumDesc: 'Wir verwenden nur die feinsten Satinstoffe, um ein luxuriöses Aussehen und Gefühl zu gewährleisten.',
   },
+  vacation: {
+    title: 'Wir haben Urlaub',
+    subtitle: 'Vielen Dank für Ihr Interesse! Wir sind bald wieder mit schönen neuen Produkten zurück.',
+    returningOn: 'Zurück am',
+    days: 'Tage',
+    hours: 'Stunden',
+    minutes: 'Minuten',
+    seconds: 'Sekunden',
+    message: 'Wir schätzen Ihre Geduld und freuen uns darauf, Sie wieder zu bedienen!',
+  },
   trustBadges: {
     whyShopWithUs: 'Warum bei uns kaufen?',
     securePayment: 'Sichere Zahlung',

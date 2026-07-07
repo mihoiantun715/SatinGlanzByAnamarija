@@ -405,6 +405,16 @@ export const tr: Translation = {
     premiumTitle: 'Premium Malzemeler',
     premiumDesc: 'Lüks bir görünüm ve his sağlamak için sadece en iyi saten kumaşları kullanıyoruz.',
   },
+  vacation: {
+    title: 'Tatileyiz',
+    subtitle: 'İlginiz için teşekkürler! Yakında güzel yeni ürünlerle geri döneceğiz.',
+    returningOn: 'Dönüş tarihi',
+    days: 'Gün',
+    hours: 'Saat',
+    minutes: 'Dakika',
+    seconds: 'Saniye',
+    message: 'Sabrınız için minnettarız ve tekrar hizmet vermek için sabırsızlanıyoruz!',
+  },
   trustBadges: {
     whyShopWithUs: 'Neden Bizden Alışveriş Yapmalısınız?',
     securePayment: 'Güvenli Ödeme',

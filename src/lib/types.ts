@@ -454,4 +454,14 @@ export interface Translation {
     premiumTitle: string;
     premiumDesc: string;
   };
+  vacation: {
+    title: string;
+    subtitle: string;
+    returningOn: string;
+    days: string;
+    hours: string;
+    minutes: string;
+    seconds: string;
+    message: string;
+  };
 }

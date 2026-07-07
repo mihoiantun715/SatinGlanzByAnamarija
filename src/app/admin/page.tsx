@@ -123,7 +123,7 @@ export default function AdminPage() {
   // Orders state
   const [adminOrders, setAdminOrders] = useState<AdminOrder[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
-  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'finances' | 'messages' | 'analytics' | 'popup'>('orders');
+  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'finances' | 'messages' | 'analytics' | 'popup' | 'vacation'>('orders');
   const [orderStatusFilter, setOrderStatusFilter] = useState<'all' | 'paid' | 'pending_payment' | 'payment_failed'>('all');
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
   const [deleteOrderConfirm, setDeleteOrderConfirm] = useState<string | null>(null);

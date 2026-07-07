@@ -405,6 +405,16 @@ export const hr: Translation = {
     premiumTitle: 'Premium materijali',
     premiumDesc: 'Koristimo samo najfinije satenske tkanine kako bismo osigurali luksuzan izgled i osjećaj.',
   },
+  vacation: {
+    title: 'Na odmoru smo',
+    subtitle: 'Hvala vam na interesu! Uskoro se vraćamo s lijepim novim proizvodima.',
+    returningOn: 'Vraćamo se',
+    days: 'Dani',
+    hours: 'Sati',
+    minutes: 'Minute',
+    seconds: 'Sekunde',
+    message: 'Cijenimo vaše strpljenje i radujemo se opet vam služiti!',
+  },
   trustBadges: {
     whyShopWithUs: 'Zašto kupovati kod nas?',
     securePayment: 'Sigurna plaćanja',

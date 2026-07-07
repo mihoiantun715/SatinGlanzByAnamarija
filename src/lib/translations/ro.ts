@@ -405,6 +405,16 @@ export const ro: Translation = {
     premiumTitle: 'Materiale premium',
     premiumDesc: 'Folosim doar cele mai fine țesături de satin pentru a asigura un aspect și o senzație luxoasă.',
   },
+  vacation: {
+    title: 'Suntem în vacanță',
+    subtitle: 'Vă mulțumim pentru interes! Vom reveni curând cu produse noi frumoase.',
+    returningOn: 'Ne întoarcem pe',
+    days: 'Zile',
+    hours: 'Ore',
+    minutes: 'Minute',
+    seconds: 'Secunde',
+    message: 'Apreciem răbdarea dumneavoastră și așteptăm să vă servim din nou!',
+  },
   trustBadges: {
     whyShopWithUs: 'De ce să cumpărați de la noi?',
     securePayment: 'Plată securizată',

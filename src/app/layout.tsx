@@ -11,6 +11,9 @@ import Footer from '@/components/Footer';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
 import CookieConsent from '@/components/CookieConsent';
+import VacationMode from '@/components/VacationMode';
+import { getDoc, doc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,11 +40,30 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+async function getVacationMode() {
+  try {
+    const docRef = doc(db, 'settings', 'vacationMode');
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return {
+        active: data.active || false,
+        returnDate: data.returnDate || null,
+      };
+    }
+  } catch (error) {
+    console.error('Error fetching vacation mode:', error);
+  }
+  return { active: false, returnDate: null };
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const vacationConfig = await getVacationMode();
+
   return (
     <html lang="en">
       <body
@@ -57,11 +79,15 @@ export default function RootLayout({
               <ProductsProvider>
                 <CartProvider>
                   <AnalyticsTracker />
-                  <div className="flex flex-col min-h-screen">
-                    <Navbar />
-                    <main className="flex-1">{children}</main>
-                    <Footer />
-                  </div>
+                  {vacationConfig.active && vacationConfig.returnDate ? (
+                    <VacationMode returnDate={new Date(vacationConfig.returnDate)} />
+                  ) : (
+                    <div className="flex flex-col min-h-screen">
+                      <Navbar />
+                      <main className="flex-1">{children}</main>
+                      <Footer />
+                    </div>
+                  )}
                   <CookieConsent />
                 </CartProvider>
               </ProductsProvider>
