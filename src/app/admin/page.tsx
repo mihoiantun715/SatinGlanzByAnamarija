@@ -943,6 +943,17 @@ export default function AdminPage() {
             <MessageCircle className="w-4 h-4" />
             Holiday Popup
           </button>
+          <button
+            onClick={() => setActiveTab('vacation')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+              activeTab === 'vacation'
+                ? 'bg-gray-900 text-white'
+                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <Calendar className="w-4 h-4" />
+            Vacation Mode
+          </button>
         </div>
 
         {/* Product Form Modal */}
