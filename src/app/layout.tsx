@@ -42,10 +42,13 @@ export const metadata: Metadata = {
 
 async function getVacationMode() {
   try {
+    console.log('Fetching vacation mode from Firestore...');
     const docRef = doc(db, 'settings', 'vacationMode');
     const docSnap = await getDoc(docRef);
+    console.log('Vacation mode doc exists:', docSnap.exists());
     if (docSnap.exists()) {
       const data = docSnap.data();
+      console.log('Vacation mode data:', data);
       return {
         active: data.active || false,
         returnDate: data.returnDate || null,
@@ -54,6 +57,7 @@ async function getVacationMode() {
   } catch (error) {
     console.error('Error fetching vacation mode:', error);
   }
+  console.log('Returning vacation mode as inactive');
   return { active: false, returnDate: null };
 }
 
@@ -63,6 +67,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const vacationConfig = await getVacationMode();
+  console.log('Vacation config in layout:', vacationConfig);
 
   return (
     <html lang="en">
