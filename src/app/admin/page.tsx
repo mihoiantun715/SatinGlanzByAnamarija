@@ -1928,10 +1928,17 @@ export default function AdminPage() {
                 {savingPopup ? 'Saving...' : 'Save Popup Settings'}
               </button>
             </div>
-          </div>
-        )}
-
-        {/* Customer Messages */}
+              </div>
+  )}
+ 
+{/* Vacation Mode Tab */}
+{activeTab === 'vacation' && (
+  <div className="space-y-6">
+    <AdminVacationSettings />
+  </div>
+)}
+ 
+  {/* Customer Messages */}
         {activeTab === 'messages' && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
             <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
